@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<!-- saved from url=(0070)file:///Users/harrisonemery/Downloads/ontario-corp-structure-v2_1.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corporate Structure Advisory — Ontario</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./Corporate Structure Advisory — Ontario_files/css2" rel="stylesheet">
+<style>
+/* ── VAULT MERIDIAN — design philosophy: structured luminosity ── */
+:root{
+  --ivory:#FAF8F4;
+  --ivory2:#F2EFE8;
+  --ivory3:#E8E3D8;
+  --navy:#0C1A2E;
+  --navy2:#1A2E4A;
+  --navy3:#2D4A6E;
+  --gold:#B8831A;
+  --gold2:#D4A030;
+  --gold-bg:rgba(184,131,26,.08);
+  --gold-border:rgba(184,131,26,.22);
+  --ink:#1C1A16;
+  --ink2:#3D3A32;
+  --ink3:#6B6458;
+  --ink4:#9A9488;
+  --border:#DDD9D0;
+  --border2:#C8C4B8;
+  /* node fills — light mode */
+  --nblue-f:#EBF2FC;--nblue-s:#2D5FA6;--nblue-t:#1A3F7A;
+  --nteal-f:#E8F5EF;--nteal-s:#1F7A52;--nteal-t:#124D33;
+  --namber-f:#FDF3E3;--namber-s:#B87820;--namber-t:#7A4E10;
+  --npurp-f:#F0EDF9;--npurp-s:#5940A8;--npurp-t:#32226B;
+  --ncoral-f:#FBEEE9;--ncoral-s:#B04020;--ncoral-t:#7A2A12;
+  --ngreen-f:#EBF5E8;--ngreen-s:#2A7020;--ngreen-t:#154010;
+  --ngray-f:#F2F1EE;--ngray-s:#6A6860;--ngray-t:#3A3830;
+  --nred-f:#FCEAEA;--nred-s:#A82828;--nred-t:#6B1010;
+  --panel-w:400px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--ivory);
+  color:var(--ink);
+  font-family:'Outfit',sans-serif;
+  font-size:15px;
+  line-height:1.7;
+  min-height:100vh;
+  /* subtle dot grid */
+  background-image:radial-gradient(circle,rgba(180,170,155,.35) 1px,transparent 1px);
+  background-size:28px 28px;
+  background-attachment:fixed;
+}
+
+/* ── HEADER ── */
+header{
+  background:var(--navy);
+  padding:52px 56px 44px;
+  position:relative;
+  overflow:hidden;
+}
+header::after{
+  content:'';
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:3px;
+  background:linear-gradient(90deg,var(--gold),transparent 70%);
+}
+header::before{
+  content:'';
+  position:absolute;
+  top:-120px;right:-60px;
+  width:420px;height:420px;
+  border:1px solid rgba(184,131,26,.12);
+  border-radius:50%;
+  pointer-events:none;
+}
+.h-eyebrow{
+  font-family:'Outfit',sans-serif;
+  font-size:11px;font-weight:500;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold2);
+  margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;
+}
+.h-eyebrow::before{
+  content:'';display:block;
+  width:28px;height:1px;background:var(--gold2);
+}
+.h-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(30px,4.5vw,50px);
+  line-height:1.1;
+  color:#FAF8F4;
+  margin-bottom:14px;
+  font-weight:400;
+}
+.h-title em{
+  font-style:italic;
+  color:var(--gold2);
+}
+.h-sub{
+  font-size:14px;color:rgba(250,248,244,.5);
+  max-width:560px;line-height:1.75;
+  margin-bottom:24px;
+}
+.h-pills{display:flex;gap:8px;flex-wrap:wrap;}
+.hpill{
+  font-size:11px;font-weight:500;
+  padding:4px 12px;border-radius:2px;
+  letter-spacing:.06em;
+  border:1px solid rgba(184,131,26,.3);
+  color:var(--gold2);
+  background:rgba(184,131,26,.08);
+}
+
+/* ── NAV ── */
+nav{
+  background:var(--navy2);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  padding:0 56px;
+  display:flex;gap:0;
+  overflow-x:auto;scrollbar-width:none;
+  position:sticky;top:0;z-index:100;
+}
+nav::-webkit-scrollbar{display:none}
+.nb{
+  padding:18px 22px;
+  background:none;border:none;
+  border-bottom:2px solid transparent;
+  color:rgba(250,248,244,.4);
+  font-family:'Outfit',sans-serif;
+  font-size:12px;font-weight:500;
+  letter-spacing:.06em;text-transform:uppercase;
+  cursor:pointer;white-space:nowrap;
+  transition:color .2s,border-color .2s;
+}
+.nb:hover{color:rgba(250,248,244,.7);}
+.nb.on{color:var(--gold2);border-bottom-color:var(--gold2);}
+.nb-n{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:18px;height:18px;border-radius:2px;
+  background:rgba(184,131,26,.15);
+  color:var(--gold);
+  font-size:10px;margin-right:7px;
+}
+.nb.on .nb-n{background:var(--gold);color:var(--navy);}
+
+/* ── LAYOUT ── */
+main{
+  max-width:1120px;
+  margin:0 auto;
+  padding:48px 56px 80px;
+}
+.tp{display:none}
+.tp.on{display:block;animation:rise .3s ease}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION HEADER ── */
+.sh{margin-bottom:32px;}
+.sh-label{
+  font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:8px;
+  display:flex;align-items:center;gap:8px;
+}
+.sh-label::after{content:'';flex:1;height:1px;background:var(--gold-border);}
+.sh-title{
+  font-family:'Playfair Display',serif;
+  font-size:30px;font-weight:400;
+  color:var(--navy);margin-bottom:8px;
+}
+.sh-desc{font-size:14px;color:var(--ink3);max-width:660px;line-height:1.75;}
+
+/* ── DIAGRAM ── */
+.dw{
+  background:#FFFFFF;
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:32px;
+  margin-bottom:28px;
+  overflow-x:auto;
+  box-shadow:0 2px 12px rgba(12,26,46,.05);
+}
+.dw svg{display:block;width:100%;}
+
+/* SVG text */
+svg text{font-family:'Outfit',sans-serif;}
+svg .th{font-weight:600;font-size:13px;}
+svg .ts{font-size:11px;}
+svg .node{cursor:pointer;}
+svg .node rect{transition:filter .15s;}
+svg .node:hover rect{filter:brightness(.95);}
+
+/* SVG color nodes */
+svg .c-blue rect{fill:var(--nblue-f);stroke:var(--nblue-s);stroke-width:.8;}
+svg .c-blue .th{fill:var(--nblue-t);}
+svg .c-blue .ts{fill:var(--nblue-s);}
+svg .c-teal rect{fill:var(--nteal-f);stroke:var(--nteal-s);stroke-width:.8;}
+svg .c-teal .th{fill:var(--nteal-t);}
+svg .c-teal .ts{fill:var(--nteal-s);}
+svg .c-amber rect{fill:var(--namber-f);stroke:var(--namber-s);stroke-width:.8;}
+svg .c-amber .th{fill:var(--namber-t);}
+svg .c-amber .ts{fill:var(--namber-s);}
+svg .c-purple rect{fill:var(--npurp-f);stroke:var(--npurp-s);stroke-width:.8;}
+svg .c-purple .th{fill:var(--npurp-t);}
+svg .c-purple .ts{fill:var(--npurp-s);}
+svg .c-coral rect{fill:var(--ncoral-f);stroke:var(--ncoral-s);stroke-width:.8;}
+svg .c-coral .th{fill:var(--ncoral-t);}
+svg .c-coral .ts{fill:var(--ncoral-s);}
+svg .c-green rect{fill:var(--ngreen-f);stroke:var(--ngreen-s);stroke-width:.8;}
+svg .c-green .th{fill:var(--ngreen-t);}
+svg .c-green .ts{fill:var(--ngreen-s);}
+svg .c-gray rect{fill:var(--ngray-f);stroke:var(--ngray-s);stroke-width:.8;}
+svg .c-gray .th{fill:var(--ngray-t);}
+svg .c-gray .ts{fill:var(--ngray-s);}
+svg .c-red rect{fill:var(--nred-f);stroke:var(--nred-s);stroke-width:.8;}
+svg .c-red .th{fill:var(--nred-t);}
+svg .c-red .ts{fill:var(--nred-s);}
+
+/* ── CARDS ── */
+.cg{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:12px;margin-top:4px;
+}
+.cd{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:20px 22px;
+  transition:border-color .2s,box-shadow .2s;
+}
+.cd:hover{border-color:var(--border2);box-shadow:0 4px 16px rgba(12,26,46,.07);}
+.ct{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink4);margin-bottom:5px;}
+.ch{font-size:14px;font-weight:600;color:var(--navy);margin-bottom:6px;}
+.cb{font-size:13px;color:var(--ink3);line-height:1.7;}
+.pill{
+  display:inline-block;font-size:10px;font-weight:600;
+  padding:2px 9px;border-radius:2px;
+  letter-spacing:.05em;margin-bottom:7px;
+}
+.p-ok{background:#EBF5E8;color:#154010;border:1px solid #9ACA90;}
+.p-warn{background:#FDF3E3;color:#7A4E10;border:1px solid #D4A030;}
+.p-hot{background:#FCEAEA;color:#6B1010;border:1px solid #D08080;}
+
+/* ── SLIDE PANEL ── */
+#panel-overlay{
+  position:fixed;inset:0;
+  background:rgba(12,26,46,.35);
+  opacity:0;pointer-events:none;
+  transition:opacity .25s;
+  z-index:200;
+}
+#panel-overlay.open{opacity:1;pointer-events:all;}
+#panel{
+  position:fixed;top:0;right:0;bottom:0;
+  width:var(--panel-w);
+  max-width:calc(100vw - 32px);
+  background:#fff;
+  border-left:1px solid var(--border);
+  box-shadow:-8px 0 40px rgba(12,26,46,.12);
+  transform:translateX(100%);
+  transition:transform .3s cubic-bezier(.22,.68,0,1.2);
+  z-index:201;
+  display:flex;flex-direction:column;
+}
+#panel.open{transform:translateX(0);}
+#panel-head{
+  padding:28px 28px 0;
+  border-bottom:1px solid var(--border);
+  padding-bottom:20px;
+  display:flex;flex-direction:column;gap:6px;
+}
+#panel-label{
+  font-size:10px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gold);
+}
+#panel-title{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:400;
+  color:var(--navy);line-height:1.25;
+}
+#panel-close{
+  position:absolute;top:20px;right:20px;
+  width:32px;height:32px;border-radius:50%;
+  background:var(--ivory2);border:1px solid var(--border);
+  cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink3);transition:background .15s;
+}
+#panel-close:hover{background:var(--ivory3);}
+#panel-body{
+  padding:24px 28px 32px;
+  overflow-y:auto;
+  flex:1;
+  font-size:14px;color:var(--ink2);
+  line-height:1.8;
+}
+#panel-body p{margin-bottom:14px;}
+#panel-body p:last-child{margin-bottom:0;}
+#panel-body strong{color:var(--navy);font-weight:600;}
+#panel-body .tag{
+  display:inline-block;font-size:10px;font-weight:600;
+  padding:2px 8px;border-radius:2px;letter-spacing:.06em;
+  background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-border);
+  margin-bottom:14px;
+}
+.panel-hint{
+  font-size:12px;color:var(--ink4);
+  padding:10px 14px;
+  background:var(--ivory);
+  border:1px solid var(--border);
+  border-radius:4px;margin-top:16px;
+  line-height:1.6;
+}
+
+/* ── DISCLAIMER ── */
+.disc{
+  margin-top:32px;
+  padding:18px 22px;
+  border:1px solid var(--border);
+  border-left:3px solid var(--gold);
+  border-radius:0 6px 6px 0;
+  font-size:13px;color:var(--ink3);
+  line-height:1.75;
+  background:#fff;
+}
+.disc strong{color:var(--navy);font-weight:600;}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid var(--border);
+  padding:24px 56px;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:10px;
+  background:var(--ivory2);
+}
+.fb{
+  font-family:'Playfair Display',serif;
+  font-size:14px;color:var(--ink3);
+}
+.fb span{color:var(--gold);}
+.fm{font-size:12px;color:var(--ink4);}
+
+/* click hint */
+.click-hint{
+  font-size:12px;color:var(--ink4);
+  margin-bottom:12px;
+  display:flex;align-items:center;gap:6px;
+}
+.click-hint::before{
+  content:'↗';font-size:10px;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:18px;height:18px;border-radius:2px;
+  background:var(--gold-bg);color:var(--gold);
+  border:1px solid var(--gold-border);
+  flex-shrink:0;
+}
+
+@media(max-width:700px){
+  header,main,footer{padding-left:20px;padding-right:20px;}
+  nav{padding:0 20px;}
+  .h-title{font-size:28px;}
+  #panel{width:100vw;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── DETAIL PANEL ── -->
+<div id="panel-overlay" onclick="closePanel()"></div>
+<div id="panel" role="dialog" aria-modal="true">
+  <div id="panel-head">
+    <div id="panel-label">Advisory note</div>
+    <div id="panel-title">—</div>
+    <button id="panel-close" onclick="closePanel()" aria-label="Close">✕</button>
+  </div>
+  <div id="panel-body"></div>
+</div>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="h-eyebrow">Confidential — Strategic Advisory</div>
+  <h1 class="h-title">Corporate Structure Design<br><em>Benefits · MGA · AI SaaS</em></h1>
+  <p class="h-sub">Ontario CCPC stack architecture — tax efficiency, asset protection, IP isolation, and flywheel growth across six strategic frameworks.</p>
+  <div class="h-pills">
+    <span class="hpill">Ontario · Canada</span>
+    <span class="hpill">ITA s.112 · LCGE · SR&amp;ED</span>
+    <span class="hpill">CCPC · ONCA · FSRA</span>
+    <span class="hpill">Click any node to explore →</span>
+  </div>
+</header>
+
+<!-- ── NAV ── -->
+<nav>
+  <button class="nb on" onclick="sw(0)"><span class="nb-n">1</span>Master Stack</button>
+  <button class="nb" onclick="sw(1)"><span class="nb-n">2</span>IP Tax Shield</button>
+  <button class="nb" onclick="sw(2)"><span class="nb-n">3</span>Data Flywheel</button>
+  <button class="nb" onclick="sw(3)"><span class="nb-n">4</span>Family Wealth</button>
+  <button class="nb" onclick="sw(4)"><span class="nb-n">5</span>HoldCo Firewall</button>
+  <button class="nb" onclick="sw(5)"><span class="nb-n">6</span>Grey Legal</button>
+</nav>
+
+<main>
+
+<!-- ════ TAB 0 — MASTER STACK ════ -->
+<div class="tp on" id="t0">
+  <div class="sh">
+    <div class="sh-label">Framework 1 of 6</div>
+    <h2 class="sh-title">Master corporate stack</h2>
+    <p class="sh-desc">Full recommended entity architecture — family-controlled, risk-isolated, tax-optimized. One IP source licensed across four revenue channels.</p>
+  </div>
+  <p class="click-hint">Click any entity node for a detailed advisory note</p>
+  <div class="dw">
+    <svg viewBox="0 0 700 470" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="ma" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#9A9488" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></marker></defs>
+      <g class="node c-purple" onclick="op(&#39;Family Discretionary Trust&#39;,&#39;trust&#39;,&#39;Ontario CCPC · apex control entity&#39;)">
+        <rect x="220" y="18" width="260" height="56" rx="6"></rect>
+        <text class="th" x="350" y="40" text-anchor="middle" dominant-baseline="central">Family Discretionary Trust</text>
+        <text class="ts" x="350" y="59" text-anchor="middle" dominant-baseline="central">Controls all HoldCo shares · LCGE × beneficiaries</text>
+      </g>
+      <line x1="350" y1="74" x2="350" y2="114" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#ma)"></line>
+      <g class="node c-blue" onclick="op(&#39;HoldCo Inc. (CCPC)&#39;,&#39;holdco&#39;,&#39;Passive holding · deploy · protect&#39;)">
+        <rect x="255" y="116" width="190" height="56" rx="6"></rect>
+        <text class="th" x="350" y="138" text-anchor="middle" dominant-baseline="central">HoldCo Inc. (CCPC)</text>
+        <text class="ts" x="350" y="157" text-anchor="middle" dominant-baseline="central">Passive holding · deploy · protect</text>
+      </g>
+      <line x1="350" y1="172" x2="350" y2="205" stroke="#C8C4B8" stroke-width=".8"></line>
+      <line x1="89" y1="205" x2="605" y2="205" stroke="#C8C4B8" stroke-width=".8"></line>
+      <line x1="89" y1="205" x2="89" y2="247" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#ma)"></line>
+      <line x1="215" y1="205" x2="215" y2="247" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#ma)"></line>
+      <line x1="350" y1="205" x2="350" y2="247" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#ma)"></line>
+      <line x1="475" y1="205" x2="475" y2="247" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#ma)"></line>
+      <line x1="605" y1="205" x2="605" y2="247" stroke="#C8C4B8" stroke-width=".8" stroke-dasharray="5,3" marker-end="url(#ma)"></line>
+      <g class="node c-teal" onclick="op(&#39;BenefitsCo&#39;,&#39;benefitsco&#39;,&#39;Active benefits consulting OpCo&#39;)"><rect x="34" y="249" width="110" height="54" rx="6"></rect><text class="th" x="89" y="270" text-anchor="middle" dominant-baseline="central">BenefitsCo</text><text class="ts" x="89" y="288" text-anchor="middle" dominant-baseline="central">Benefits consulting</text></g>
+      <g class="node c-teal" onclick="op(&#39;MGA Inc.&#39;,&#39;mga&#39;,&#39;FSRA-licensed managing general agent&#39;)"><rect x="160" y="249" width="110" height="54" rx="6"></rect><text class="th" x="215" y="270" text-anchor="middle" dominant-baseline="central">MGA Inc.</text><text class="ts" x="215" y="288" text-anchor="middle" dominant-baseline="central">FSRA licensed</text></g>
+      <g class="node c-amber" onclick="op(&#39;TechCo (IP HoldCo)&#39;,&#39;techco&#39;,&#39;AI platform · SaaS · software IP&#39;)"><rect x="295" y="249" width="110" height="54" rx="6"></rect><text class="th" x="350" y="270" text-anchor="middle" dominant-baseline="central">TechCo (IP)</text><text class="ts" x="350" y="288" text-anchor="middle" dominant-baseline="central">AI · SaaS · software</text></g>
+      <g class="node c-coral" onclick="op(&#39;DataCo&#39;,&#39;dataco&#39;,&#39;Infrastructure leaseback entity&#39;)"><rect x="420" y="249" width="110" height="54" rx="6"></rect><text class="th" x="475" y="270" text-anchor="middle" dominant-baseline="central">DataCo</text><text class="ts" x="475" y="288" text-anchor="middle" dominant-baseline="central">Servers · cloud infra</text></g>
+      <g class="node c-green" onclick="op(&#39;NFP Association&#39;,&#39;nfp&#39;,&#39;Ontario NFP Benefits Insurtech Hub&#39;)"><rect x="550" y="249" width="110" height="54" rx="6"></rect><text class="th" x="605" y="270" text-anchor="middle" dominant-baseline="central">NFP Assoc.</text><text class="ts" x="605" y="288" text-anchor="middle" dominant-baseline="central">Member dues</text></g>
+      <line x1="605" y1="303" x2="605" y2="357" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#ma)"></line>
+      <g class="node c-green" onclick="op(&#39;Association SubCo&#39;,&#39;subco&#39;,&#39;Commercial subsidiary of the NFP&#39;)"><rect x="550" y="359" width="110" height="54" rx="6"></rect><text class="th" x="605" y="380" text-anchor="middle" dominant-baseline="central">Assoc. SubCo</text><text class="ts" x="605" y="398" text-anchor="middle" dominant-baseline="central">SaaS · freemium</text></g>
+      <path d="M350,303 L350,333 L605,333 L605,359" fill="none" stroke="#C8C4B8" stroke-width=".7" stroke-dasharray="4,3" marker-end="url(#ma)"></path>
+      <text class="ts" x="476" y="327" text-anchor="middle" fill="#9A9488">licenses IP →</text>
+      <path d="M475,303 L475,346 L550,346" fill="none" stroke="#C8C4B8" stroke-width=".6" stroke-dasharray="3,3"></path>
+      <text class="ts" x="508" y="340" text-anchor="middle" fill="#9A9488">leaseback</text>
+      <!-- legend -->
+      <rect x="30" y="444" width="7" height="7" rx="1" fill="#F0EDF9" stroke="#5940A8" stroke-width=".7"></rect>
+      <text class="ts" x="41" y="451" fill="#9A9488">Trust</text>
+      <rect x="82" y="444" width="7" height="7" rx="1" fill="#EBF2FC" stroke="#2D5FA6" stroke-width=".7"></rect>
+      <text class="ts" x="93" y="451" fill="#9A9488">HoldCo</text>
+      <rect x="148" y="444" width="7" height="7" rx="1" fill="#E8F5EF" stroke="#1F7A52" stroke-width=".7"></rect>
+      <text class="ts" x="159" y="451" fill="#9A9488">Operating</text>
+      <rect x="224" y="444" width="7" height="7" rx="1" fill="#FDF3E3" stroke="#B87820" stroke-width=".7"></rect>
+      <text class="ts" x="235" y="451" fill="#9A9488">IP/Tech</text>
+      <rect x="280" y="444" width="7" height="7" rx="1" fill="#FBEEE9" stroke="#B04020" stroke-width=".7"></rect>
+      <text class="ts" x="291" y="451" fill="#9A9488">Infra</text>
+      <rect x="326" y="444" width="7" height="7" rx="1" fill="#EBF5E8" stroke="#2A7020" stroke-width=".7"></rect>
+      <text class="ts" x="337" y="451" fill="#9A9488">NFP</text>
+      <line x1="370" y1="448" x2="390" y2="448" stroke="#C8C4B8" stroke-width=".7" stroke-dasharray="4,3"></line>
+      <text class="ts" x="394" y="451" fill="#9A9488">License / leaseback flow</text>
+    </svg>
+  </div>
+  <div class="cg">
+    <div class="cd"><div class="ct">Tax</div><div class="ch">Inter-corporate dividend cascade</div><div class="cb">Every OpCo pays dividends to HoldCo 100% tax-free under ITA s.112. HoldCo compounds and deploys capital — personal tax deferred indefinitely until strategically extracted.</div></div>
+    <div class="cd"><div class="ct">Risk</div><div class="ch">Liability firewall by design</div><div class="cb">FSRA regulatory exposure sits in MGA Inc. Client litigation sits in BenefitsCo. Real value — IP, data, infra — lives in TechCo and DataCo, unreachable by OpCo creditors.</div></div>
+    <div class="cd"><div class="ct">Cash flow</div><div class="ch">Management fee stripping</div><div class="cb">Each OpCo pays HoldCo management fees for services, IP access, and infrastructure at arm's-length FMV — legally stripping taxable income from high-exposure entities.</div></div>
+    <div class="cd"><div class="ct">Scale</div><div class="ch">One IP source, four channels</div><div class="cb">TechCo licenses to BenefitsCo, MGA, Assoc. SubCo, and external brokerages. IP created once — monetized everywhere across the stack simultaneously.</div></div>
+  </div>
+</div>
+
+<!-- ════ TAB 1 — IP SHIELD ════ -->
+<div class="tp" id="t1">
+  <div class="sh">
+    <div class="sh-label">Framework 2 of 6</div>
+    <h2 class="sh-title">IP isolation &amp; tax shield</h2>
+    <p class="sh-desc">All AI models, code, and proprietary tools live in TechCo — generating SR&amp;ED credits, royalty income, and QSBC-eligible shares worth $1.25M+ per beneficiary at exit.</p>
+  </div>
+  <p class="click-hint">Click any entity node for a detailed advisory note</p>
+  <div class="dw">
+    <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="mb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#9A9488" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></marker></defs>
+      <g class="node c-teal" onclick="op(&#39;Dev / R&amp;D&#39;,&#39;dev_rd&#39;,&#39;Qualifying R&amp;D expenditures and SR&amp;ED documentation&#39;)"><rect x="20" y="112" width="140" height="54" rx="6"></rect><text class="th" x="90" y="133" text-anchor="middle" dominant-baseline="central">Dev / R&amp;D</text><text class="ts" x="90" y="151" text-anchor="middle" dominant-baseline="central">Code · AI models</text></g>
+      <line x1="160" y1="131" x2="266" y2="56" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#mb)"></line>
+      <text class="ts" x="205" y="86" text-anchor="middle" fill="#9A9488">s.85 IP transfer →</text>
+      <g class="node c-amber" onclick="op(&#39;TechCo (IP HoldCo)&#39;,&#39;techco&#39;,&#39;All IP · AI models · software — SR&amp;ED, royalties, QSBC&#39;)"><rect x="266" y="18" width="192" height="56" rx="6"></rect><text class="th" x="362" y="40" text-anchor="middle" dominant-baseline="central">TechCo (IP HoldCo)</text><text class="ts" x="362" y="59" text-anchor="middle" dominant-baseline="central">All IP · models · software</text></g>
+      <line x1="458" y1="46" x2="488" y2="46" stroke="#C8C4B8" stroke-width=".8"></line>
+      <line x1="488" y1="30" x2="488" y2="200" stroke="#C8C4B8" stroke-width=".8"></line>
+      <line x1="488" y1="30" x2="508" y2="30" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#mb)"></line>
+      <line x1="488" y1="115" x2="508" y2="115" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#mb)"></line>
+      <line x1="488" y1="200" x2="508" y2="200" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#mb)"></line>
+      <text class="ts" x="476" y="26" text-anchor="end" fill="#9A9488">← royalties</text>
+      <g class="node c-teal" onclick="op(&#39;BenefitsCo&#39;,&#39;benefitsco&#39;,&#39;Active benefits consulting OpCo&#39;)"><rect x="508" y="10" width="164" height="42" rx="6"></rect><text class="th" x="590" y="31" text-anchor="middle" dominant-baseline="central">BenefitsCo</text></g>
+      <g class="node c-teal" onclick="op(&#39;MGA Inc.&#39;,&#39;mga&#39;,&#39;FSRA-licensed managing general agent&#39;)"><rect x="508" y="94" width="164" height="42" rx="6"></rect><text class="th" x="590" y="115" text-anchor="middle" dominant-baseline="central">MGA Inc.</text></g>
+      <g class="node c-gray" onclick="op(&#39;External brokers&#39;,&#39;extbroker&#39;,&#39;Third-party brokerage SaaS subscribers&#39;)"><rect x="508" y="178" width="164" height="42" rx="6"></rect><text class="th" x="590" y="199" text-anchor="middle" dominant-baseline="central">External brokers</text></g>
+      <line x1="362" y1="74" x2="362" y2="205" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#mb)"></line>
+      <g class="node c-blue" onclick="op(&#39;SR&amp;ED Cash Credit&#39;,&#39;sred&#39;,&#39;35% federal + 8% Ontario = 43% refundable on qualifying AI dev spend&#39;)"><rect x="266" y="207" width="192" height="56" rx="6"></rect><text class="th" x="362" y="229" text-anchor="middle" dominant-baseline="central">SR&amp;ED Cash Credit</text><text class="ts" x="362" y="248" text-anchor="middle" dominant-baseline="central">35% fed + 8% ON = 43% return</text></g>
+      <line x1="266" y1="235" x2="186" y2="235" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#mb)"></line>
+      <text class="ts" x="222" y="227" text-anchor="middle" fill="#9A9488">cash refund</text>
+    </svg>
+  </div>
+  <div class="cg">
+    <div class="cd"><div class="ct">SR&amp;ED</div><div class="ch">43% R&amp;D subsidy (CCPC rate)</div><div class="cb">Federal 35% fully refundable on first $3M of qualifying expenditures, plus Ontario OITC 8%. For every $100 of AI dev spend, roughly $43 returns as cash before deducting the expense.</div></div>
+    <div class="cd"><div class="ct">IP Freeze</div><div class="ch">Transfer at cost while IP is young</div><div class="cb">Use ITA s.85 rollover to transfer IP to TechCo at nominal value. All future appreciation — the entire commercial value of the AI platform — is trapped in TechCo shares at LCGE-sheltered capital gains rates.</div></div>
+    <div class="cd"><div class="ct">Royalties</div><div class="ch">Deductible by payer, taxed at 9%</div><div class="cb">BenefitsCo and MGA deduct royalties as a business expense. TechCo receives them at the CCPC small business rate (9% federal on first $500K). Document arm's-length rate with an IP valuation.</div></div>
+    <div class="cd"><div class="ct">QSBC test</div><div class="ch">TechCo shares = LCGE eligible</div><div class="cb">Ensure TechCo stays CCPC-qualified: 90%+ of FMV in active Canadian business assets, 24-month holding period, less than $50M taxable capital. Each trust beneficiary claims their own $1.25M+ exemption on exit.</div></div>
+  </div>
+</div>
+
+<!-- ════ TAB 2 — FLYWHEEL ════ -->
+<div class="tp" id="t2">
+  <div class="sh">
+    <div class="sh-label">Framework 3 of 6</div>
+    <h2 class="sh-title">Benefits intelligence flywheel</h2>
+    <p class="sh-desc">The NFP Association drives community growth → data flows into a pooled Data Trust → TechCo's AI improves → more members join. A self-compounding moat no competitor can buy.</p>
+  </div>
+  <p class="click-hint">Click any entity node for a detailed advisory note</p>
+  <div class="dw">
+    <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="mc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#9A9488" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></marker></defs>
+      <g class="node c-gray" onclick="op(&#39;Member brokers&#39;,&#39;members&#39;,&#39;Value proposition for Ontario benefits brokerages joining the association&#39;)"><rect x="20" y="100" width="140" height="56" rx="6"></rect><text class="th" x="90" y="122" text-anchor="middle" dominant-baseline="central">Member brokers</text><text class="ts" x="90" y="140" text-anchor="middle" dominant-baseline="central">Dues + data contribution</text></g>
+      <g class="node c-green" onclick="op(&#39;NFP Association&#39;,&#39;nfp&#39;,&#39;Ontario NFP Benefits Insurtech Hub — ONCA incorporation, s.149 compliance&#39;)"><rect x="252" y="18" width="188" height="56" rx="6"></rect><text class="th" x="346" y="40" text-anchor="middle" dominant-baseline="central">NFP Association</text><text class="ts" x="346" y="59" text-anchor="middle" dominant-baseline="central">Benefits Insurtech Hub</text></g>
+      <g class="node c-green" onclick="op(&#39;Data Trust&#39;,&#39;datatrust&#39;,&#39;PIPEDA-defensible community-owned data cooperative structure&#39;)"><rect x="252" y="218" width="188" height="56" rx="6"></rect><text class="th" x="346" y="240" text-anchor="middle" dominant-baseline="central">Data Trust</text><text class="ts" x="346" y="259" text-anchor="middle" dominant-baseline="central">Pooled broker data (PIPEDA)</text></g>
+      <g class="node c-amber" onclick="op(&#39;TechCo / AI&#39;,&#39;techco&#39;,&#39;AI models · SaaS · proposals — powered by Data Trust training data&#39;)"><rect x="512" y="108" width="162" height="56" rx="6"></rect><text class="th" x="593" y="130" text-anchor="middle" dominant-baseline="central">TechCo / AI</text><text class="ts" x="593" y="149" text-anchor="middle" dominant-baseline="central">Models · SaaS · proposals</text></g>
+      <g class="node c-blue" onclick="op(&#39;HoldCo&#39;,&#39;holdco&#39;,&#39;Passive holding — receives royalties from TechCo&#39;)"><rect x="520" y="240" width="144" height="44" rx="6"></rect><text class="th" x="592" y="262" text-anchor="middle" dominant-baseline="central">HoldCo</text></g>
+      <line x1="160" y1="118" x2="252" y2="52" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#mc)"></line>
+      <text class="ts" x="200" y="78" text-anchor="middle" fill="#9A9488">dues →</text>
+      <path d="M252,44 C212,44 168,44 168,108" fill="none" stroke="#C8C4B8" stroke-width=".7" stroke-dasharray="4,3" marker-end="url(#mc)"></path>
+      <text class="ts" x="198" y="36" text-anchor="middle" fill="#9A9488">← free tools</text>
+      <line x1="160" y1="148" x2="252" y2="232" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#mc)"></line>
+      <text class="ts" x="196" y="198" text-anchor="middle" fill="#9A9488">data →</text>
+      <path d="M440,244 C476,244 476,136 512,136" fill="none" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#mc)"></path>
+      <text class="ts" x="468" y="200" text-anchor="middle" fill="#9A9488">data license</text>
+      <line x1="512" y1="136" x2="160" y2="136" stroke="#C8C4B8" stroke-width=".7" stroke-dasharray="5,3" marker-end="url(#mc)"></line>
+      <text class="ts" x="334" y="128" text-anchor="middle" fill="#9A9488">← enhanced AI tools</text>
+      <line x1="593" y1="164" x2="593" y2="240" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#mc)"></line>
+      <text class="ts" x="607" y="206" text-anchor="start" fill="#9A9488">royalties</text>
+    </svg>
+  </div>
+  <div class="cg">
+    <div class="cd"><div class="ct">Data moat</div><div class="ch">The trust as competitive shield</div><div class="cb">Brokers contribute anonymized data to the trust in exchange for membership benefits. The trust — not TechCo — owns the aggregated dataset. TechCo is merely a licensee. PIPEDA-defensible and impossible for any competitor to replicate by throwing money at it.</div></div>
+    <div class="cd"><div class="ct">NFP tax</div><div class="ch">ITA s.149(1)(e) exemption</div><div class="cb">The association qualifies as a non-profit under CRA guidance — member dues and community activities are exempt from Part I tax. Commercial revenue flows to the wholly-owned subsidiary only, keeping NFP status clean and audit-proof.</div></div>
+    <div class="cd"><div class="ct">Flywheel</div><div class="ch">More members = better AI</div><div class="cb">Every new brokerage member adds data to the trust, improving model accuracy. Better models attract more brokerages. Better benchmarking data improves proposal quality. The community can't be unbundled — it is the product.</div></div>
+    <div class="cd"><div class="ct">CRA risk</div><div class="ch">NFP commercial benefit scrutiny</div><div class="cb">CRA scrutinizes NFPs that generate commercial benefit for related parties. Board independence, genuine member value, and substantive community purpose are mandatory. A sales funnel wearing a charity logo fails the s.149 test.</div></div>
+  </div>
+</div>
+
+<!-- ════ TAB 3 — FAMILY WEALTH ════ -->
+<div class="tp" id="t3">
+  <div class="sh">
+    <div class="sh-label">Framework 4 of 6</div>
+    <h2 class="sh-title">Family wealth architecture</h2>
+    <p class="sh-desc">LCGE multiplication, prescribed rate loans, estate freeze, and three integration paths for a related brokerage — coordinated into a single tax-efficient structure.</p>
+  </div>
+  <p class="click-hint">Click any entity node for a detailed advisory note</p>
+  <div class="dw">
+    <svg viewBox="0 0 700 370" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="md" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#9A9488" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></marker></defs>
+      <g class="node c-purple" onclick="op(&#39;Family Discretionary Trust&#39;,&#39;trust&#39;,&#39;Ontario CCPC · apex control entity&#39;)"><rect x="220" y="18" width="260" height="56" rx="6"></rect><text class="th" x="350" y="40" text-anchor="middle" dominant-baseline="central">Family Discretionary Trust</text><text class="ts" x="350" y="59" text-anchor="middle" dominant-baseline="central">Trustee: founder + spouse</text></g>
+      <line x1="220" y1="46" x2="62" y2="46" stroke="#C8C4B8" stroke-width=".8"></line>
+      <line x1="62" y1="46" x2="62" y2="132" stroke="#C8C4B8" stroke-width=".8"></line>
+      <line x1="62" y1="150" x2="72" y2="150" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#md)"></line>
+      <line x1="62" y1="200" x2="72" y2="200" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#md)"></line>
+      <line x1="62" y1="250" x2="72" y2="250" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#md)"></line>
+      <g class="node c-gray" onclick="op(&#39;Founder / Trustee&#39;,&#39;founder&#39;,&#39;Salary vs eligible dividend extraction — Ontario tax planning&#39;)"><rect x="72" y="132" width="160" height="40" rx="6"></rect><text class="th" x="152" y="152" text-anchor="middle" dominant-baseline="central">Founder / Trustee</text></g>
+      <g class="node c-gray" onclick="op(&#39;Spouse (beneficiary)&#39;,&#39;spouse&#39;,&#39;Income splitting and LCGE claim for spouse as trust beneficiary&#39;)"><rect x="72" y="182" width="160" height="40" rx="6"></rect><text class="th" x="152" y="202" text-anchor="middle" dominant-baseline="central">Spouse</text></g>
+      <g class="node c-gray" onclick="op(&#39;Adult children (beneficiaries)&#39;,&#39;children&#39;,&#39;Adult children as trust beneficiaries — LCGE claims, TOSI rules&#39;)"><rect x="72" y="232" width="160" height="40" rx="6"></rect><text class="th" x="152" y="252" text-anchor="middle" dominant-baseline="central">Adult children (2+)</text></g>
+      <text class="ts" x="152" y="294" text-anchor="middle" fill="#9A9488">~$1.25M LCGE × each = $3.75M–5M+ tax-free</text>
+      <line x1="350" y1="74" x2="350" y2="132" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#md)"></line>
+      <g class="node c-blue" onclick="op(&#39;HoldCo Inc.&#39;,&#39;holdco&#39;,&#39;Passive holding — inter-corporate dividends, PRL issuer, asset protection&#39;)"><rect x="268" y="134" width="172" height="56" rx="6"></rect><text class="th" x="354" y="156" text-anchor="middle" dominant-baseline="central">HoldCo Inc.</text><text class="ts" x="354" y="175" text-anchor="middle" dominant-baseline="central">Holding · PRL issuer</text></g>
+      <line x1="354" y1="190" x2="354" y2="248" stroke="#C8C4B8" stroke-width=".8" marker-end="url(#md)"></line>
+      <g class="node c-amber" onclick="op(&#39;TechCo (QSBC)&#39;,&#39;techco&#39;,&#39;QSBC-eligible shares — 90% active asset test, 24-month holding, LCGE&#39;)"><rect x="268" y="250" width="172" height="56" rx="6"></rect><text class="th" x="354" y="272" text-anchor="middle" dominant-baseline="central">TechCo (QSBC)</text><text class="ts" x="354" y="291" text-anchor="middle" dominant-baseline="central">LCGE-eligible shares</text></g>
+      <line x1="440" y1="162" x2="466" y2="162" stroke="#C8C4B8" stroke-width=".8" stroke-dasharray="4,3" marker-end="url(#md)"></line>
+      <g class="node c-coral" onclick="op(&#39;Prescribed Rate Loan&#39;,&#39;prl&#39;,&#39;Income splitting mechanism — loan to trust, invest at above-PRL rate, tax in lower-rate hands&#39;)"><rect x="466" y="134" width="200" height="56" rx="6"></rect><text class="th" x="566" y="156" text-anchor="middle" dominant-baseline="central">Prescribed Rate Loan</text><text class="ts" x="566" y="175" text-anchor="middle" dominant-baseline="central">Income split to family</text></g>
+      <line x1="566" y1="190" x2="566" y2="248" stroke="#C8C4B8" stroke-width=".6" stroke-dasharray="3,3"></line>
+      <g class="node c-teal" onclick="op(" dad's="" brokerage",'dadsbiz','three="" integration="" paths:="" a="" estate="" freeze,="" b="" founding="" member,="" c="" book="" acquisition')"=""><rect x="466" y="250" width="200" height="56" rx="6"></rect><text class="th" x="566" y="272" text-anchor="middle" dominant-baseline="central">Dad's Brokerage</text><text class="ts" x="566" y="291" text-anchor="middle" dominant-baseline="central">3 integration paths →</text></g>
+      <text class="ts" x="566" y="332" text-anchor="middle" fill="#9A9488">A: Estate freeze · B: Founding member · C: Book acquisition</text>
+    </svg>
+  </div>
+  <div class="cg">
+    <div class="cd"><div class="ct">LCGE</div><div class="ch">Multiply the lifetime exemption</div><div class="cb">Each trust beneficiary can claim their own ~$1.25M LCGE on qualifying TechCo shares at exit. A family of 4 = up to $5M of capital gains completely tax-free. Structure from day one — retrofitting is complicated.</div></div>
+    <div class="cd"><div class="ct">PRL</div><div class="ch">Prescribed rate loan income split</div><div class="cb">HoldCo loans funds to the family trust at the CRA prescribed rate. Trust invests; income earned above the prescribed rate is taxed in lower-income beneficiaries' hands. Annual interest must be paid by January 30 or attribution rules kick in.</div></div>
+    <div class="cd"><div class="ct">Dad — A</div><div class="ch">Estate freeze + succession</div><div class="cb">Dad exchanges brokerage common shares for fixed-value preferred shares via ITA s.85/86 reorganization. New common shares (with all future growth) go to the family trust. Future appreciation passes to next generation tax-deferred.</div></div>
+    <div class="cd"><div class="ct">Dad — B</div><div class="ch">Charter association member</div><div class="cb">Dad's brokerage becomes a founding member of the NFP Association with preferred AI tool pricing, early access, and a revenue share on referred brokerages. Zero structural complexity — maximum optionality preserved.</div></div>
+    <div class="cd"><div class="ct">Dad — C</div><div class="ch">Book-of-business acquisition</div><div class="cb">BenefitsCo acquires Dad's client list and AUM at FMV. Dad receives a capital gain sheltered by LCGE if his shares qualify as QSBC. BenefitsCo gets the clients immediately, accelerating active business income.</div></div>
+    <div class="cd"><div class="ct">EOT (2023+)</div><div class="ch">Employee Ownership Trust</div><div class="cb">A qualifying EOT acquires TechCo shares — employees become economic owners without cash. Sellers receive a separate $10M capital gains exemption (additive to LCGE). Powerful talent retention tool few Canadian operators know exists yet.</div></div>
+  </div>
+</div>
+
+<!-- ════ TAB 4 — FIREWALL ════ -->
+<div class="tp" id="t4">
+  <div class="sh">
+    <div class="sh-label">Framework 5 of 6</div>
+    <h2 class="sh-title">HoldCo creditor firewall</h2>
+    <p class="sh-desc">How the corporate veil works, what creditors can and cannot reach, the three attack vectors, and the timing discipline required to keep the structure defensible.</p>
+  </div>
+  <p class="click-hint">Click any entity node for a detailed advisory note</p>
+  <div class="dw">
+    <svg viewBox="0 0 700 510" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="me" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#9A9488" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></marker>
+        <marker id="mer" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#B04020" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></marker>
+        <marker id="meg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#2A7020" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></marker>
+      </defs>
+      <!-- Protected zone -->
+      <rect x="20" y="18" width="660" height="176" rx="10" fill="none" stroke="#2A7020" stroke-width=".8" stroke-dasharray="6,4"></rect>
+      <text class="ts" x="38" y="36" fill="#2A7020">Protected zone — HoldCo assets</text>
+      <g class="node c-blue" onclick="op(&#39;Portfolio investments&#39;,&#39;investments&#39;,&#39;What HoldCo can hold — equities, real estate, GICs, private lending, and passive income rules&#39;)"><rect x="40" y="50" width="148" height="50" rx="6"></rect><text class="th" x="114" y="69" text-anchor="middle" dominant-baseline="central">Portfolio investments</text><text class="ts" x="114" y="87" text-anchor="middle" dominant-baseline="central">Stocks · GICs · bonds</text></g>
+      <g class="node c-amber" onclick="op(&#39;TechCo shares&#39;,&#39;techco&#39;,&#39;How HoldCo holding TechCo shares protects IP from OpCo creditors&#39;)"><rect x="208" y="50" width="148" height="50" rx="6"></rect><text class="th" x="282" y="69" text-anchor="middle" dominant-baseline="central">TechCo shares</text><text class="ts" x="282" y="87" text-anchor="middle" dominant-baseline="central">IP · AI platform</text></g>
+      <g class="node c-teal" onclick="op(&#39;Real property&#39;,&#39;realproperty&#39;,&#39;HoldCo holds real property, leases back to OpCo — CCA deductions and creditor isolation&#39;)"><rect x="376" y="50" width="148" height="50" rx="6"></rect><text class="th" x="450" y="69" text-anchor="middle" dominant-baseline="central">Real property</text><text class="ts" x="450" y="87" text-anchor="middle" dominant-baseline="central">Leased back to OpCo</text></g>
+      <g class="node c-gray" onclick="op(&#39;Cash reserves&#39;,&#39;cash&#39;,&#39;Compounding passive capital in HoldCo — passive income grind-down threshold&#39;)"><rect x="544" y="50" width="120" height="50" rx="6"></rect><text class="th" x="604" y="69" text-anchor="middle" dominant-baseline="central">Cash reserves</text><text class="ts" x="604" y="87" text-anchor="middle" dominant-baseline="central">Compounding</text></g>
+      <!-- Firewall -->
+      <rect x="20" y="202" width="660" height="18" rx="4" fill="#EBF5E8" stroke="#2A7020" stroke-width=".5"></rect>
+      <text class="ts" x="350" y="215" text-anchor="middle" fill="#2A7020">Corporate veil — judgment against OpCo cannot cross this line</text>
+      <text class="ts" x="38" y="240" fill="#9A9488">Risk zone — operating entities</text>
+      <!-- OpCos -->
+      <g class="node c-teal" onclick="op(&#39;BenefitsCo&#39;,&#39;benefitsco&#39;,&#39;What creditors pursue BenefitsCo — E&amp;O claims, employee disputes, CRA assessments&#39;)"><rect x="40" y="250" width="148" height="50" rx="6"></rect><text class="th" x="114" y="269" text-anchor="middle" dominant-baseline="central">BenefitsCo</text><text class="ts" x="114" y="287" text-anchor="middle" dominant-baseline="central">E&amp;O · client claims</text></g>
+      <g class="node c-teal" onclick="op(&#39;MGA Inc.&#39;,&#39;mga&#39;,&#39;FSRA regulatory creditors — fines, carrier disputes, errors and omissions&#39;)"><rect x="208" y="250" width="148" height="50" rx="6"></rect><text class="th" x="282" y="269" text-anchor="middle" dominant-baseline="central">MGA Inc.</text><text class="ts" x="282" y="287" text-anchor="middle" dominant-baseline="central">FSRA · carrier risk</text></g>
+      <g class="node c-amber" onclick="op(&#39;TechCo&#39;,&#39;techco&#39;,&#39;SaaS contract breaches, IP disputes, data liability — and how DataCo separation helps&#39;)"><rect x="376" y="250" width="148" height="50" rx="6"></rect><text class="th" x="450" y="269" text-anchor="middle" dominant-baseline="central">TechCo</text><text class="ts" x="450" y="287" text-anchor="middle" dominant-baseline="central">SaaS · IP · data</text></g>
+      <!-- Creditors -->
+      <g class="node c-red" onclick="op(&#39;Client / E&amp;O creditors&#39;,&#39;eocredi&#39;,&#39;E&amp;O claimants, employee disputes, CRA HST/payroll — stopped at OpCo level&#39;)"><rect x="40" y="340" width="148" height="44" rx="6"></rect><text class="th" x="114" y="362" text-anchor="middle" dominant-baseline="central">Client / E&amp;O creditors</text></g>
+      <g class="node c-red" onclick="op(&#39;CRA / tax creditors&#39;,&#39;cracredi&#39;,&#39;CRA can impose director liability — payroll source deductions and HST remittances&#39;)"><rect x="208" y="340" width="148" height="44" rx="6"></rect><text class="th" x="282" y="362" text-anchor="middle" dominant-baseline="central">CRA / tax creditors</text></g>
+      <g class="node c-red" onclick="op(&#39;FSRA / regulators&#39;,&#39;fsracredi&#39;,&#39;FSRA can impose administrative penalties against MGA — contained within MGA Inc.&#39;)"><rect x="376" y="340" width="148" height="44" rx="6"></rect><text class="th" x="450" y="362" text-anchor="middle" dominant-baseline="central">FSRA / regulators</text></g>
+      <!-- Arrows: creditor → opco (red solid) -->
+      <line x1="114" y1="340" x2="114" y2="300" stroke="#B04020" stroke-width="1" marker-end="url(#mer)"></line>
+      <line x1="282" y1="340" x2="282" y2="300" stroke="#B04020" stroke-width="1" marker-end="url(#mer)"></line>
+      <line x1="450" y1="340" x2="450" y2="300" stroke="#B04020" stroke-width="1" marker-end="url(#mer)"></line>
+      <!-- Blocked (dashed, stopped at firewall) -->
+      <line x1="114" y1="250" x2="114" y2="220" stroke="#B04020" stroke-width=".7" stroke-dasharray="4,3"></line>
+      <line x1="282" y1="250" x2="282" y2="220" stroke="#B04020" stroke-width=".7" stroke-dasharray="4,3"></line>
+      <line x1="450" y1="250" x2="450" y2="220" stroke="#B04020" stroke-width=".7" stroke-dasharray="4,3"></line>
+      <!-- Good: dividends up -->
+      <path d="M166,250 L200,232 L200,200" fill="none" stroke="#2A7020" stroke-width=".8" marker-end="url(#meg)"></path>
+      <text class="ts" x="205" y="226" text-anchor="start" fill="#2A7020">dividends up</text>
+      <!-- Attack vectors -->
+      <rect x="548" y="250" width="134" height="134" rx="6" fill="#FDF3E3" stroke="#B87820" stroke-width=".5"></rect>
+      <text class="ts" x="615" y="270" text-anchor="middle" fill="#7A4E10">3 attack vectors</text>
+      <g class="node" onclick="op(&#39;Fraudulent preference&#39;,&#39;fraudpref&#39;,&#39;One-year and five-year clawback rules under Ontario FCA and BIA — when transfers to HoldCo become vulnerable&#39;)"><text class="ts" x="564" y="296" fill="#B87820">1. Fraudulent pref. (BIA)</text></g>
+      <g class="node" onclick="op(&#39;GAAR (ITA s.245)&#39;,&#39;gaar&#39;,&#39;How CRA uses GAAR to challenge aggressive asset stripping — genuine business purpose requirement&#39;)"><text class="ts" x="564" y="322" fill="#B87820">2. GAAR (ITA s.245)</text></g>
+      <g class="node" onclick="op(&#39;Oppression remedy&#39;,&#39;oppression&#39;,&#39;OBCA s.248 — broadest attack vector, does not require fraud, only unfairly prejudicial conduct&#39;)"><text class="ts" x="564" y="348" fill="#B87820">3. Oppression remedy</text><text class="ts" x="564" y="364" fill="#C8A060">(OBCA s.248)</text></g>
+      <path d="M548,288 L534,268 L524,218" fill="none" stroke="#B87820" stroke-width=".6" stroke-dasharray="3,3" marker-end="url(#me)"></path>
+      <!-- Legend -->
+      <line x1="30" y1="472" x2="58" y2="472" stroke="#B04020" stroke-width="1"></line>
+      <text class="ts" x="64" y="476" fill="#9A9488">Creditor reaches OpCo (normal)</text>
+      <line x1="258" y1="472" x2="286" y2="472" stroke="#B04020" stroke-width=".8" stroke-dasharray="4,3"></line>
+      <text class="ts" x="292" y="476" fill="#9A9488">Blocked at firewall</text>
+      <line x1="436" y1="472" x2="464" y2="472" stroke="#2A7020" stroke-width=".8"></line>
+      <text class="ts" x="470" y="476" fill="#9A9488">Protected upward flow</text>
+    </svg>
+  </div>
+  <div class="cg">
+    <div class="cd"><div class="ct">How it works</div><div class="ch">Judgment stops at the OpCo</div><div class="cb">A judgment against BenefitsCo is against BenefitsCo only. Courts will not pierce the corporate veil to reach HoldCo assets unless a creditor can satisfy one of the three attack vectors — all defeated by consistent, early, well-documented transfers.</div></div>
+    <div class="cd"><div class="ct">Attack vector 1</div><div class="ch">Fraudulent preference (BIA)</div><div class="cb">A transfer to HoldCo within one year of insolvency (five years at undervalue) can be unwound. Defense: transfers must be at FMV, made well before any insolvency is foreseeable, and consistent with normal cash management practice — not reactive to a known claim.</div></div>
+    <div class="cd"><div class="ct">Attack vector 2</div><div class="ch">GAAR (ITA s.245)</div><div class="cb">CRA's tool for challenging arrangements that technically comply but produce unintended results. Defense: genuine business purpose, arm's-length pricing, documented contemporaneously, consistent year-over-year — not a spike triggered by adverse events.</div></div>
+    <div class="cd"><div class="ct">Attack vector 3</div><div class="ch">Oppression remedy (OBCA s.248)</div><div class="cb">Broadest attack vector — doesn't require fraud, only unfairly prejudicial conduct. Courts have used this where a shareholder drained OpCo assets into HoldCo after a dispute arose. Defense: consistent commercially rational behavior, not reactive to specific claims.</div></div>
+  </div>
+</div>
+
+<!-- ════ TAB 5 — GREY LEGAL ════ -->
+<div class="tp" id="t5">
+  <div class="sh">
+    <div class="sh-label">Framework 6 of 6</div>
+    <h2 class="sh-title">Grey legal arsenal</h2>
+    <p class="sh-desc">Aggressive-but-legal strategies ranked by risk level. All permissible under Canadian law — several require qualified tax counsel to execute correctly.</p>
+  </div>
+  <div class="cg">
+    <div class="cd"><div class="pill p-ok">Standard</div><div class="ch">ITA s.112 inter-corporate dividends</div><div class="cb">Dividends from a subsidiary CCPC to a parent CCPC are 100% deductible — effectively zero tax on the transfer. The non-negotiable foundation of every Canadian holding company structure. Set this up before any profit is generated.</div></div>
+    <div class="cd"><div class="pill p-ok">Standard</div><div class="ch">SR&amp;ED + Ontario OITC</div><div class="cb">Up to 43% of qualifying R&amp;D costs returned as cash. Well-established but heavily audited — document everything contemporaneously. Technological uncertainty must be genuine, and project logs must be written in real time, not reconstructed.</div></div>
+    <div class="cd"><div class="pill p-ok">Standard</div><div class="ch">LCGE multiplication</div><div class="cb">Multiple family trust beneficiaries each claim their $1.25M+ LCGE on qualifying QSBC shares. Legal and well-understood — requires correct setup from day one. The 24-month holding test, 90% active asset test, and taxable capital limit must all be satisfied continuously.</div></div>
+    <div class="cd"><div class="pill p-warn">Aggressive</div><div class="ch">IP freeze via s.85 rollover</div><div class="cb">Transfer IP to TechCo at nominal value while the company is young. All future appreciation sits in TechCo at capital gains / LCGE rates. CRA scrutinizes if the elected amount is unreasonably low — commission a proper IP valuation and document it.</div></div>
+    <div class="cd"><div class="pill p-warn">Aggressive</div><div class="ch">Management fee stripping</div><div class="cb">HoldCo charges OpCos for services at FMV — legally strips income into the passive holding entity. Must be backed by a real intercompany services agreement and actual services rendered. Circular fees with no substance are a s.245 GAAR target.</div></div>
+    <div class="cd"><div class="pill p-warn">Aggressive</div><div class="ch">NFP association as lead feeder</div><div class="cb">CRA scrutinizes NFPs that commercially benefit related parties. Genuine member value, an independent board, and substantive community purpose are mandatory. The association must pass the "operated exclusively for non-profit purposes" test — not just on paper.</div></div>
+    <div class="cd"><div class="pill p-warn">Aggressive</div><div class="ch">Data cooperative / trust</div><div class="cb">Genuinely novel — no specific CRA guidance and no settled caselaw. Sound under Ontario contract and trust law, and PIPEDA-defensible as a community-owned data asset. First-mover advantage on the moat. Requires tech-IP lawyer and tax counsel working together.</div></div>
+    <div class="cd"><div class="pill p-warn">Aggressive</div><div class="ch">DataCo infrastructure leaseback</div><div class="cb">DataCo owns servers, networking, and cloud hardware — leased back to TechCo and OpCos at FMV. DataCo claims Class 8 (20%), Class 10 (30%), and Class 53 (100%) CCA accelerated deductions, stripping rent expense from TechCo.</div></div>
+    <div class="cd"><div class="pill p-hot">Handle carefully</div><div class="ch">Pipeline transaction (on exit)</div><div class="cb">Converts retained earnings from dividend treatment to capital gains on corporate sale. CRA has successfully challenged these (Foix, Descarries). Still used — but only with current safe-harbor planning, documented economic substance, and explicit legal opinion.</div></div>
+    <div class="cd"><div class="pill p-hot">Handle carefully</div><div class="ch">International IP structure</div><div class="cb">IP holding company in UK or Ireland (treaty access + lower rates), licensed down to the Canadian OpCo. Canadian FAPI rules limit benefit unless there's genuine foreign substance — real employees, real premises, real functions. A pure shell is an immediate CRA attack.</div></div>
+  </div>
+  <div class="disc">
+    <strong>Implementation note:</strong> This is a strategic framework, not legal or tax advice. A Canadian corporate tax lawyer (specializing in reorganizations) and a CPA firm with private-company M&amp;A experience should review and implement the final structure. The combination of LCGE multiplication + SR&amp;ED + Data Trust + NFP association is genuinely novel — budget $15–30K for initial legal and accounting setup; the LCGE savings alone on exit justify multiples of that.
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="fb">Corporate Structure Advisory <span>·</span> Ontario</div>
+  <div class="fm">Confidential — for client review and professional counsel</div>
+</footer>
+
+<script>
+/* ── TAB SWITCHING ── */
+function sw(n){
+  document.querySelectorAll('.tp').forEach(function(p,i){p.classList.toggle('on',i===n);});
+  document.querySelectorAll('.nb').forEach(function(b,i){b.classList.toggle('on',i===n);});
+}
+
+/* ── PANEL CONTENT DATABASE ── */
+var DB = {
+  trust:{
+    label:'Apex control entity',
+    title:'Family Discretionary Trust',
+    body:`<div class="tag">Ontario trust law · ITA s.104</div>
+<p>The Family Discretionary Trust sits at the apex of the entire structure and serves one primary function: it owns all HoldCo shares, meaning every economic benefit flowing upward from the operating entities ultimately flows through the trust before reaching individual family members.</p>
+<p><strong>LCGE multiplication</strong> is the most valuable consequence of this architecture. Because the trust distributes capital gains to individual beneficiaries — rather than the gains being realized directly by the founder — each adult beneficiary can claim their own Lifetime Capital Gains Exemption (~$1.25M+ in 2024). A family of four beneficiaries could shelter $5M or more of gains on a TechCo exit, completely tax-free.</p>
+<p><strong>Trustee selection</strong> matters enormously. The founder and spouse typically act as co-trustees, giving them full discretionary control over distributions. An independent trustee (a trusted advisor or professional trust company) can be added to assist with TOSI compliance where a beneficiary's income-splitting eligibility is questioned.</p>
+<p><strong>TOSI (Tax on Split Income)</strong> applies to income-splitting distributions to family members who aren't actively engaged in the business. Post-2018 TOSI rules require beneficiaries to meet "excluded amount" tests — principally: actively engaged in the business at a meaningful level, or over age 24 with qualifying shares. Plan this from inception, not after distributions begin.</p>
+<p><strong>Timing:</strong> The trust must be established before TechCo shares are issued or transferred at low value. Once TechCo is worth something material, the LCGE benefit is eroded or unavailable on shares already held personally.</p>
+<div class="panel-hint">Next: Ask about HoldCo, TechCo (QSBC), or the Prescribed Rate Loan for additional income-splitting mechanics.</div>`
+  },
+  holdco:{
+    label:'Passive holding entity',
+    title:'HoldCo Inc. (CCPC)',
+    body:`<div class="tag">ITA s.112 · s.129 · OBCA</div>
+<p>HoldCo performs five simultaneous functions in the structure — each distinct and each adding measurable value.</p>
+<p><strong>1. Inter-corporate dividend receipt (ITA s.112).</strong> When BenefitsCo, MGA, or TechCo declares a dividend to HoldCo, HoldCo claims a full deduction under s.112, making the receipt tax-free. The dividend was already taxed at the corporate level in the OpCo — s.112 prevents double-taxation on transfer. Result: 100% of after-corporate-tax OpCo profit moves into the passive holding vehicle with zero friction.</p>
+<p><strong>2. Management fee income.</strong> HoldCo charges OpCos for actual services rendered — executive oversight, strategic advisory, shared admin, IT access. These fees are deductible by the OpCo (reducing taxable income at 26.5% Ontario combined rate) and received by HoldCo. Requires a written intercompany services agreement, real services performed, and FMV pricing benchmarked against comparable arrangements.</p>
+<p><strong>3. Passive investment compounding.</strong> Capital accumulates in HoldCo and can be invested in a diversified portfolio — equities, real estate, GICs, private lending — without triggering a personal tax event. The deferral advantage is substantial over a decade or two.</p>
+<p><strong>4. Asset protection firewall.</strong> HoldCo never operates, never employs, never touches clients. Judgments against operating entities cannot reach HoldCo's assets. Real estate, investments, and TechCo shares held in HoldCo are creditor-isolated.</p>
+<p><strong>5. Personal extraction planning.</strong> Distributions flow from HoldCo to the family trust as eligible dividends, then to beneficiaries who may include lower-income family members — splitting the tax burden across the family unit.</p>
+<p><strong>Critical constraint — the $50K passive income grind:</strong> When HoldCo earns more than $50,000 of adjusted aggregate investment income (AAII), it begins to erode the associated OpCos' small business deduction. At $150K passive income, the SBD is fully eliminated and OpCo pays 26.5% instead of 12.2%. At scale, a sibling InvestCo may be warranted to isolate investment assets.</p>`
+  },
+  benefitsco:{
+    label:'Operating entity',
+    title:'BenefitsCo — Benefits consulting',
+    body:`<div class="tag">Active business income · CCPC SBD eligible</div>
+<p>BenefitsCo is the client-facing operating company — it holds the client relationships, employs the consultants and account managers, and earns active business income from consulting fees, placement commissions, and service retainers.</p>
+<p><strong>CCPC small business deduction:</strong> Active business income in BenefitsCo is taxed at the federal small business rate (9%) + Ontario small business rate (3.2%) = 12.2% combined on the first $500K of active income. This is the primary reason to run operations through a CCPC rather than personally — the effective deferral versus personal top marginal rates (53.53% in Ontario) is 41 percentage points.</p>
+<p><strong>Liability exposure:</strong> Client E&O claims, employee disputes, CRA payroll/HST assessments, and carrier contract disputes all land here. This is precisely why BenefitsCo should be kept asset-light — regular dividend declarations to HoldCo strip profit upstream, leaving only working capital in the OpCo. A successful plaintiff finds an entity with receivables and operating cash, not accumulated wealth.</p>
+<p><strong>E&O insurance</strong> is the first line of defense. The corporate structure is the second. Benefits consulting errors can generate material claims — ensure coverage limits match the scale of the book of business.</p>
+<p><strong>Director liability:</strong> As a director of BenefitsCo, the founder faces personal liability under ITA s.227.1 for unremitted source deductions (payroll) and under the Excise Tax Act for unremitted HST. HoldCo does not shield this. Payroll compliance must be airtight.</p>`
+  },
+  mga:{
+    label:'FSRA licensed entity',
+    title:'MGA Inc. — Managing General Agent',
+    body:`<div class="tag">Insurance Act (Ontario) · FSRA regulated</div>
+<p>The MGA is a separate licensed entity under the Ontario Insurance Act, regulated by FSRA. It sits between insurance carriers and the individual insurance agents/brokerages it distributes through. The MGA earns overrides, contingent commissions, and wholesale placement fees distinct from BenefitsCo's consulting income.</p>
+<p><strong>FSRA licensing timeline:</strong> Obtaining an MGA license in Ontario is not fast — the application process, background checks, and approval timeline can run 6–18 months. This process must begin immediately and well before the entity is intended to generate revenue. License the entity early and keep it in good standing.</p>
+<p><strong>Risk isolation rationale:</strong> Keeping MGA Inc. separate from BenefitsCo is essential because the regulatory and carrier-relationship risk profiles are different. FSRA administrative penalties, carrier clawbacks on commissions, and E&O exposure on group benefit placements are contained within MGA Inc. and cannot automatically reach BenefitsCo's client relationships or HoldCo's assets.</p>
+<p><strong>Contingent commissions:</strong> Carrier contingent commissions (performance-based overrides) can be significant in the MGA model. These are tied to loss ratios, retention, and volume targets. They must be disclosed appropriately under FSRA rules and properly attributed to MGA Inc. under intercompany agreements.</p>
+<p><strong>Book of business value:</strong> MGA Inc.'s durable asset is its book of business — client relationships, carrier agreements, and distribution network. This has no realizable value to a creditor who cannot operate a licensed MGA. Asset protection here is inherent in the regulatory structure itself.</p>`
+  },
+  techco:{
+    label:'IP holding entity',
+    title:'TechCo — AI Platform & IP',
+    body:`<div class="tag">SR&amp;ED · ITA s.85 · QSBC · royalties</div>
+<p>TechCo is the highest-value entity in the stack and the primary wealth creation vehicle at exit. All AI models, software code, proprietary algorithms, training data structures, and workflow IP live here. TechCo licenses this IP to every other entity in the structure and to external brokerage subscribers.</p>
+<p><strong>SR&ED eligibility:</strong> AI and machine learning development qualifies for SR&ED credits when the work involves genuine "technological uncertainty" — problems whose resolution is not obvious to a skilled practitioner. The federal CCPC rate is 35% fully refundable on the first $3M of qualifying expenditures. Ontario adds 8% via the OITC. Total: 43 cents back per dollar of qualifying spend, as cash, before deducting the expense against income. Document all R&D work contemporaneously — CRA will not accept reconstructed records.</p>
+<p><strong>IP transfer via s.85 rollover:</strong> Transfer IP to TechCo at its current nominal value (often near zero at inception) via an ITA s.85 election. This "freezes" the IP's value at the transfer date inside TechCo. All future appreciation — the entire commercial value of the AI platform — is trapped in TechCo shares, accessible at capital gains rates (50% inclusion) or entirely tax-free via LCGE on exit.</p>
+<p><strong>Royalty structure:</strong> TechCo charges BenefitsCo, MGA, and Assoc. SubCo royalties for IP access. These are deductible by the payer as a business expense (reducing income at 26.5% combined rate) and received by TechCo at the CCPC SBD rate (12.2%). Document arm's-length pricing with a proper IP valuation and written intercompany licensing agreement.</p>
+<p><strong>QSBC eligibility for LCGE:</strong> TechCo shares must qualify as Qualifying Small Business Corporation shares under ITA s.110.6. Requirements: 90%+ of FMV in active Canadian business assets at time of sale, 24-month holding period, taxable capital less than $50M, and shares held by a Canadian resident individual or qualifying trust. Monitor all three continuously.</p>`
+  },
+  dataco:{
+    label:'Infrastructure entity',
+    title:'DataCo — Servers & Cloud Infrastructure',
+    body:`<div class="tag">CCA Classes 8, 10, 53 · leaseback structure</div>
+<p>DataCo owns all physical infrastructure — on-premises servers, networking equipment, and owned cloud infrastructure assets. It then leases this back to TechCo and the operating entities at fair market value. This creates three simultaneous benefits.</p>
+<p><strong>CCA accelerated deductions:</strong> Server and networking equipment falls into Class 8 (20% declining balance), Class 10 (30%), and potentially Class 53 (100% in year of acquisition under the Accelerated Investment Incentive for clean energy and manufacturing property). DataCo can write off hardware costs aggressively, creating tax losses that shelter other DataCo income.</p>
+<p><strong>Income stripping via rent:</strong> TechCo pays market-rate rent to DataCo for infrastructure access. This rent is deductible by TechCo (reducing TechCo's taxable income) and received by DataCo as passive income. DataCo then pays dividends to HoldCo under s.112 — tax-free transfer to the passive holding entity.</p>
+<p><strong>Creditor isolation:</strong> Physical infrastructure that might be essential to business continuity (servers containing customer data, proprietary training datasets) is protected from TechCo creditors by sitting in DataCo. A breach of a SaaS contract or data liability claim against TechCo cannot directly reach DataCo's infrastructure assets.</p>
+<p><strong>Self-hosted data rationale:</strong> For a benefits AI platform handling sensitive plan member and claims data, self-hosted infrastructure — properly secured and certified — creates a strong data governance story for brokerage clients. The Data Trust is PIPEDA-defensible precisely because the data never leaves Canadian-owned, Canadian-hosted infrastructure controlled by the Data Trust, not a third-party cloud provider.</p>`
+  },
+  nfp:{
+    label:'Community entity',
+    title:'NFP Association — Benefits Insurtech Hub',
+    body:`<div class="tag">ONCA 2010 · ITA s.149(1)(e) · PIPEDA</div>
+<p>The NFP Association is incorporated under the Ontario Not-for-Profit Corporations Act (ONCA) as a member-based association of benefits brokerages. Its stated purpose is advancing the interests of benefits brokers through education, technology access, benchmarking data, and industry advocacy.</p>
+<p><strong>ITA s.149(1)(e) tax exemption:</strong> A qualifying non-profit corporation is exempt from Part I tax on income from activities carried on primarily for the benefit of members, provided it does not distribute profits to members in any form. Member dues and community activities are tax-exempt. Commercial revenue must flow to a wholly-owned subsidiary to preserve NFP status.</p>
+<p><strong>Freemium AI tools:</strong> The Association gives members access to basic AI tools (powered by the Association SubCo, which licenses TechCo IP) — proposal templates, market benchmarking data, carrier summaries. This is the value proposition driving membership. The "secret sauce" stays in the paid TechCo platform — the freemium tier is enough to attract members and feed the Data Trust, not enough to displace the commercial offering.</p>
+<p><strong>CRA scrutiny warning:</strong> CRA has consistently challenged NFPs where the primary beneficiary of NFP activities is a related commercial entity. Board independence is essential — a majority of directors who are independent arms-length members, not controlled by the founder. Genuine community value, documented in board minutes and activity reports, must precede and exceed the commercial benefit to TechCo.</p>
+<p><strong>Governance:</strong> ONCA requires a board of directors, annual membership meetings, and financial statements. Keep governance clean and documented from incorporation. A light-touch annual audit is advisable from year one — it pre-empts any CRA inquiry about the legitimacy of the NFP purpose.</p>`
+  },
+  subco:{
+    label:'Commercial subsidiary',
+    title:'Association SubCo — SaaS & Freemium',
+    body:`<div class="tag">ONCA subsidiary · arm's length licensing</div>
+<p>The Association SubCo is a for-profit corporation wholly owned by the NFP Association. Its existence solves a fundamental structural problem: the NFP cannot earn commercial revenue without risking its s.149(1)(e) exemption, but the freemium SaaS offering generates revenue that must go somewhere.</p>
+<p><strong>Revenue flows:</strong> Association SubCo charges members subscription fees for premium AI tool access above the freemium tier, earns SaaS revenue from participating brokerages, and pays TechCo royalties for the IP it licenses. Net profit flows back to the Association as a dividend — which the Association can retain as a reserve for community programming, or deploy as member benefits.</p>
+<p><strong>Arm's length licensing from TechCo:</strong> The licensing arrangement between TechCo and Assoc. SubCo must be priced at arm's length — similar to what an unrelated party would pay for equivalent AI tools and IP access. This is the most structurally sensitive arrangement in the entire stack. Document the pricing methodology, benchmark it against comparable SaaS licensing arrangements, and review it annually. An overly favorable license from TechCo to Assoc. SubCo (and by extension back to the NFP) is a GAAR target.</p>
+<p><strong>The feeder logic:</strong> Every brokerage that joins the Association as a "freemium" member is a warm, pre-qualified lead for TechCo's commercial SaaS platform. They've already experienced the tools, already contributed data to the trust, and already see the value. The upgrade path from free association member to paid TechCo SaaS subscriber is the core commercial flywheel — the NFP effectively subsidizes customer acquisition for TechCo without TechCo directly paying for it.</p>`
+  },
+  dev_rd:{
+    label:'R&D activity',
+    title:'Dev / R&D — Qualifying Expenditures',
+    body:`<div class="tag">SR&amp;ED · ITA s.37 · Ontario OITC</div>
+<p>The SR&ED (Scientific Research and Experimental Development) program is Canada's primary incentive for R&D spending. For a CCPC like TechCo, the federal credit is 35% fully refundable on the first $3M of qualified expenditures — meaning the credit is paid as cash even if TechCo has no tax payable. Above $3M, the rate drops to 15% non-refundable.</p>
+<p><strong>Ontario OITC:</strong> The Ontario Innovation Tax Credit adds 8% on qualifying expenditures (up to $3M of Ontario-based R&D), also refundable. Combined: 43% cash return on every qualifying dollar of AI development spend before deducting the expense against income.</p>
+<p><strong>What qualifies:</strong> Work that advances scientific or technological knowledge beyond what is currently known, or resolves technological uncertainty. For AI/ML development, this typically includes: training novel model architectures for benefits-specific use cases, developing proprietary NLP pipelines for insurance document parsing, creating inference systems that don't have established solutions in the literature. Routine software development, data entry, and standard implementation work does not qualify.</p>
+<p><strong>Documentation requirements (critical):</strong> CRA requires contemporaneous documentation — project logs written at the time of the work, not reconstructed afterward. Every SR&ED claim must be supported by: project descriptions establishing the technological uncertainty, timesheets allocating developer hours to qualifying vs. non-qualifying work, and technical narratives describing the hypothesis, experiment, and outcome. Engage an SR&ED consultant to structure the documentation from day one, not after year-end when it's too late.</p>
+<p><strong>Salary inclusion:</strong> Developer salaries and contractor fees for qualifying R&D work are included in the SR&ED expenditure base. This is typically the largest component for a software company. Equity compensation (stock options) is excluded.</p>`
+  },
+  sred:{
+    label:'Cash credit',
+    title:'SR&ED Cash Credit — 43% Effective Return',
+    body:`<div class="tag">ITA s.127 · OITC · Refundable credits</div>
+<p>The SR&ED credit is the most valuable government program available to a Canadian technology startup. For a CCPC with less than $15M in taxable capital (TechCo will comfortably qualify), the federal investment tax credit is 35% refundable — meaning CRA writes TechCo a cheque for 35 cents of every qualifying dollar spent on R&D, regardless of whether TechCo has any tax payable.</p>
+<p><strong>Combined rate example:</strong> TechCo spends $500,000 on qualifying AI development in a year. Federal SR&ED credit: $175,000 cash refund. Ontario OITC: $40,000 additional. Total cash received: $215,000 — 43% of the spend, as cash, deposited into TechCo's bank account within 60-90 days of filing. TechCo then also deducts the $500,000 as a business expense against income. The net cost of $500,000 of R&D is effectively $285,000 before considering the tax deduction benefit.</p>
+<p><strong>Phase-out:</strong> The enhanced 35% refundable rate phases out as the CCPC's taxable capital (across associated corporations) exceeds $10M, reaching zero at $50M. Monitor this threshold as the business grows — it affects both the SR&ED rate and QSBC eligibility simultaneously.</p>
+<p><strong>Filing:</strong> SR&ED claims are filed with the T2 corporate return. The deadline is 18 months after the tax year end. Engage a qualified SR&ED preparer — the technical review component is audited separately from the financial review, and claims prepared by specialists have materially higher approval rates and lower audit adjustment risk.</p>`
+  },
+  extbroker:{
+    label:'SaaS client',
+    title:'External brokers — SaaS subscribers',
+    body:`<div class="tag">SaaS contracts · liability limitation · data governance</div>
+<p>External brokerage clients — Ontario and potentially national — subscribe to TechCo's AI platform through a standard SaaS agreement. This is the primary external revenue stream for TechCo and the commercial validation of the entire platform.</p>
+<p><strong>Pricing model options:</strong> Seat-based (per licensed user/broker), usage-based (per proposal generated, per query run), tiered (base subscription + overages), or hybrid. For a high-value professional services tool generating $50K+ annual efficiency gains per brokerage, premium pricing ($500–$2,000/month per brokerage) is justified. The Data Trust moat and proprietary benchmarking data are the primary pricing power drivers.</p>
+<p><strong>SaaS agreement essentials:</strong> Data processing agreement (required under PIPEDA for handling client plan member data), limitation of liability clause (cap at 12 months of subscription fees), IP ownership (TechCo retains all ownership — clients get a license, not a transfer), and a data contribution clause for the Data Trust (member brokerages who contribute anonymized data to the trust receive enhanced access or pricing benefits).</p>
+<p><strong>Ontario licensing:</strong> The platform generates insurance-adjacent outputs (benchmarked rate indications, proposal documents). Ensure the SaaS agreement clearly characterizes the tool as a productivity and information tool, not as insurance advice or licensed brokerage activity. The broker-client using the tool remains the licensed professional responsible for advice. This characterization protects TechCo from FSRA licensing requirements for the SaaS business itself.</p>`
+  },
+  members:{
+    label:'Association members',
+    title:'Member brokers — Value proposition',
+    body:`<div class="tag">ONCA membership · freemium model · data trust</div>
+<p>The NFP Association's membership proposition must be genuinely compelling to Ontario benefits brokerages — not just a sales funnel. If CRA or ONCA scrutinizes the association, the member value must stand on its own independent of any TechCo commercial relationship.</p>
+<p><strong>Freemium AI tools:</strong> Access to basic AI-powered proposal templates, market benchmark summaries, carrier comparison summaries, and regulatory update digests — powered by Association SubCo, which licenses TechCo IP. Enough to deliver real productivity gains for smaller brokerages who can't afford the full TechCo subscription.</p>
+<p><strong>Benchmarking data:</strong> Aggregated, anonymized claims data and renewal rate data across the member base — accessible only to members. This is the most valuable community asset, and it compounds with membership size. A 50-brokerage association has materially better benchmarking data than a 10-brokerage one.</p>
+<p><strong>Community and advocacy:</strong> Ontario-specific regulatory updates (FSRA guidance, provincial health benefit changes, drug plan legislation), member webinars, networking events, and industry advocacy representing the benefits brokerage community's interests to regulators. This is the non-commercial purpose that sustains the NFP status.</p>
+<p><strong>Data Trust participation:</strong> Member brokerages who contribute anonymized client data (plan design, renewal rates, claims ratios — stripped of all PII) to the Data Trust receive enhanced access, priority feature requests, and potentially reduced subscription pricing for TechCo's commercial platform. The contribution is voluntary and governed by a data contribution agreement that complies with PIPEDA and Ontario's Bill 194 (Digital Charter).</p>`
+  },
+  datatrust:{
+    label:'Data cooperative',
+    title:'Data Trust — Pooled broker data',
+    body:`<div class="tag">Ontario trust law · PIPEDA · Bill 194</div>
+<p>The Data Trust is the most structurally innovative element of the architecture and the hardest for any competitor to replicate. It is a formally established trust — governed by a trust deed under Ontario law — into which member brokerages voluntarily contribute anonymized benefits data. The trust, not TechCo, is the data controller and owner of the aggregated dataset.</p>
+<p><strong>Why a trust, not a database:</strong> A trust structure creates genuine legal separation between the data contributors (member brokerages), the data controller (the Trust, governed by trustees), and the data user (TechCo, as a licensee). This separation is critical for PIPEDA compliance — member brokerages can justify contribution to a trust they partially govern, whereas contribution directly to a commercial entity they have no control over raises consent and purpose-limitation concerns.</p>
+<p><strong>PIPEDA compliance:</strong> Benefits data containing plan member information is personal information under PIPEDA. The data contribution process must: (1) strip all direct identifiers before contribution, (2) obtain appropriate consent from the contributing brokerage (not from plan members individually, since aggregated anonymized plan-level data is contributed), and (3) limit use to the purposes described in the trust deed. Engage a privacy lawyer with benefits industry experience to design the data governance framework.</p>
+<p><strong>Ontario Bill 194 (Digital Charter):</strong> Ontario's 2024 Digital and Data Act imposes additional obligations on organizations handling digital data in Ontario. The Data Trust structure must be reviewed against these emerging requirements — particularly the provisions around automated decision-making and data sharing with third parties.</p>
+<p><strong>The competitive moat:</strong> Three years of aggregated benefits data across 50 Ontario brokerages cannot be purchased, scraped, or created from scratch by any competitor. It is a genuinely non-replicable asset that improves with every new member and every renewal cycle. This is the Michael Saylor flywheel — the asset compounds without additional capital input once the community is established.</p>`
+  },
+  founder:{
+    label:'Beneficiary',
+    title:'Founder / Trustee — extraction planning',
+    body:`<div class="tag">Salary · eligible dividends · capital gains</div>
+<p>The founder sits at the center of three distinct income extraction mechanisms from HoldCo, each with different tax treatment in Ontario.</p>
+<p><strong>Salary (T4):</strong> Deductible by HoldCo as a business expense. Taxed as employment income — generates RRSP contribution room (up to 18% of prior year earned income, max $32,490 in 2024), CPP contributions, and accesses the basic personal amount. In Ontario, salary is efficient up to approximately $100–150K annually. Above that, the combined marginal rate accelerates toward 53.53% at the top bracket. Salary also creates a business expense against HoldCo's passive income, which can help keep passive income below the $50K AAII grind threshold.</p>
+<p><strong>Eligible dividends:</strong> Paid from HoldCo's after-tax investment portfolio or from OpCo profits taxed at the general corporate rate (not SBD rate). Ontario residents pay approximately 39.34% on eligible dividends at top marginal rate — meaningfully better than salary at the top bracket, no CPP, no RRSP room generated.</p>
+<p><strong>Capital gains on exit:</strong> Taxed at 50% inclusion — effective rate ~26.77% at top marginal in Ontario. With the LCGE shelter on qualifying QSBC shares, the first $1.25M+ per beneficiary is entirely exempt. This is the most tax-efficient extraction mechanism and the reason the trust structure and TechCo's QSBC qualification matter so much — the exit event is where the architecture pays its biggest dividend.</p>
+<p><strong>Optimal mix:</strong> Most tax counsel recommend a salary sufficient to maximize RRSP room ($191,167 of earned income generates the 2024 max), topped up with eligible dividends to avoid the highest marginal bracket. Capital gains are deferred to a strategic exit event.</p>`
+  },
+  spouse:{
+    label:'Beneficiary',
+    title:'Spouse — income splitting',
+    body:`<div class="tag">TOSI · ITA s.74.1 · trust distributions</div>
+<p>The spouse's role as a trust beneficiary enables income splitting — distributing taxable income from TechCo or HoldCo into the spouse's lower tax bracket, reducing the family's combined tax burden.</p>
+<p><strong>Post-TOSI rules (2018+):</strong> TOSI applies to certain dividends and other income paid to adult family members. For a spouse, income splitting is still effective if the spouse meets an "excluded amount" test: they are actively engaged in the business at a "meaningful level" — at least 20 hours per week on average during the year, or over their lifetime in the case of more mature businesses. A spouse who works meaningfully in BenefitsCo, TechCo, or the NFP Association operations can receive dividends without TOSI applying.</p>
+<p><strong>Attribution rules (ITA s.74.1):</strong> Income earned on property transferred or loaned to a spouse is typically attributed back to the transferor. The Prescribed Rate Loan structure (HoldCo → trust → investment at above-PRL rate) bypasses attribution by charging interest at the CRA prescribed rate. Annual interest payment by January 30 is mandatory — missing even one payment reinstates attribution for the current and all future years.</p>
+<p><strong>LCGE claim:</strong> On a TechCo exit, if the trust distributes the capital gain to the spouse as a beneficiary, the spouse can claim their own $1.25M+ LCGE on that gain — completely separate from the founder's LCGE claim. This requires the spouse to have never previously used their LCGE, and TechCo shares must meet the QSBC tests at the time of disposition.</p>`
+  },
+  children:{
+    label:'Beneficiaries',
+    title:'Adult children — LCGE claims',
+    body:`<div class="tag">TOSI · LCGE · trust distributions</div>
+<p>Adult children (over age 18, ideally over 24 for the most favourable TOSI treatment) as trust beneficiaries multiply the LCGE available on a TechCo exit. Each child can claim their own ~$1.25M+ LCGE on capital gains distributed to them by the trust — completely separate from the founder's and spouse's claims.</p>
+<p><strong>TOSI age thresholds:</strong> For beneficiaries aged 18-24, TOSI applies to dividends and other income unless they're actively engaged in the business (20+ hours/week). For beneficiaries over age 24, capital gains from dispositions of QSBC shares are excluded from TOSI entirely — they can receive capital gain distributions from a TechCo exit without TOSI applying, regardless of their involvement in the business.</p>
+<p><strong>Planning timeline:</strong> To have adult children claim LCGE, the trust must have been established when TechCo shares were first issued or transferred at low value. Children who are minors at trust establishment will eventually age into eligibility. A child who turns 25 before TechCo's exit is a clean LCGE claimant with no TOSI concern.</p>
+<p><strong>Practical example:</strong> Founder, spouse, and two adult children (both over 24) as trust beneficiaries. TechCo exits for $6M capital gain. Trust distributes $1.5M gain to each of four beneficiaries. Each claims their full $1.25M LCGE. Total LCGE coverage: $5M. Remaining $1M is taxed as a capital gain at the individual level. Effective family tax rate on a $6M exit: approximately 4–5%. Without the trust structure, the entire $6M gain is taxed at the founder's marginal rate — approximately $1.6M in personal tax.</p>`
+  },
+  prl:{
+    label:'Income splitting mechanism',
+    title:'Prescribed Rate Loan',
+    body:`<div class="tag">ITA s.74.5(2) · CRA prescribed rate</div>
+<p>The Prescribed Rate Loan (PRL) is one of the most effective income-splitting tools available to Canadian families. HoldCo lends funds to the family trust at the CRA prescribed interest rate (set quarterly — currently elevated but monitor for when it drops). The trust invests those funds; income earned above the prescribed rate is taxed in the hands of the trust beneficiaries (lower-income family members) rather than attributed back to the founder.</p>
+<p><strong>Mechanics step by step:</strong> (1) HoldCo establishes a formal written loan to the family trust, bearing interest at the current CRA prescribed rate. (2) The loan is documented with a promissory note specifying the rate, repayment terms, and security. (3) The trust invests the borrowed funds in a portfolio generating returns above the prescribed rate. (4) The "spread" — income above the prescribed rate — is taxed in the trust and distributed to lower-income beneficiaries. (5) Interest must be paid by January 30 of the following year, every year, without exception.</p>
+<p><strong>The January 30 rule is absolute:</strong> Missing the annual interest payment — even once, even by a day — triggers the attribution rules for the current year and all future years. The income splitting benefit is permanently lost for that loan. Set up automatic payment on January 15 as a buffer.</p>
+<p><strong>Rate timing strategy:</strong> The prescribed rate is locked in for the life of the loan at the rate in effect when the loan was made. When the CRA prescribed rate is low, establishing a PRL locks in the low rate permanently. If rates have risen since the ideal entry point, consider waiting for a rate reduction before establishing a new loan — the spread between the prescribed rate and achievable investment returns is the entire economic benefit of the structure.</p>`
+  },
+  dadsbiz:{
+    label:'Related brokerage',
+    title:"Dad's Brokerage — Integration paths",
+    body:`<div class="tag">Estate freeze · LCGE crystallization · s.85/86</div>
+<p>A related brokerage controlled by a family member presents three distinct integration paths, each with different structural complexity, timing requirements, and tax implications. The right path depends on trust level, timeline, and estate planning objectives.</p>
+<p><strong>Path A — Estate Freeze + Succession:</strong> Dad exchanges his brokerage common shares for fixed-value preferred shares via an ITA s.85/86 reorganization. New common shares — carrying all future appreciation — are issued to the family trust. Dad crystallizes his current value (and claims LCGE if his shares qualify as QSBC), while all future growth passes to the next generation on a tax-deferred basis. Dad retains economic security through preferred share dividends. This is the highest-value path but requires the most trust, the most complexity, and the most professional structuring work. Begin with a proper valuation of the brokerage book of business.</p>
+<p><strong>Path B — Founding Association member:</strong> Dad's brokerage becomes a founding member of the NFP Association with preferential terms — charter member pricing, early access to AI tools, a seat on the advisory board, and potentially a revenue share on referred member brokerages. This is the zero-complexity first move — it preserves all optionality, starts the relationship, and provides immediate value without requiring any structural commitment. When trust is established and appetite for deeper integration is confirmed, migrate to Path A or C.</p>
+<p><strong>Path C — Book-of-business acquisition:</strong> BenefitsCo acquires Dad's client list, carrier relationships, and AUM at fair market value (established by an independent valuator). Dad receives cash or a combination of cash and BenefitsCo/HoldCo preferred shares. If Dad's shares qualified as QSBC, the gain on the disposition is sheltered by his LCGE. BenefitsCo gets the client base and revenue immediately — accelerating active business income and the commercial scale of the stack. Most practical if Dad is approaching retirement and wants liquidity rather than ongoing involvement.</p>`
+  },
+  investments:{
+    label:'Protected asset',
+    title:'Portfolio investments in HoldCo',
+    body:`<div class="tag">Creditor protection · RDTOH · passive income grind</div>
+<p>HoldCo can hold a diversified portfolio of investments — publicly traded equities, bonds, GICs, real estate investment trusts, and private lending arrangements. These assets are protected from OpCo creditors by the corporate veil, and they compound at the pre-personal-tax rate rather than the post-personal-tax rate available to individual investors.</p>
+<p><strong>The deferral advantage:</strong> If BenefitsCo earns $500K of profit and distributes it to HoldCo tax-free under s.112, HoldCo has $500K to invest. If that profit had been extracted personally (at 53.53% marginal rate), only ~$233K would remain. The compounding difference on $500K vs. $233K over 20 years at 6% annual return is approximately $1.1M — the entire value of the deferral structure expressed in future dollars.</p>
+<p><strong>Refundable Dividend Tax on Hand (RDTOH):</strong> Passive investment income earned inside HoldCo is subject to Part IV tax (38.33% on eligible dividends, 30.67% on other investment income). However, this tax is refundable at a rate of $38.33 per $100 of eligible dividends paid to shareholders — the mechanism that prevents permanent double-taxation. Track RDTOH balances carefully with the corporate accountant.</p>
+<p><strong>Passive income grind risk:</strong> HoldCo's passive investment income above $50K annually erodes the associated OpCos' small business deduction. At $150K of passive income, the SBD is fully eliminated. At scale, consider a sibling InvestCo (sister company to HoldCo, both owned by the trust) to isolate investment assets from the HoldCo that receives OpCo dividends — keeping HoldCo's AAII clean.</p>`
+  },
+  realproperty:{
+    label:'Protected asset',
+    title:'Real property — leaseback structure',
+    body:`<div class="tag">CCA Class 1 · leaseback · CMHC financing</div>
+<p>Real property held in HoldCo and leased back to operating entities is one of the most effective combinations of asset protection and tax efficiency available to Canadian private company owners.</p>
+<p><strong>Asset protection:</strong> Property held in HoldCo is unreachable by BenefitsCo's or MGA's creditors. A judgment against the operating entity cannot force a sale of HoldCo real estate. For a business that operates from leased premises, this means negotiating HoldCo's acquisition of the office space early — before the business has material contractual or liability exposure.</p>
+<p><strong>CCA deductions:</strong> Commercial real property falls into CCA Class 1 (4% declining balance). HoldCo claims CCA against the building's value, reducing HoldCo's net income. The rental income from the OpCo leaseback offsets HoldCo's other investment income — the CCA deduction shelters that rental income from tax.</p>
+<p><strong>Leaseback mechanics:</strong> The lease between HoldCo and the operating entity must be priced at arm's-length fair market rent — confirmed by a market rent appraisal. The OpCo deducts rent as a business expense; HoldCo receives rental income and claims CCA. The intercompany lease must be documented with a formal written lease agreement, market rent review provisions, and commercially standard terms.</p>
+<p><strong>Financing consideration:</strong> If HoldCo acquires property with a mortgage, the mortgage sits in HoldCo — not in the operating entity. A creditor of BenefitsCo cannot reach the property, but also cannot reach the equity above the mortgage. The mortgage lender will likely require a personal guarantee from the founder — this guarantee is the one piece of personal exposure that the structure does not eliminate for real property financing.</p>`
+  },
+  cash:{
+    label:'Protected asset',
+    title:'Cash reserves — compounding in HoldCo',
+    body:`<div class="tag">Deferral · RDTOH · passive income threshold</div>
+<p>Cash reserves accumulated in HoldCo represent the primary vehicle for tax-deferred wealth building in the Canadian private company context. Every dollar of corporate profit that flows to HoldCo under s.112 and remains invested — rather than being extracted personally — compounds at the pre-personal-tax amount.</p>
+<p><strong>Deployment options:</strong> HoldCo's cash can be deployed into publicly traded equities (through a brokerage account in HoldCo's name), GICs and bonds, private lending at market rates (secured first mortgages generate attractive risk-adjusted returns with strong creditor protection through the charge), participating in real estate limited partnerships, or as growth capital for the operating entities through intercompany loans at market interest rates.</p>
+<p><strong>Private lending from HoldCo:</strong> HoldCo can lend to arm's-length third parties at commercial interest rates, secured by real property mortgages. The interest income is passive investment income in HoldCo (subject to Part IV tax), but the underlying security — first mortgage on real property — creates very low credit risk. This is a legitimate deployment of HoldCo reserves for founders who understand real estate credit.</p>
+<p><strong>Critical: maintain $50K AAII discipline.</strong> If HoldCo's annual adjusted aggregate investment income exceeds $50,000, it begins to erode the associated OpCos' SBD eligibility. A HoldCo earning $100K/year in dividends, interest, and realized capital gains is already in the grind zone. Monitor this threshold quarterly — when approaching it, consider whether a sibling entity structure makes sense, or whether deploying reserves into growth capital for TechCo (active investment rather than passive) changes the AAII calculation.</p>`
+  },
+  eocredi:{
+    label:'OpCo creditor',
+    title:'Client / E&O creditors',
+    body:`<div class="tag">E&O insurance · OpCo liability · judgment enforcement</div>
+<p>E&O (errors and omissions) claimants are the primary litigation risk for a benefits consulting firm. A client who suffers loss — through an incorrectly structured plan, a missed renewal, a carrier insolvency not properly hedged — can sue BenefitsCo for professional negligence. These claims settle or award in the range of policy liability limits, which can be substantial in the group benefits context.</p>
+<p><strong>Why E&O insurance is the primary defense:</strong> No corporate structure eliminates the underlying professional liability exposure — it only limits where a judgment can be enforced. E&O insurance is the first line. Ensure coverage limits are sufficient for the scale of the book ($2M–$5M per occurrence for a mid-size benefits brokerage is typical starting coverage), and that the policy covers both BenefitsCo and the individual consultants working under it.</p>
+<p><strong>What a successful plaintiff gets:</strong> A judgment against BenefitsCo entitles the plaintiff to enforce against BenefitsCo's assets — bank accounts, accounts receivable, owned equipment, and retained earnings that haven't been distributed upstream. They cannot reach HoldCo's investments, TechCo's IP, DataCo's servers, or the family trust's assets. This is why regular upstream dividend declarations matter — a BenefitsCo with $20K of operating cash and $0 in accumulated retained earnings presents a judgment creditor with very little to collect.</p>
+<p><strong>After collecting the judgment:</strong> A creditor who has exhausted BenefitsCo's assets can attempt to pierce the corporate veil to reach HoldCo — but only by satisfying one of the three attack vectors (fraudulent preference, GAAR, oppression remedy). If the structure was established properly, consistently administered, and the upstream transfers predate the claim by a comfortable margin, none of these attacks succeed.</p>`
+  },
+  cracredi:{
+    label:'Tax creditor',
+    title:'CRA / tax creditors',
+    body:`<div class="tag">ITA s.227.1 · Director liability · source deductions</div>
+<p>CRA is a unique and powerful creditor class because it has statutory collection tools that ordinary judgment creditors do not — including requirements notices, garnishments, and director liability provisions that reach through the corporate structure to individuals personally.</p>
+<p><strong>Director liability (ITA s.227.1):</strong> A director of a corporation that fails to remit source deductions (income tax withheld from employee paycheques, CPP, and EI) is personally liable for those amounts, plus interest and penalties. HoldCo does not shield this — it is a personal liability of the director. The due diligence defense (showing the director took specific, positive steps to prevent the failure) is narrow and rarely successful after the fact. Payroll remittance compliance is non-negotiable.</p>
+<p><strong>HST (Excise Tax Act s.323):</strong> Similar director liability applies to unremitted HST. A director of a corporation that fails to remit HST collected from clients is personally liable. BenefitsCo and MGA both collect HST on their service fees — these remittances must be current at all times.</p>
+<p><strong>GST/HST refund offset:</strong> CRA can offset HST refunds claimed by one entity against HST debts owed by an associated entity. In a group of associated corporations (HoldCo + OpCos), CRA has authority to apply refunds across the group. Ensure all entities are current on all tax filings before any refund claims are submitted.</p>
+<p><strong>What CRA cannot do:</strong> Absent a specific statutory provision, CRA cannot pierce the corporate veil between BenefitsCo and HoldCo to collect BenefitsCo's unpaid corporate tax from HoldCo's investment accounts. Corporate income tax assessed against BenefitsCo is a BenefitsCo liability. CRA collects from BenefitsCo's assets — not from HoldCo.</p>`
+  },
+  fsracredi:{
+    label:'Regulatory creditor',
+    title:'FSRA / regulators',
+    body:`<div class="tag">Insurance Act (Ontario) · FSRA Act 2016</div>
+<p>FSRA (Financial Services Regulatory Authority of Ontario) regulates insurance agents, brokers, and MGAs under the Insurance Act. As the regulator of MGA Inc., FSRA has broad administrative powers including the ability to impose administrative monetary penalties, issue compliance orders, and ultimately revoke or suspend MGA Inc.'s license.</p>
+<p><strong>What FSRA can reach:</strong> Administrative monetary penalties assessed against MGA Inc. are debts owed by MGA Inc. — enforceable against MGA Inc.'s assets. FSRA cannot directly reach HoldCo's investment accounts or TechCo's IP to collect penalties assessed against MGA Inc. The corporate separation is respected in the regulatory context, provided MGA Inc. is genuinely separate (separate banking, separate management, separate books).</p>
+<p><strong>License revocation risk:</strong> FSRA's most powerful sanction is license revocation — stripping MGA Inc. of its ability to operate as a licensed MGA in Ontario. This destroys the business value of MGA Inc. entirely. The defense is proactive compliance: understand FSRA's conduct expectations, implement robust complaint handling procedures, maintain carrier relationships within FSRA guidelines, and disclose contingent commissions and compensation arrangements as required.</p>
+<p><strong>AI tool compliance:</strong> As TechCo's AI platform generates rate indications and proposal documents used in insurance placements, FSRA may take an interest in how AI-generated outputs are characterized and disclosed. Proactively engaging with FSRA on the characterization of AI tools as information and productivity tools (not as licensed insurance advice) protects both TechCo's SaaS business and MGA Inc.'s license.</p>`
+  },
+  fraudpref:{
+    label:'Attack vector 1',
+    title:'Fraudulent preference — BIA & Ontario FCA',
+    body:`<div class="tag">Bankruptcy and Insolvency Act · Fraudulent Conveyances Act (Ontario)</div>
+<p>Fraudulent preference is the most commonly invoked attack on HoldCo structures. Under the federal Bankruptcy and Insolvency Act and the Ontario Fraudulent Conveyances Act, a court can unwind asset transfers that were made with intent to defeat creditors, or that were made to non-arm's-length parties at undervalue within specific time windows.</p>
+<p><strong>BIA s.95 — preference within one year:</strong> Any transfer of value from an insolvent debtor to a non-arm's-length party (HoldCo is non-arm's-length — same beneficial owner) within one year of the date of bankruptcy is automatically deemed a fraudulent preference and can be reversed without requiring proof of intent. The trustee in bankruptcy gets the asset back. The one-year window starts from the bankruptcy date, not the date of insolvency — a business can be insolvent for months before formal bankruptcy proceedings begin.</p>
+<p><strong>BIA s.96 — undervalue transactions within five years:</strong> A transaction at undervalue (transfer of assets for less than fair market value) to a non-arm's-length party is reviewable within five years if the corporation was insolvent at the time or became insolvent as a result. This is broader and longer — it's the provision that catches "gifting" assets to HoldCo to keep them from creditors.</p>
+<p><strong>The defense:</strong> All transfers must be at fair market value. Management fees must reflect real services. Dividends must reflect genuine distributable profits. The transfer history must be consistent and long-standing — not a sudden spike when creditor claims appeared on the horizon. Transfers made 3+ years before any insolvency event, at FMV, consistently documented, are effectively immune to fraudulent preference challenge.</p>
+<p><strong>Practical rule:</strong> Strip OpCo profits quarterly, every quarter, from day one. A three-year history of quarterly dividend declarations is a fortress. A single large transfer the month before a lawsuit is a confession.</p>`
+  },
+  gaar:{
+    label:'Attack vector 2',
+    title:'GAAR (ITA s.245)',
+    body:`<div class="tag">General Anti-Avoidance Rule · misuse and abuse test</div>
+<p>GAAR is CRA's broadest tool for challenging tax planning arrangements that technically comply with specific provisions of the Income Tax Act but produce a result that is inconsistent with the object, spirit, and purpose of the Act as a whole. Applied to HoldCo structures, GAAR targets arrangements where management fees, royalties, or intercompany transactions are structured primarily for tax avoidance rather than commercial purpose.</p>
+<p><strong>The three-part GAAR test:</strong> (1) There is a "tax benefit" — a reduction, avoidance, or deferral of tax. (2) There is an "avoidance transaction" — a transaction undertaken primarily for tax purposes, not primarily for a bona fide non-tax purpose. (3) The avoidance transaction is a "misuse or abuse" of the specific provisions relied upon, or of the Act as a whole. All three must be satisfied for GAAR to apply.</p>
+<p><strong>Where GAAR targets HoldCo arrangements:</strong> Management fees that spike dramatically in years when the OpCo has high income and HoldCo has losses. Royalties for IP that TechCo did not genuinely develop. Intercompany loan arrangements with below-market interest that shift income. Leaseback arrangements at above-market rent. The common thread: transactions between related parties that would not exist on commercial terms between arm's-length parties.</p>
+<p><strong>The defense:</strong> Every intercompany transaction must have a genuine, documentable business purpose independent of the tax benefit. The management fee must reflect real services — substantiated by written agreements, time logs, and board minutes authorizing the arrangement. The royalty must reflect real IP — substantiated by an IP valuation and a licensing agreement with commercially standard terms. Benchmark against what unrelated parties would negotiate. The arrangement must look exactly the same whether or not there was a tax benefit — that's the arm's-length standard.</p>`
+  },
+  oppression:{
+    label:'Attack vector 3',
+    title:'Oppression remedy (OBCA s.248)',
+    body:`<div class="tag">Ontario Business Corporations Act · creditor remedy</div>
+<p>The oppression remedy under s.248 of the Ontario Business Corporations Act is the broadest and most flexible attack available to a creditor seeking to pierce the corporate veil. Unlike fraudulent preference (which requires a formal insolvency proceeding) or GAAR (which is a tax-specific tool), the oppression remedy is available to any creditor in any civil proceeding and does not require proof of fraud — only proof that the corporation's affairs were conducted in a manner that was "oppressive or unfairly prejudicial" to the creditor.</p>
+<p><strong>What courts have done with this remedy:</strong> Ontario courts have ordered that assets transferred from an OpCo to a related HoldCo be returned to satisfy a creditor's judgment — not because the transfer was fraudulent, but because the overall pattern of conduct (draining assets from a company with known creditor obligations while the controlling shareholders extracted value through the holding company) was unfairly prejudicial. The remedy is equitable, and courts have broad discretion.</p>
+<p><strong>The cases that define the risk:</strong> Oppression remedy claims against HoldCo structures tend to succeed when: (a) the asset transfers occurred after a specific creditor dispute arose (reactive rather than consistent), (b) the OpCo was left with insufficient assets to meet its known obligations while the shareholders extracted value, or (c) the corporate structure was specifically designed or modified in response to a known creditor claim.</p>
+<p><strong>The defense:</strong> The most effective defense to an oppression remedy claim is a long, consistent, commercially rational history of upstream transfers that predates any creditor dispute by years. If HoldCo has been receiving quarterly dividends and annual management fees since the day the OpCo was incorporated — consistently, at documented arm's-length rates — no court will characterize that pattern as oppressive. The oppression remedy targets reactive, manipulative conduct, not consistent, commercially rational dividend policy.</p>
+<p><strong>Practical implication:</strong> Do not modify the dividend or fee structure in response to a specific creditor claim. Continue the established pattern even if litigation is pending. Any deviation from the established pattern becomes evidence in an oppression remedy proceeding.</p>`
+  }
+};
+
+/* ── PANEL FUNCTIONS ── */
+function op(title, key, subtitle){
+  var data = DB[key];
+  if(!data){ return; }
+  document.getElementById('panel-label').textContent = data.label || subtitle || 'Advisory note';
+  document.getElementById('panel-title').textContent = data.title || title;
+  document.getElementById('panel-body').innerHTML = data.body || '<p>No detail available.</p>';
+  document.getElementById('panel-overlay').classList.add('open');
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('panel').focus();
+}
+function closePanel(){
+  document.getElementById('panel-overlay').classList.remove('open');
+  document.getElementById('panel').classList.remove('open');
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closePanel();});
+
+/* ── TAB SWITCHING ── */
+function sw(n){
+  document.querySelectorAll('.tp').forEach(function(p,i){p.classList.toggle('on',i===n);});
+  document.querySelectorAll('.nb').forEach(function(b,i){b.classList.toggle('on',i===n);});
+  closePanel();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+
+
+</body></html>
