@@ -99,23 +99,32 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 
 Copy the webhook signing secret printed by the CLI into `STRIPE_WEBHOOK_SECRET` in `.env.local`.
 
-### 6. Create test users
+### 6. Dev test accounts
 
-In Supabase Dashboard → Authentication → Users, create users and assign roles via the `profiles` table:
+The seed (`003_seed.sql`) creates two advocate accounts automatically. Sign in immediately after `supabase db push` — no manual user creation needed:
+
+| Role | Email | Password | Scoped to |
+|---|---|---|---|
+| Advocate | `advocate1@livingrock.ca` | `hope-dev-password-1` | Living Rock Ministries |
+| Advocate | `advocate2@helpinghandshamilton.ca` | `hope-dev-password-2` | Helping Hands Hamilton |
+
+> **These are local dev credentials only.** The bcrypt hashes in the seed file are pre-computed for these exact passwords. Do not use these accounts in any shared, staging, or production environment.
+
+For additional roles, create users via magic link then promote via SQL:
 
 ```sql
--- Make a user a super_admin
+-- Super admin (for /admin dashboard)
 UPDATE profiles SET role = 'super_admin' WHERE user_id = '<your-user-id>';
 
--- Make a user an advocate (also insert advocate row)
-UPDATE profiles SET role = 'advocate' WHERE user_id = '<user-id>';
-INSERT INTO advocates (charity_id, user_id, full_name)
-VALUES ('00000000-0000-0000-0000-000000000010', '<user-id>', 'Jane Smith');
-
--- Make a user merchant staff
+-- Merchant staff (for /merchant portal)
 UPDATE profiles SET role = 'merchant_staff' WHERE user_id = '<user-id>';
 INSERT INTO merchant_staff (merchant_id, user_id)
 VALUES ('00000000-0000-0000-0000-000000000020', '<user-id>');
+
+-- Additional advocate
+UPDATE profiles SET role = 'advocate' WHERE user_id = '<user-id>';
+INSERT INTO advocates (charity_id, user_id, full_name)
+VALUES ('00000000-0000-0000-0000-000000000010', '<user-id>', 'Your Name');
 ```
 
 ---
