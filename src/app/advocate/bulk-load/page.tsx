@@ -50,7 +50,7 @@ export default function BulkLoadPage() {
 
     // Validate the card code
     try {
-      const res = await fetch(`/api/cards/${code}/lookup`)
+      const res = await fetch(`/api/lookup/${code}`)
       const data = await res.json()
 
       if (!res.ok || !data.card) {

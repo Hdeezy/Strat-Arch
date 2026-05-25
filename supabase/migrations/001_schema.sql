@@ -37,7 +37,7 @@ create type user_role as enum (
 -- ─────────────────────────────────────────────
 
 create table cities (
-  id          uuid primary key default uuid_generate_v4(),
+  id          uuid primary key default gen_random_uuid(),
   name        text not null,
   province    text not null,
   country     text not null default 'Canada',
@@ -49,7 +49,7 @@ create table cities (
 -- ─────────────────────────────────────────────
 
 create table charities (
-  id                          uuid primary key default uuid_generate_v4(),
+  id                          uuid primary key default gen_random_uuid(),
   city_id                     uuid not null references cities(id),
   name                        text not null,
   cra_registration            text,
@@ -67,7 +67,7 @@ create index charities_city_id_idx on charities(city_id);
 -- ─────────────────────────────────────────────
 
 create table merchants (
-  id                          uuid primary key default uuid_generate_v4(),
+  id                          uuid primary key default gen_random_uuid(),
   city_id                     uuid not null references cities(id),
   charity_id                  uuid not null references charities(id),
   name                        text not null,
@@ -90,7 +90,7 @@ create index merchants_charity_id_idx on merchants(charity_id);
 -- ─────────────────────────────────────────────
 
 create table cards (
-  id                    uuid primary key default uuid_generate_v4(),
+  id                    uuid primary key default gen_random_uuid(),
   city_id               uuid not null references cities(id),
   charity_id            uuid not null references charities(id),
   card_code             text not null unique,
@@ -114,7 +114,7 @@ create index cards_state_idx on cards(state);
 -- ─────────────────────────────────────────────
 
 create table donations (
-  id                        uuid primary key default uuid_generate_v4(),
+  id                        uuid primary key default gen_random_uuid(),
   card_id                   uuid not null references cards(id),
   donor_user_id             uuid references auth.users(id),
   donor_email               text,
@@ -136,7 +136,7 @@ create index donations_stripe_payment_intent_idx on donations(stripe_payment_int
 -- ─────────────────────────────────────────────
 
 create table card_events (
-  id          uuid primary key default uuid_generate_v4(),
+  id          uuid primary key default gen_random_uuid(),
   card_id     uuid not null references cards(id),
   event_type  card_event_type not null,
   actor_type  actor_type not null,
@@ -169,7 +169,7 @@ create trigger card_events_no_delete
 -- ─────────────────────────────────────────────
 
 create table redemptions (
-  id               uuid primary key default uuid_generate_v4(),
+  id               uuid primary key default gen_random_uuid(),
   card_id          uuid not null references cards(id),
   merchant_id      uuid not null references merchants(id),
   amount_cents     integer not null check (amount_cents > 0),
@@ -190,7 +190,7 @@ create index redemptions_idempotency_key_idx on redemptions(idempotency_key);
 -- ─────────────────────────────────────────────
 
 create table advocates (
-  id          uuid primary key default uuid_generate_v4(),
+  id          uuid primary key default gen_random_uuid(),
   charity_id  uuid not null references charities(id),
   user_id     uuid not null references auth.users(id),
   full_name   text not null,
@@ -255,7 +255,7 @@ $$ language plpgsql security definer;
 -- ─────────────────────────────────────────────
 
 create table merchant_staff (
-  id          uuid primary key default uuid_generate_v4(),
+  id          uuid primary key default gen_random_uuid(),
   merchant_id uuid not null references merchants(id),
   user_id     uuid not null references auth.users(id),
   is_active   boolean not null default true,
