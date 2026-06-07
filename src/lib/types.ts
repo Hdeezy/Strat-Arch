@@ -13,6 +13,8 @@ export type CardEventType =
 export type ActorType = 'system' | 'donor' | 'advocate' | 'merchant' | 'admin'
 export type RedemptionStatus = 'pending' | 'succeeded' | 'failed' | 'refunded'
 export type UserRole = 'donor' | 'advocate' | 'merchant_staff' | 'charity_admin' | 'super_admin'
+// organization_type: controls tax-receipt eligibility and donor UI
+export type OrganizationType = 'charity' | 'sponsor_org' | 'direct'
 
 // Database row types
 export interface City {
@@ -28,6 +30,8 @@ export interface Charity {
   city_id: string
   name: string
   cra_registration: string | null
+  org_type: OrganizationType
+  receives_tax_receipts: boolean
   contact_email: string
   stripe_connect_account_id: string | null
   bank_designated_account_ref: string | null

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { formatCAD } from '@/lib/utils'
 import { AMOUNT_PRESETS, CATEGORY_LABELS, CATEGORY_ICONS, type CardCategory } from '@/lib/types'
 
@@ -8,6 +8,13 @@ interface CardEntry {
   code: string
   id?: string
   valid?: boolean
+  error?: string
+}
+
+interface BatchResult {
+  code: string
+  success: boolean
+  new_balance_cents?: number
   error?: string
 }
 
@@ -19,50 +26,77 @@ export default function BulkLoadPage() {
   const [amountCents, setAmountCents] = useState(1000)
   const [isCustom, setIsCustom] = useState(false)
   const [customAmount, setCustomAmount] = useState('')
-  const [categories, setCategories] = useState<CardCategory[]>(DEFAULT_CATEGORIES)
-  const [donorNote, setDonorNote] = useState('')
+  const [reason, setReason] = useState('Advocate distribution')
   const [loading, setLoading] = useState(false)
+  const [results, setResults] = useState<BatchResult[]>([])
   const [error, setError] = useState<string | null>(null)
+  const csvRef = useRef<HTMLInputElement>(null)
 
   const allCategories: CardCategory[] = ['food', 'transit', 'clothing', 'hygiene']
 
-  function toggleCategory(cat: CardCategory) {
-    setCategories(prev =>
-      prev.includes(cat) ? (prev.length > 1 ? prev.filter(c => c !== cat) : prev) : [...prev, cat]
-    )
+  function getEffectiveAmount() {
+    return isCustom
+      ? Math.round(parseFloat(customAmount || '0') * 100)
+      : amountCents
   }
 
-  async function addCard() {
-    const code = inputCode.trim().toUpperCase()
-    if (!code || !/^[A-Z]{4}-[A-Z0-9]{4}$/.test(code)) {
+  async function lookupCard(code: string): Promise<{ valid: boolean; id?: string; error?: string }> {
+    try {
+      const res = await fetch(`/api/lookup/${code}`)
+      const data = await res.json()
+      if (!res.ok || !data.card) return { valid: false, error: data.error || 'Not found' }
+      if (data.card.state === 'invalidated' || data.card.state === 'expired') {
+        return { valid: false, error: `Card is ${data.card.state}` }
+      }
+      return { valid: true, id: data.card.id }
+    } catch {
+      return { valid: false, error: 'Lookup failed' }
+    }
+  }
+
+  async function addCard(code: string = inputCode) {
+    const normalized = code.trim().toUpperCase()
+    if (!normalized || !/^[A-Z]{4}-[A-Z0-9]{4}$/.test(normalized)) {
       setError('Invalid card code format (e.g. HMLT-0001)')
       return
     }
-    if (cards.some(c => c.code === code)) {
+    if (cards.some(c => c.code === normalized)) {
       setError('Card already in batch')
       return
     }
 
-    const entry: CardEntry = { code, valid: undefined }
+    const entry: CardEntry = { code: normalized, valid: undefined }
     setCards(prev => [...prev, entry])
     setInputCode('')
     setError(null)
 
-    // Validate the card code
-    try {
-      const res = await fetch(`/api/lookup/${code}`)
-      const data = await res.json()
+    const result = await lookupCard(normalized)
+    setCards(prev =>
+      prev.map(c => c.code === normalized ? { ...c, ...result } : c)
+    )
+  }
 
-      if (!res.ok || !data.card) {
-        setCards(prev => prev.map(c => c.code === code ? { ...c, valid: false, error: data.error || 'Not found' } : c))
-      } else if (data.card.state === 'invalidated' || data.card.state === 'expired') {
-        setCards(prev => prev.map(c => c.code === code ? { ...c, valid: false, error: `Card is ${data.card.state}` } : c))
-      } else {
-        setCards(prev => prev.map(c => c.code === code ? { ...c, valid: true, id: data.card.id } : c))
-      }
-    } catch {
-      setCards(prev => prev.map(c => c.code === code ? { ...c, valid: false, error: 'Lookup failed' } : c))
+  async function handleCSV(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const text = await file.text()
+    const codes = text
+      .split(/[\n,;\t]+/)
+      .map(s => s.trim().toUpperCase())
+      .filter(s => /^[A-Z]{4}-[A-Z0-9]{4}$/.test(s))
+      .filter(s => !cards.some(c => c.code === s))
+
+    if (codes.length === 0) {
+      setError('No valid card codes found in CSV')
+      return
     }
+
+    // Add all at once as pending, then validate in parallel
+    setCards(prev => [...prev, ...codes.map(code => ({ code, valid: undefined as boolean | undefined }))])
+    await Promise.all(codes.map(async code => {
+      const result = await lookupCard(code)
+      setCards(prev => prev.map(c => c.code === code ? { ...c, ...result } : c))
+    }))
   }
 
   function removeCard(code: string) {
@@ -70,54 +104,90 @@ export default function BulkLoadPage() {
   }
 
   const validCards = cards.filter(c => c.valid === true)
-  const finalAmount = isCustom ? amountCents : amountCents
-  const totalCents = validCards.length * finalAmount
+  const effectiveAmount = getEffectiveAmount()
+  const totalCents = validCards.length * effectiveAmount
 
-  async function handleCheckout() {
+  // Credit each valid card via the advocate credit endpoint (no Stripe — loaded
+  // from org reserve). For donor-funded Stripe payments, use /donate/[code].
+  async function handleBatchCredit() {
     if (validCards.length === 0) { setError('Add at least one valid card'); return }
-    if (finalAmount < 100) { setError('Minimum $1.00 per card'); return }
+    if (effectiveAmount < 100) { setError('Minimum $1.00 per card'); return }
 
     setLoading(true)
     setError(null)
+    setResults([])
 
-    // For bulk load, create checkout for the first card and chain the rest
-    // In production this would be a single consolidated payment; for MVP
-    // we redirect to Stripe for the first card with batch metadata
-    const firstCard = validCards[0]
+    const batchResults: BatchResult[] = []
 
-    try {
-      const res = await fetch('/api/checkout/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          card_id: firstCard.id,
-          amount_cents: finalAmount,
-          allowed_categories: categories,
-          donor_note: donorNote || undefined,
-          receipt_requested: false,
-        }),
-      })
+    for (const card of validCards) {
+      try {
+        const res = await fetch(`/api/cards/${card.id}/credit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount_cents: effectiveAmount, reason }),
+        })
+        const data = await res.json()
 
-      const data = await res.json()
-      if (data.url) window.location.href = data.url
-      else setError(data.error || 'Checkout failed')
-    } catch {
-      setError('Network error')
-    } finally {
-      setLoading(false)
+        if (res.ok && data.success) {
+          batchResults.push({
+            code: card.code,
+            success: true,
+            new_balance_cents: data.new_balance_cents,
+          })
+        } else {
+          batchResults.push({
+            code: card.code,
+            success: false,
+            error: data.error || 'Failed',
+          })
+        }
+      } catch {
+        batchResults.push({ code: card.code, success: false, error: 'Network error' })
+      }
     }
+
+    setResults(batchResults)
+    // Remove successfully loaded cards from the list
+    const failedCodes = new Set(batchResults.filter(r => !r.success).map(r => r.code))
+    setCards(prev => prev.filter(c => failedCodes.has(c.code)))
+    setLoading(false)
   }
+
+  const successCount = results.filter(r => r.success).length
+  const failCount = results.filter(r => !r.success).length
 
   return (
     <div className="space-y-5">
       <div>
         <h1 className="text-xl font-bold text-hope-dark">Load Cards for Distribution</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">Add cards to the batch, set amount and categories, then pay once</p>
+        <p className="text-sm text-muted-foreground mt-0.5">
+          Credit cards from your org reserve. For donor Stripe payments, use the{' '}
+          <a href="/donate" className="text-hope-green underline">Donate page</a>.
+        </p>
       </div>
+
+      {/* Results banner */}
+      {results.length > 0 && (
+        <div className={`rounded-2xl p-4 ${successCount > 0 ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+          <div className={`font-semibold text-sm mb-2 ${successCount > 0 ? 'text-green-800' : 'text-red-800'}`}>
+            Batch complete: {successCount} loaded{failCount > 0 ? `, ${failCount} failed` : ''}
+          </div>
+          {results.map(r => (
+            <div key={r.code} className="flex items-center gap-2 text-xs py-0.5">
+              <span>{r.success ? '✅' : '❌'}</span>
+              <span className="font-mono">{r.code}</span>
+              {r.success && r.new_balance_cents != null && (
+                <span className="text-green-700">→ {formatCAD(r.new_balance_cents)}</span>
+              )}
+              {!r.success && <span className="text-red-600">{r.error}</span>}
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Add card */}
       <div className="bg-white rounded-2xl shadow-sm p-4 space-y-3">
-        <div className="text-sm font-semibold text-hope-dark">Add Card to Batch</div>
+        <div className="text-sm font-semibold text-hope-dark">Add Cards</div>
         <div className="flex gap-2">
           <input
             type="text"
@@ -129,29 +199,62 @@ export default function BulkLoadPage() {
             className="flex-1 border border-input rounded-lg px-3 py-2 text-sm font-mono uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-hope-green"
           />
           <button
-            onClick={addCard}
+            onClick={() => addCard()}
             className="bg-hope-green text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-hope-teal transition-colors"
           >
             Add
           </button>
         </div>
+
+        {/* CSV upload */}
+        <div className="flex items-center gap-2">
+          <input
+            ref={csvRef}
+            type="file"
+            accept=".csv,.txt"
+            onChange={handleCSV}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => csvRef.current?.click()}
+            className="flex items-center gap-1.5 text-xs text-hope-green border border-hope-green rounded-lg px-3 py-1.5 hover:bg-hope-pale transition-colors"
+          >
+            📄 Upload CSV
+          </button>
+          <span className="text-xs text-muted-foreground">One code per line or comma-separated</span>
+        </div>
+
         {error && <p className="text-xs text-destructive">{error}</p>}
       </div>
 
-      {/* Card batch list */}
+      {/* Card list */}
       {cards.length > 0 && (
         <div className="bg-white rounded-2xl shadow-sm p-4 space-y-2">
-          <div className="text-sm font-semibold text-hope-dark">Batch ({cards.length})</div>
+          <div className="flex items-center justify-between">
+            <div className="text-sm font-semibold text-hope-dark">
+              Batch ({cards.length} • {validCards.length} valid)
+            </div>
+            <button
+              onClick={() => setCards([])}
+              className="text-xs text-muted-foreground hover:text-destructive"
+            >
+              Clear all
+            </button>
+          </div>
           {cards.map(c => (
-            <div key={c.code} className="flex items-center gap-2">
-              <span className={`text-lg ${
-                c.valid === undefined ? '⏳' : c.valid ? '✅' : '❌'
-              }`}>
+            <div key={c.code} className="flex items-center gap-2 py-1">
+              <span className="text-base w-6 text-center">
                 {c.valid === undefined ? '⏳' : c.valid ? '✅' : '❌'}
               </span>
               <span className="font-mono text-sm flex-1">{c.code}</span>
               {c.error && <span className="text-xs text-destructive">{c.error}</span>}
-              <button onClick={() => removeCard(c.code)} className="text-xs text-muted-foreground hover:text-destructive">×</button>
+              <button
+                onClick={() => removeCard(c.code)}
+                className="text-xs text-muted-foreground hover:text-destructive px-1"
+              >
+                ×
+              </button>
             </div>
           ))}
         </div>
@@ -191,54 +294,44 @@ export default function BulkLoadPage() {
             min="1"
             step="0.01"
             value={customAmount}
-            onChange={e => {
-              setCustomAmount(e.target.value)
-              const v = parseFloat(e.target.value)
-              if (!isNaN(v) && v >= 1) setAmountCents(Math.round(v * 100))
-            }}
-            placeholder="Custom amount"
+            onChange={e => setCustomAmount(e.target.value)}
+            placeholder="Custom amount (CAD)"
             className="w-full border border-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-hope-green"
           />
         )}
       </div>
 
-      {/* Categories */}
-      <div className="bg-white rounded-2xl shadow-sm p-4 space-y-3">
-        <div className="text-sm font-semibold text-hope-dark">Categories</div>
-        <div className="grid grid-cols-2 gap-2">
-          {allCategories.map(cat => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => toggleCategory(cat)}
-              className={`flex items-center gap-2 p-2.5 rounded-xl border text-sm font-medium transition-colors ${
-                categories.includes(cat)
-                  ? 'bg-hope-pale text-hope-dark border-hope-green'
-                  : 'bg-white text-muted-foreground border-border'
-              }`}
-            >
-              <span>{CATEGORY_ICONS[cat]}</span>
-              <span>{CATEGORY_LABELS[cat]}</span>
-              {categories.includes(cat) && <span className="ml-auto text-hope-green text-xs">✓</span>}
-            </button>
-          ))}
-        </div>
+      {/* Reason note */}
+      <div className="bg-white rounded-2xl shadow-sm p-4 space-y-2">
+        <div className="text-sm font-semibold text-hope-dark">Load Reason</div>
+        <input
+          type="text"
+          value={reason}
+          onChange={e => setReason(e.target.value)}
+          maxLength={200}
+          className="w-full border border-input rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-hope-green"
+        />
       </div>
 
+      {/* Totals */}
       {validCards.length > 0 && (
         <div className="bg-hope-dark text-white rounded-2xl p-4 space-y-1">
           <div className="text-xs text-hope-light">Batch Total</div>
           <div className="text-3xl font-bold">{formatCAD(totalCents)}</div>
-          <div className="text-xs text-hope-light">{validCards.length} card{validCards.length !== 1 ? 's' : ''} × {formatCAD(finalAmount)} each</div>
+          <div className="text-xs text-hope-light">
+            {validCards.length} card{validCards.length !== 1 ? 's' : ''} × {formatCAD(effectiveAmount)} each
+          </div>
         </div>
       )}
 
       <button
-        onClick={handleCheckout}
-        disabled={loading || validCards.length === 0}
+        onClick={handleBatchCredit}
+        disabled={loading || validCards.length === 0 || effectiveAmount < 100}
         className="w-full bg-hope-green text-white rounded-xl py-4 font-bold text-base hover:bg-hope-teal transition-colors disabled:opacity-50"
       >
-        {loading ? 'Redirecting…' : `Pay ${formatCAD(totalCents)} for ${validCards.length} card${validCards.length !== 1 ? 's' : ''}`}
+        {loading
+          ? 'Loading cards…'
+          : `Load ${validCards.length} card${validCards.length !== 1 ? 's' : ''} · ${formatCAD(totalCents)}`}
       </button>
     </div>
   )

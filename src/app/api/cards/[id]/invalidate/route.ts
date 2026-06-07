@@ -70,10 +70,13 @@ export async function POST(
       return NextResponse.json({ error: 'Failed to invalidate card' }, { status: 500 })
     }
 
+    const actorType: 'admin' | 'advocate' =
+      profile.role === 'advocate' ? 'advocate' : 'admin'
+
     await admin.from('card_events').insert({
       card_id: params.id,
       event_type: 'invalidated',
-      actor_type: profile.role === 'super_admin' ? 'admin' : profile.role as 'advocate',
+      actor_type: actorType,
       actor_ref: user.id,
       metadata: { reason },
     })

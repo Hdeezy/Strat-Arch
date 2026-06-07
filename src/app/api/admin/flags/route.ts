@@ -1,14 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-
-export interface SuspiciousFlag {
-  type: 'rapid_redemption' | 'velocity_outlier' | 'quick_load_redeem'
-  card_id: string
-  card_code: string
-  detail: string
-  occurred_at: string
-}
+import { computeFlags } from '@/lib/admin-flags'
 
 export async function GET(_req: NextRequest) {
   try {
@@ -24,72 +17,18 @@ export async function GET(_req: NextRequest) {
       return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
     }
 
-    const flags: SuspiciousFlag[] = []
-    const now = new Date()
-    const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString()
-    const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString()
-
-    // Flag 1: Same card redeemed 3+ times in same hour
-    const { data: rapidRedemptions } = await admin
-      .from('redemptions')
-      .select('card_id, cards(card_code)')
-      .eq('status', 'succeeded')
-      .gte('occurred_at', oneHourAgo)
-
-    const cardRedemptionCounts: Record<string, { count: number; code: string; latest: string }> = {}
-    for (const r of rapidRedemptions || []) {
-      const card = r.cards as { card_code: string } | null
-      if (!cardRedemptionCounts[r.card_id]) {
-        cardRedemptionCounts[r.card_id] = { count: 0, code: card?.card_code || '', latest: '' }
-      }
-      cardRedemptionCounts[r.card_id].count++
-    }
-
-    for (const [card_id, { count, code }] of Object.entries(cardRedemptionCounts)) {
-      if (count >= 3) {
-        flags.push({
-          type: 'rapid_redemption',
-          card_id,
-          card_code: code,
-          detail: `Card redeemed ${count} times in the last hour`,
-          occurred_at: now.toISOString(),
-        })
-      }
-    }
-
-    // Flag 2: Card loaded then redeemed within 60 seconds
-    const { data: recentLoads } = await admin
-      .from('card_events')
-      .select('card_id, occurred_at, cards(card_code)')
-      .eq('event_type', 'loaded')
-      .gte('occurred_at', oneDayAgo)
-
-    for (const load of recentLoads || []) {
-      const loadTime = new Date(load.occurred_at)
-      const sixtySecondsLater = new Date(loadTime.getTime() + 60000).toISOString()
-
-      const { data: quickRedeem } = await admin
-        .from('redemptions')
-        .select('id')
-        .eq('card_id', load.card_id)
-        .eq('status', 'succeeded')
-        .gte('occurred_at', load.occurred_at)
-        .lte('occurred_at', sixtySecondsLater)
-        .limit(1)
+    // Charity admins only see flags for their own charity
+    let charityId: string | undefined
+    if (profile.role === 'charity_admin') {
+      const { data: advocate } = await admin
+        .from('advocates')
+        .select('charity_id')
+        .eq('user_id', user.id)
         .single()
-
-      if (quickRedeem) {
-        const card = load.cards as { card_code: string } | null
-        flags.push({
-          type: 'quick_load_redeem',
-          card_id: load.card_id,
-          card_code: card?.card_code || '',
-          detail: 'Card redeemed within 60 seconds of being loaded',
-          occurred_at: load.occurred_at,
-        })
-      }
+      charityId = advocate?.charity_id
     }
 
+    const flags = await computeFlags(charityId)
     return NextResponse.json({ flags })
   } catch (err) {
     console.error('Flags error:', err)
