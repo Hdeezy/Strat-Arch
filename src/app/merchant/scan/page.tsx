@@ -60,7 +60,7 @@ export default function MerchantScanPage() {
         async (decodedText) => {
           await scanner.stop()
           setState('validating')
-          await validateCard(decodedText)
+          await resolveAndValidate(decodedText)
         },
         undefined
       )
@@ -68,6 +68,38 @@ export default function MerchantScanPage() {
       setState('idle')
       setError('Camera access denied. Please allow camera access in your browser settings.')
     }
+  }
+
+  async function resolveAndValidate(raw: string) {
+    // QR codes printed on cards encode a URL like /donate/HMLT-0001.
+    // Extract the card code and fetch a live signed JWT from the lookup endpoint.
+    const codeMatch = raw.match(/\/donate\/([A-Z]{4}-[A-Z0-9]{4})/i)
+    if (codeMatch) {
+      const code = codeMatch[1].toUpperCase()
+      try {
+        const res = await fetch(`/api/cards/${code}/lookup`)
+        const data = await res.json()
+        if (!res.ok || !data.token) {
+          setState('declined')
+          setChargeResult({ success: false, failure_reason: 'card_not_found' })
+          return
+        }
+        await validateCard(data.token)
+      } catch {
+        setState('idle')
+        setError('Network error — please try again')
+      }
+      return
+    }
+
+    // JWT format: 3 dot-separated base64url segments
+    if (raw.split('.').length === 3) {
+      await validateCard(raw)
+      return
+    }
+
+    setState('declined')
+    setChargeResult({ success: false, failure_reason: 'qr_invalid' })
   }
 
   async function validateCard(token: string) {

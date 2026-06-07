@@ -32,11 +32,12 @@ export async function POST(req: NextRequest) {
   switch (event.type) {
     case 'payment_intent.succeeded': {
       const intent = event.data.object as Stripe.PaymentIntent
-      const { card_id, donor_user_id, donor_email, amount_cents, donor_note, receipt_requested } = intent.metadata
+      const { card_id, donor_user_id, donor_email, amount_cents, allowed_categories, donor_note, receipt_requested } = intent.metadata
 
       if (!card_id || !amount_cents) break
 
       const amountCents = parseInt(amount_cents, 10)
+      const parsedCategories = allowed_categories ? allowed_categories.split(',') : null
 
       // Create donation record
       const { error: donationError } = await admin.from('donations').insert({
@@ -71,6 +72,7 @@ export async function POST(req: NextRequest) {
         .update({
           balance_cents: card.balance_cents + amountCents,
           state: 'active',
+          ...(parsedCategories ? { allowed_categories: parsedCategories } : {}),
         })
         .eq('id', card_id)
 
