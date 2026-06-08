@@ -11,13 +11,15 @@ jobs:
   test:
     name: Lint, typecheck & test
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
@@ -38,9 +40,10 @@ jobs:
   build:
     name: Next.js build
     runs-on: ubuntu-latest
-    # Placeholder env vars satisfy Next.js NEXT_PUBLIC_* validation at build time.
-    # Real secrets are never committed here.
     env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      # Placeholder env vars satisfy Next.js NEXT_PUBLIC_* validation at build time.
+      # Real secrets are never committed here.
       NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
       NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder.placeholder
       NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_placeholder_for_ci_build_check
@@ -52,7 +55,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
@@ -65,6 +68,8 @@ jobs:
   supabase-lint:
     name: Supabase schema lint
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - uses: actions/checkout@v4
@@ -82,6 +87,6 @@ jobs:
       - name: Check migration files exist
         run: |
           test -f supabase/migrations/001_schema.sql || (echo "Missing 001_schema.sql" && exit 1)
-          test -f supabase/migrations/002_rls.sql    || (echo "Missing 002_rls.sql" && exit 1)
-          test -f supabase/migrations/003_seed.sql   || (echo "Missing 003_seed.sql" && exit 1)
+          test -f supabase/migrations/002_rls.sql || (echo "Missing 002_rls.sql" && exit 1)
+          test -f supabase/migrations/003_seed.sql || (echo "Missing 003_seed.sql" && exit 1)
           echo "All migration files present"
