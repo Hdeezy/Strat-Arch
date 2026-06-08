@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { formatCAD } from '@/lib/utils'
-import { AMOUNT_PRESETS, CATEGORY_LABELS, CATEGORY_ICONS, type CardCategory } from '@/lib/types'
+import { AMOUNT_PRESETS, type CardCategory } from '@/lib/types'
 
 interface CardEntry {
   code: string
@@ -18,8 +18,6 @@ interface BatchResult {
   error?: string
 }
 
-const DEFAULT_CATEGORIES: CardCategory[] = ['food', 'transit', 'clothing', 'hygiene']
-
 export default function BulkLoadPage() {
   const [cards, setCards] = useState<CardEntry[]>([])
   const [inputCode, setInputCode] = useState('')
@@ -31,8 +29,6 @@ export default function BulkLoadPage() {
   const [results, setResults] = useState<BatchResult[]>([])
   const [error, setError] = useState<string | null>(null)
   const csvRef = useRef<HTMLInputElement>(null)
-
-  const allCategories: CardCategory[] = ['food', 'transit', 'clothing', 'hygiene']
 
   function getEffectiveAmount() {
     return isCustom

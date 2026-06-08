@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { formatCAD, formatDateHamilton } from '@/lib/utils'
-import { CATEGORY_LABELS, CATEGORY_ICONS, type CardCategory } from '@/lib/types'
+import { type CardCategory } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 
