@@ -1,5 +1,4 @@
 import { createAdminClient } from '@/lib/supabase/admin'
-import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
 

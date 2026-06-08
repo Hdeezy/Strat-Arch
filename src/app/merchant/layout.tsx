@@ -34,7 +34,7 @@ export default async function MerchantLayout({ children }: { children: React.Rea
     )
   }
 
-  const merchant = staffRecord.merchant as { name: string } | null
+  const merchant = staffRecord.merchant as unknown as { name: string } | null
 
   return (
     <div className="min-h-screen bg-gray-50">

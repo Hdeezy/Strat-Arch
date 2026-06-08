@@ -32,8 +32,6 @@ export default async function AdvocateLayout({ children }: { children: React.Rea
     )
   }
 
-  const charity = advocate.charity as { name: string } | null
-
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-hope-dark text-white px-4 py-3">

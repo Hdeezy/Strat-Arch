@@ -13,7 +13,7 @@ const schema = z.object({
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params: _params }: { params: { id: string } }
 ) {
   try {
     // Auth: must be merchant_staff

@@ -1,8 +1,7 @@
 import type { Card, Merchant, QRPayload } from '@/lib/types'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { verifyCardPayload } from '@/lib/qr'
-import { isCategoryAllowed, isNewDay, HAMILTON_TZ } from '@/lib/utils'
-import { formatInTimeZone } from 'date-fns-tz'
+import { isCategoryAllowed, isNewDay } from '@/lib/utils'
 import { v4 as uuidv4 } from 'uuid'
 
 export type RedemptionFailureReason =
@@ -221,7 +220,7 @@ async function logRedemptionAttempt(
   params: RedemptionAttemptParams,
   status: 'succeeded' | 'failed',
   reason: string,
-  nonce: string
+  _nonce: string
 ) {
   await admin.from('card_events').insert({
     card_id: card.id,

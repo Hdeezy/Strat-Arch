@@ -30,7 +30,7 @@ export async function computeFlags(charityId?: string): Promise<SuspiciousFlag[]
 
   const counts: Record<string, { count: number; code: string; charityId: string }> = {}
   for (const r of rapidRedemptions ?? []) {
-    const card = r.cards as { card_code: string; charity_id: string } | null
+    const card = r.cards as unknown as { card_code: string; charity_id: string } | null
     if (!card) continue
     if (charityId && card.charity_id !== charityId) continue
     if (!counts[r.card_id]) {
@@ -75,7 +75,7 @@ export async function computeFlags(charityId?: string): Promise<SuspiciousFlag[]
 
   const alreadyFlagged = new Set<string>()
   for (const load of loadsResult.data ?? []) {
-    const card = load.cards as { card_code: string; charity_id: string } | null
+    const card = load.cards as unknown as { card_code: string; charity_id: string } | null
     if (!card) continue
     if (charityId && card.charity_id !== charityId) continue
     if (alreadyFlagged.has(load.card_id)) continue

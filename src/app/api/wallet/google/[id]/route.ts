@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { signCardPayload } from '@/lib/qr'
-import { SignJWT, importPKCS8 } from 'jose'
+import { SignJWT, importPKCS8, type JWTPayload } from 'jose'
 
 export async function GET(
   _req: NextRequest,
@@ -62,7 +62,7 @@ export async function GET(
       },
     }
 
-    const jwt = await new SignJWT(payload as Parameters<SignJWT['setPayload']>[0])
+    const jwt = await new SignJWT(payload as JWTPayload)
       .setProtectedHeader({ alg: 'RS256' })
       .sign(privateKeyObj)
 

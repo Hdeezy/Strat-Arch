@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin'
-import { formatCAD, formatDateHamilton } from '@/lib/utils'
+import { formatCAD } from '@/lib/utils'
 import Link from 'next/link'
 import { CardStateBadge } from '@/components/card-state-badge'
 

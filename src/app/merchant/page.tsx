@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
-import { formatCAD, formatDateHamilton } from '@/lib/utils'
+import { formatCAD } from '@/lib/utils'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'

@@ -6,11 +6,25 @@ export const dynamic = 'force-dynamic'
 export default async function AdminDonationsPage() {
   const admin = createAdminClient()
 
-  const { data: donations } = await admin
+  const { data: donationsRaw } = await admin
     .from('donations')
     .select('*, card:cards(card_code)')
     .order('created_at', { ascending: false })
     .limit(200)
+
+  const donations = donationsRaw as Array<{
+    id: string
+    card_id: string
+    amount_cents: number
+    donor_user_id: string | null
+    donor_email: string | null
+    donor_name: string | null
+    stripe_payment_intent_id: string | null
+    donor_note: string | null
+    receipt_requested: boolean
+    created_at: string
+    card: { card_code: string } | null
+  }> | null
 
   const total = donations?.reduce((s, d) => s + d.amount_cents, 0) || 0
 

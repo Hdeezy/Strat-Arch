@@ -140,20 +140,82 @@ export interface UsedNonce {
 }
 
 // Database type map for Supabase generics
+// Matches the full format expected by @supabase/supabase-js v2.44+
 export interface Database {
   public: {
     Tables: {
-      cities: { Row: City; Insert: Omit<City, 'id' | 'created_at'> & Partial<Pick<City, 'id' | 'created_at'>>; Update: Partial<City> }
-      charities: { Row: Charity; Insert: Omit<Charity, 'id' | 'created_at'> & Partial<Pick<Charity, 'id' | 'created_at'>>; Update: Partial<Charity> }
-      merchants: { Row: Merchant; Insert: Omit<Merchant, 'id' | 'created_at'> & Partial<Pick<Merchant, 'id' | 'created_at'>>; Update: Partial<Merchant> }
-      cards: { Row: Card; Insert: Omit<Card, 'id' | 'created_at'> & Partial<Pick<Card, 'id' | 'created_at'>>; Update: Partial<Card> }
-      donations: { Row: Donation; Insert: Omit<Donation, 'id' | 'created_at'> & Partial<Pick<Donation, 'id' | 'created_at'>>; Update: Partial<Donation> }
-      card_events: { Row: CardEvent; Insert: Omit<CardEvent, 'id' | 'occurred_at'> & Partial<Pick<CardEvent, 'id' | 'occurred_at'>>; Update: never }
-      redemptions: { Row: Redemption; Insert: Omit<Redemption, 'id' | 'occurred_at'> & Partial<Pick<Redemption, 'id' | 'occurred_at'>>; Update: Partial<Redemption> }
-      advocates: { Row: Advocate; Insert: Omit<Advocate, 'id' | 'created_at'> & Partial<Pick<Advocate, 'id' | 'created_at'>>; Update: Partial<Advocate> }
-      profiles: { Row: Profile; Insert: Omit<Profile, 'created_at'> & Partial<Pick<Profile, 'created_at'>>; Update: Partial<Profile> }
-      merchant_staff: { Row: MerchantStaff; Insert: Omit<MerchantStaff, 'id' | 'created_at'> & Partial<Pick<MerchantStaff, 'id' | 'created_at'>>; Update: Partial<MerchantStaff> }
-      used_nonces: { Row: UsedNonce; Insert: UsedNonce; Update: never }
+      cities: {
+        Row: City
+        Insert: Omit<City, 'id' | 'created_at'> & Partial<Pick<City, 'id' | 'created_at'>>
+        Update: Partial<City>
+        Relationships: []
+      }
+      charities: {
+        Row: Charity
+        Insert: Omit<Charity, 'id' | 'created_at'> & Partial<Pick<Charity, 'id' | 'created_at'>>
+        Update: Partial<Charity>
+        Relationships: []
+      }
+      merchants: {
+        Row: Merchant
+        Insert: Omit<Merchant, 'id' | 'created_at'> & Partial<Pick<Merchant, 'id' | 'created_at'>>
+        Update: Partial<Merchant>
+        Relationships: []
+      }
+      cards: {
+        Row: Card
+        Insert: Omit<Card, 'id' | 'created_at'> & Partial<Pick<Card, 'id' | 'created_at'>>
+        Update: Partial<Card>
+        Relationships: []
+      }
+      donations: {
+        Row: Donation
+        Insert: Omit<Donation, 'id' | 'created_at'> & Partial<Pick<Donation, 'id' | 'created_at'>>
+        Update: Partial<Donation>
+        Relationships: []
+      }
+      card_events: {
+        Row: CardEvent
+        Insert: Omit<CardEvent, 'id' | 'occurred_at'> & Partial<Pick<CardEvent, 'id' | 'occurred_at'>>
+        Update: Partial<CardEvent>
+        Relationships: []
+      }
+      redemptions: {
+        Row: Redemption
+        Insert: Omit<Redemption, 'id' | 'occurred_at'> & Partial<Pick<Redemption, 'id' | 'occurred_at'>>
+        Update: Partial<Redemption>
+        Relationships: []
+      }
+      advocates: {
+        Row: Advocate
+        Insert: Omit<Advocate, 'id' | 'created_at'> & Partial<Pick<Advocate, 'id' | 'created_at'>>
+        Update: Partial<Advocate>
+        Relationships: []
+      }
+      profiles: {
+        Row: Profile
+        Insert: Omit<Profile, 'created_at'> & Partial<Pick<Profile, 'created_at'>>
+        Update: Partial<Profile>
+        Relationships: []
+      }
+      merchant_staff: {
+        Row: MerchantStaff
+        Insert: Omit<MerchantStaff, 'id' | 'created_at'> & Partial<Pick<MerchantStaff, 'id' | 'created_at'>>
+        Update: Partial<MerchantStaff>
+        Relationships: []
+      }
+      used_nonces: {
+        Row: UsedNonce
+        Insert: UsedNonce
+        Update: Partial<UsedNonce>
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
     }
     Enums: {
       card_state: CardState
@@ -162,6 +224,9 @@ export interface Database {
       actor_type: ActorType
       redemption_status: RedemptionStatus
       user_role: UserRole
+    }
+    CompositeTypes: {
+      [_ in never]: never
     }
   }
 }

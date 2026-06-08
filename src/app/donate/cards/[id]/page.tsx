@@ -3,7 +3,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { formatCAD, formatDateHamilton } from '@/lib/utils'
 import { CardStateBadge } from '@/components/card-state-badge'
-import type { CardEvent, Redemption, Merchant } from '@/lib/types'
+import type { CardEvent, Merchant } from '@/lib/types'
 
 export const dynamic = 'force-dynamic'
 

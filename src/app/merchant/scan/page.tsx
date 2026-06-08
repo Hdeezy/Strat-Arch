@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import { formatCAD, extractCardCodeFromQR } from '@/lib/utils'
 import { CATEGORY_LABELS, CATEGORY_ICONS, type CardCategory } from '@/lib/types'
 

@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { formatCAD } from '@/lib/utils'
-import { AMOUNT_PRESETS, type CardCategory } from '@/lib/types'
+import { AMOUNT_PRESETS } from '@/lib/types'
 
 interface CardEntry {
   code: string

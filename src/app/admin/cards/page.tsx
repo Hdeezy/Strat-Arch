@@ -1,6 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { formatCAD, formatDateHamilton } from '@/lib/utils'
 import { CardStateBadge } from '@/components/card-state-badge'
+import type { CardState } from '@/lib/types'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
@@ -11,7 +12,7 @@ const PAGE_SIZE = 50
 type CardRow = {
   id: string
   card_code: string
-  state: string
+  state: CardState
   balance_cents: number
   allowed_categories: string[]
   created_at: string

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { generateQRSVG } from '@/lib/qr'
+import React from 'react'
 
 export const runtime = 'nodejs'
 
@@ -30,8 +30,7 @@ export async function GET(_req: NextRequest) {
       return NextResponse.json({ error: 'No unloaded cards to print' }, { status: 404 })
     }
 
-    const { renderToBuffer, Document, Page, View, Text, Svg, Path, Image } = await import('@react-pdf/renderer')
-    const { StyleSheet } = await import('@react-pdf/renderer')
+    const { renderToBuffer, Document, Page, View, Text, Image, StyleSheet } = await import('@react-pdf/renderer')
     const QRCode = (await import('qrcode')).default
 
     const styles = StyleSheet.create({
@@ -66,54 +65,37 @@ export async function GET(_req: NextRequest) {
           color: { dark: '#1B4332', light: '#ffffff' },
           errorCorrectionLevel: 'H',
         })
-
         return { card, qrDataUrl }
       })
     )
 
-    const doc = Document({
-      children: [
-        Page({
-          size: [612, 792],
-          style: styles.page,
-          children: cardComponents.map(({ card, qrDataUrl }) =>
-            View({
-              style: styles.card,
-              children: [
-                View({
-                  style: styles.cardLeft,
-                  children: [
-                    View({
-                      children: [
-                        Text({ style: styles.logo, children: ['🌿'] }),
-                        Text({ style: styles.wordmark, children: ['HOPE Card — Hamilton'] }),
-                        Text({ style: styles.subtext, children: ['Closed-loop essentials voucher'] }),
-                      ],
-                    }),
-                    View({
-                      children: [
-                        Text({ style: styles.code, children: [card.card_code] }),
-                        Text({ style: styles.backText, children: ['Cannot be exchanged for cash'] }),
-                      ],
-                    }),
-                  ],
-                }),
-                View({
-                  style: styles.cardRight,
-                  children: [
-                    Image({ src: qrDataUrl, style: { width: 90, height: 90 } }),
-                  ],
-                }),
-              ],
-            })
-          ),
-        }),
-      ],
-    })
+    const ce = React.createElement
+    const doc = ce(Document, {},
+      ce(Page, { size: [612, 792] as [number, number], style: styles.page },
+        ...cardComponents.map(({ card, qrDataUrl }) =>
+          ce(View, { key: card.id, style: styles.card },
+            ce(View, { style: styles.cardLeft },
+              ce(View, {},
+                ce(Text, { style: styles.logo }, '🌿'),
+                ce(Text, { style: styles.wordmark }, 'HOPE Card — Hamilton'),
+                ce(Text, { style: styles.subtext }, 'Closed-loop essentials voucher'),
+              ),
+              ce(View, {},
+                ce(Text, { style: styles.code }, card.card_code),
+                ce(Text, { style: styles.backText }, 'Cannot be exchanged for cash'),
+              ),
+            ),
+            ce(View, { style: styles.cardRight },
+              ce(Image, { src: qrDataUrl, style: { width: 90, height: 90 } }),
+            ),
+          )
+        )
+      )
+    )
 
     const buffer = await renderToBuffer(doc)
 
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="hope-cards-${new Date().toISOString().slice(0, 10)}.pdf"`,

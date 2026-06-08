@@ -35,6 +35,7 @@ export async function GET(
     const categories = card.allowed_categories.join(', ')
 
     const { PKPass } = await import('passkit-generator')
+    // passkit-generator v3 model type is loosely typed; cast via unknown
     const pass = await PKPass.from(
       {
         model: {
@@ -64,19 +65,19 @@ export async function GET(
             foregroundColor: 'rgb(255, 255, 255)',
             labelColor: 'rgb(212, 237, 218)',
           })),
-        },
+        } as unknown as Record<string, Buffer>,
         certificates: {
           wwdr: fs.readFileSync(path.resolve('certs/wwdr.pem')),
           signerCert: fs.readFileSync(path.resolve(certPath)),
-          signerKey: { keyFile: fs.readFileSync(path.resolve(certPath)), passphrase: certPassword },
+          signerKey: { key: fs.readFileSync(path.resolve(certPath)), passphrase: certPassword } as unknown as Buffer,
         },
-      },
+      } as never,
       { serialNumber: card.id, description: `HOPE Card — ${card.card_code}` }
     )
 
     const buffer = await pass.getAsBuffer()
 
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       headers: {
         'Content-Type': 'application/vnd.apple.pkpass',
         'Content-Disposition': `attachment; filename="hope-card-${card.card_code}.pkpass"`,

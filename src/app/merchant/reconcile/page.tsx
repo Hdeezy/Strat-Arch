@@ -20,7 +20,7 @@ export default async function MerchantReconcilePage() {
 
   if (!staffRecord) redirect('/merchant')
 
-  const merchant = staffRecord.merchant as { name: string; payout_schedule_days: number } | null
+  const merchant = staffRecord.merchant as unknown as { name: string; payout_schedule_days: number } | null
 
   const weekAgo = new Date()
   weekAgo.setDate(weekAgo.getDate() - (merchant?.payout_schedule_days || 7))
