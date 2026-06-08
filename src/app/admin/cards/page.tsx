@@ -8,6 +8,15 @@ export const dynamic = 'force-dynamic'
 const STATES = ['unloaded', 'active', 'exhausted', 'invalidated', 'expired']
 const PAGE_SIZE = 50
 
+type CardRow = {
+  id: string
+  card_code: string
+  state: string
+  balance_cents: number
+  allowed_categories: string[]
+  created_at: string
+}
+
 export default async function AdminCardsPage({
   searchParams,
 }: {
@@ -27,7 +36,9 @@ export default async function AdminCardsPage({
   if (searchParams.state) query = query.eq('state', searchParams.state)
   if (search) query = query.ilike('card_code', `%${search}%`)
 
-  const { data: cards, count } = await query
+  const result = await query
+  const cards = result.data as CardRow[] | null
+  const count = result.count
 
   function filterUrl(params: Record<string, string | undefined>) {
     const merged = { state: searchParams.state, q: search || undefined, ...params }

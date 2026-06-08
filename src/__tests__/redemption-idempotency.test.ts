@@ -23,12 +23,13 @@ const MOCK_PAYLOAD = {
   exp: Math.floor(Date.now() / 1000) + 300,
 }
 
+// Use a union type for state so spread overrides (state: 'invalidated', etc.) are valid
 const MOCK_CARD = {
   id: 'card-uuid-1234',
   card_code: 'HMLT-0001',
   city_id: 'city-uuid',
   charity_id: 'charity-uuid',
-  state: 'active' as const,
+  state: 'active' as 'active' | 'unloaded' | 'invalidated' | 'exhausted' | 'expired',
   balance_cents: 2000,
   allowed_categories: ['food', 'transit', 'clothing', 'hygiene'],
   daily_cap_cents: 2000,
@@ -70,17 +71,15 @@ function buildMockAdmin(overrides: {
     single: jest.fn().mockResolvedValue(overrides.nonce ?? { data: null, error: null }),
   }))
 
-  const fromFn = jest.fn().mockImplementation((table: string) => {
+  const fromFn = jest.fn().mockImplementation(function(table: string) {
     if (table === 'used_nonces') {
-      if (arguments.length === 0 || true) {
-        return {
-          select: jest.fn().mockReturnValue({
-            eq: jest.fn().mockReturnValue({
-              single: jest.fn().mockResolvedValue(overrides.nonce ?? { data: null, error: null }),
-            }),
+      return {
+        select: jest.fn().mockReturnValue({
+          eq: jest.fn().mockReturnValue({
+            single: jest.fn().mockResolvedValue(overrides.nonce ?? { data: null, error: null }),
           }),
-          insert: jest.fn().mockResolvedValue({ error: null }),
-        }
+        }),
+        insert: jest.fn().mockResolvedValue({ error: null }),
       }
     }
     if (table === 'cards') {

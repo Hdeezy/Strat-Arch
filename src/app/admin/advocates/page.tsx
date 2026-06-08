@@ -3,13 +3,24 @@ import { formatDateHamilton } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
 
+type AdvocateRow = {
+  id: string
+  full_name: string
+  phone: string | null
+  is_active: boolean
+  created_at: string
+  charity: { name: string } | null
+}
+
 export default async function AdminAdvocatesPage() {
   const admin = createAdminClient()
 
-  const { data: advocates } = await admin
+  const { data: rawAdvocates } = await admin
     .from('advocates')
     .select('*, charity:charities(name)')
     .order('created_at', { ascending: false })
+
+  const advocates = rawAdvocates as AdvocateRow[] | null
 
   return (
     <div className="space-y-5">
