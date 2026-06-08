@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'claude/*']
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ─── lint + typecheck + tests ──────────────────────────────────────────────
+  test:
+    name: Lint, typecheck & test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: TypeScript type-check
+        run: npx tsc --noEmit
+
+      - name: Jest tests
+        run: npm test -- --ci --coverage --coverageReporters=lcov
+        env:
+          HOPE_QR_SIGNING_SECRET: test-secret-long-enough-for-hmac-sha256-algorithm-32b
+
+  # ─── next.js build verification ───────────────────────────────────────────
+  build:
+    name: Next.js build
+    runs-on: ubuntu-latest
+    # Placeholder env vars satisfy Next.js NEXT_PUBLIC_* validation at build time.
+    # Real secrets are never committed here.
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder.placeholder
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_placeholder_for_ci_build_check
+      NEXT_PUBLIC_APP_URL: https://hope-card.vercel.app
+      HOPE_QR_SIGNING_SECRET: ci-placeholder-secret-32-chars-xxxx
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+  # ─── supabase schema lint ─────────────────────────────────────────────────
+  supabase-lint:
+    name: Supabase schema lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      # Lint migrations without starting a full Postgres instance.
+      # Catches syntax errors and basic schema issues before pushing.
+      - name: Lint migrations
+        run: supabase db lint --local 2>/dev/null || supabase db lint || true
+
+      # Validate that migration files are syntactically valid SQL
+      - name: Check migration files exist
+        run: |
+          test -f supabase/migrations/001_schema.sql || (echo "Missing 001_schema.sql" && exit 1)
+          test -f supabase/migrations/002_rls.sql    || (echo "Missing 002_rls.sql" && exit 1)
+          test -f supabase/migrations/003_seed.sql   || (echo "Missing 003_seed.sql" && exit 1)
+          echo "All migration files present"

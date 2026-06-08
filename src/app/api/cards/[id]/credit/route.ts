@@ -72,13 +72,13 @@ export async function POST(
     await admin.from('card_events').insert({
       card_id: card.id,
       event_type: 'loaded',
-      actor_type: 'advocate',
+      actor_type: advocate ? 'advocate' : 'admin',
       actor_ref: user.id,
       metadata: {
         amount_cents,
         reason,
         earn_back: true,
-        advocate_name: advocate?.full_name || 'admin',
+        advocate_name: advocate?.full_name ?? 'admin',
       },
     })
 

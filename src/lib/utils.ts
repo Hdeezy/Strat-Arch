@@ -26,7 +26,7 @@ export function isNewDay(lastReset: string): boolean {
 }
 
 export function validateCardCode(code: string): boolean {
-  return /^[A-Z]{4}-[A-Z0-9]{4}$/.test(code.toUpperCase())
+  return /^[A-Z]{4}-[A-Z0-9]{4}$/.test(code)
 }
 
 export function normalizeCardCode(code: string): string {
@@ -51,4 +51,11 @@ export function isCategoryAllowed(
 ): boolean {
   if (allowedCategories.includes('multi')) return true
   return allowedCategories.includes(merchantCategory)
+}
+
+// Extracts a HOPE Card code from a QR URL (e.g. /donate/HMLT-0001).
+// Returns null when the raw string is not a donate URL (e.g. it's already a JWT).
+export function extractCardCodeFromQR(raw: string): string | null {
+  const match = raw.match(/\/donate\/([A-Z]{4}-[A-Z0-9]{4})/i)
+  return match ? match[1].toUpperCase() : null
 }
