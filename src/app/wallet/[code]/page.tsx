@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { normalizeCardCode, formatCAD, getDailyCapRemaining } from '@/lib/utils'
+import { normalizeCardCode, formatCAD, getDailyCapRemaining, formatDateHamilton } from '@/lib/utils'
 import { CategoryBadge } from '@/components/category-badge'
 import { CardStateBadge } from '@/components/card-state-badge'
 import type { CardCategory, Merchant } from '@/lib/types'
@@ -19,13 +19,23 @@ export default async function WalletCardPage({ params }: { params: { code: strin
 
   if (!card || card.state === 'invalidated') notFound()
 
-  const { data: merchants } = await admin
-    .from('merchants')
-    .select('id, name, address, lat, lng, category')
-    .eq('city_id', card.city_id)
-    .eq('is_active', true)
-    .in('category', card.allowed_categories as CardCategory[])
+  const [merchantsResult, eventsResult] = await Promise.all([
+    admin
+      .from('merchants')
+      .select('id, name, address, lat, lng, category')
+      .eq('city_id', card.city_id)
+      .eq('is_active', true)
+      .in('category', card.allowed_categories as CardCategory[]),
+    admin
+      .from('card_events')
+      .select('id, event_type, actor_type, metadata, occurred_at')
+      .eq('card_id', card.id)
+      .order('occurred_at', { ascending: false })
+      .limit(10),
+  ])
 
+  const merchants = merchantsResult.data
+  const events = eventsResult.data ?? []
   const dailyRemaining = getDailyCapRemaining(card)
 
   return (
@@ -65,6 +75,39 @@ export default async function WalletCardPage({ params }: { params: { code: strin
       <div className="px-4 pb-4">
         <WalletPassButtons cardId={card.id} />
       </div>
+
+      {/* Recent activity */}
+      {events.length > 0 && (
+        <div className="px-4 space-y-3">
+          <div className="text-sm font-semibold text-white">Recent Activity</div>
+          <div className="bg-white/10 rounded-xl divide-y divide-white/10">
+            {events.map((event: { id: string; event_type: string; metadata: Record<string, unknown>; occurred_at: string }) => {
+              const meta = event.metadata as { amount_cents?: number; merchant_name?: string; new_balance_cents?: number }
+              const label =
+                event.event_type === 'redemption_succeeded' ? `Used at ${meta.merchant_name || 'merchant'}` :
+                event.event_type === 'loaded' ? 'Card funded' :
+                event.event_type === 'issued' ? 'Card issued' :
+                event.event_type === 'created' ? 'Card created' :
+                event.event_type === 'redemption_failed' ? 'Declined' :
+                event.event_type.replace(/_/g, ' ')
+              const amountColor = event.event_type === 'redemption_succeeded' ? 'text-red-300' : 'text-green-300'
+              return (
+                <div key={event.id} className="px-4 py-3 flex items-center justify-between">
+                  <div>
+                    <div className="text-white text-sm">{label}</div>
+                    <div className="text-hope-light text-xs">{formatDateHamilton(event.occurred_at)}</div>
+                  </div>
+                  {meta.amount_cents != null && (
+                    <div className={`text-sm font-semibold ${amountColor}`}>
+                      {event.event_type === 'redemption_succeeded' ? '−' : '+'}{formatCAD(meta.amount_cents)}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Nearby merchants */}
       <div className="px-4 space-y-3">

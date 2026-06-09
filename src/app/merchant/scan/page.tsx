@@ -28,6 +28,7 @@ export default function MerchantScanPage() {
   const [chargeResult, setChargeResult] = useState<ChargeResult | null>(null)
   const [amountInput, setAmountInput] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [manualCode, setManualCode] = useState('')
   const scannerIdRef = { current: 'merchant-qr-reader' }
 
   const DECLINE_MESSAGES: Record<string, string> = {
@@ -320,13 +321,48 @@ export default function MerchantScanPage() {
           <div id="merchant-qr-reader" className="bg-black rounded-2xl overflow-hidden min-h-[300px]" />
 
           {state === 'idle' && (
-            <button
-              onClick={startScanning}
-              className="w-full bg-hope-green text-white rounded-2xl py-5 font-bold text-lg hover:bg-hope-teal transition-colors flex items-center justify-center gap-3"
-            >
-              <span className="text-3xl">📷</span>
-              Start Scanning
-            </button>
+            <>
+              <button
+                onClick={startScanning}
+                className="w-full bg-hope-green text-white rounded-2xl py-5 font-bold text-lg hover:bg-hope-teal transition-colors flex items-center justify-center gap-3"
+              >
+                <span className="text-3xl">📷</span>
+                Start Scanning
+              </button>
+
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-xs text-muted-foreground">
+                  <span className="bg-gray-50 px-2">or enter code manually</span>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={manualCode}
+                  onChange={e => setManualCode(e.target.value.toUpperCase())}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && manualCode) {
+                      setState('validating')
+                      resolveAndValidate(manualCode)
+                    }
+                  }}
+                  placeholder="HMLT-0001"
+                  maxLength={9}
+                  className="flex-1 border border-input rounded-xl px-4 py-3 text-sm font-mono uppercase tracking-wider focus:outline-none focus:ring-2 focus:ring-hope-green"
+                />
+                <button
+                  onClick={() => { setState('validating'); resolveAndValidate(manualCode) }}
+                  disabled={!manualCode || !/^[A-Z]{4}-[A-Z0-9]{4}$/.test(manualCode)}
+                  className="bg-hope-green text-white px-5 rounded-xl font-semibold hover:bg-hope-teal transition-colors disabled:opacity-50"
+                >
+                  Look Up
+                </button>
+              </div>
+            </>
           )}
 
           {error && (
