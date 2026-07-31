@@ -42,9 +42,11 @@ CI (`.github/workflows/ci.yml`) has four jobs. The `ledger-invariants` job stand
 
 The other three pgTAP files (`01_schema_verification.sql`, `02_rls_policies.sql`, `03_append_only_trigger.sql`) exist and are **not run by CI**. Anything relying on them is unverified on every merge.
 
-The Jest suite runs in CI and is **currently red**: 5 of 53 tests fail across `src/__tests__/card-code.test.ts` (the format check was widened in migration 005 without updating the test) and `src/__tests__/webhook-categories.test.ts` (the webhook no longer writes `allowed_categories` or `balance_cents` to the card, but the tests still assert it does). Until those are reconciled, "tested in CI" is weaker than it sounds for anything in those files.
+The Jest suite runs in CI and is green: 47 assertions across 6 files. Two failures surfaced during the ledger migration and were fixed rather than suppressed — the card-code format check had been widened further than intended (the prefix is a city code and stays at 4 characters), and the rewritten webhook was silently dropping the donor's `allowed_categories`. The second was a real regression that only the existing test caught, which is the argument for keeping tests that assert a contract rather than an implementation.
 
-No test exercises `/api/redemption/authorize`, `/capture`, or `/void` end to end.
+`webhook-categories.test.ts` now asserts the *inverse* of what it used to: that the webhook never writes `balance_cents` or `state`, because value must enter through the ledger and the clearance hold.
+
+**No test exercises `/api/redemption/authorize`, `/capture`, or `/void` end to end.** The ledger transactions underneath them are covered by pgTAP, and the two-phase path was walked by hand against Postgres 16 during the migration, but the routes themselves — auth checks, merchant ownership, replay handling — are unverified on every merge. This is the largest testing gap in the system and it sits on the most consequential path.
 
 ---
 
