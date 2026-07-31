@@ -292,7 +292,7 @@ What does exist: role gates on the layouts, and a charity scope on the fraud-fla
 
 **Mechanism.** Walk the card-code space, read balances, and either target the fat cards or build a picture of who is carrying what.
 
-**Control.** New codes are non-enumerable (~40 bits, `generate_card_code()`), which is the primary defence. `/wallet/[code]` logs every lookup — hit or miss — to `credential_lookups` with a salted SHA-256 of IP plus user agent; the raw values are never stored, per shape decision 8. `credential_lookup_pressure()` returns distinct-cards-per-source over a window so a caller can spot one device scanning many different cards. Rows are pruned at 30 days by the hourly cron. Per the spec, the design is to log and alert, never to silently block — a member checking their own balance ten times must always work.
+**Control.** New codes are non-enumerable (~40 bits, `generate_card_code()`), which is the primary defence. `/wallet/[code]` logs every lookup — hit or miss — to `credential_lookups` with a salted SHA-256 of IP plus user agent; the raw values are never stored, per shape decision 8. `credential_lookup_pressure()` returns distinct-cards-per-source over a window so a caller can spot one device scanning many different cards. Rows are pruned at 30 days by the daily clearance cron. Per the spec, the design is to log and alert, never to silently block — a member checking their own balance ten times must always work.
 
 **Where.** `supabase/migrations/005_ledger.sql` (`credential_lookups`, `cleanup_credential_lookups`); `supabase/migrations/007_invariants_and_views.sql` (`credential_lookup_pressure`); `src/app/wallet/[code]/page.tsx` lines 53–58 and 88–92 (`sourceHash()` and the insert); `src/app/api/cron/clearance/route.ts` (the prune).
 
