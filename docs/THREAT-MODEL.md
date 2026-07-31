@@ -33,7 +33,7 @@ Every file path here was read. Where a control is claimed, the code implementing
 | 11 | Institutional soft coercion | PARTIAL (control is the absence of data) |
 | 12 | Staff curiosity lookups | **OPEN** |
 | 13 | Account resale | PARTIAL |
-| 14 | Balance-scanning enumeration | PARTIAL, with three unlogged surfaces |
+| 14 | Balance-scanning enumeration | PARTIAL, with five unlogged surfaces |
 | 15 | Chargeback abuse against the float | PARTIAL |
 
 ## Note on the test gate, which several entries depend on
@@ -98,7 +98,9 @@ The Jest suite runs in CI and is green: 47 assertions across 6 files. Two failur
 
 **Tested by.** Append-only enforcement on `card_events` is tested in `supabase/tests/03_append_only_trigger.sql` — **which CI does not run.** The guards' *presence* is asserted by `assert_append_only_guards()`, which invariant 5 does check in CI. Nothing tests the charity scoping or the credit ceiling.
 
-**Gap.** No per-advocate daily or weekly issuance ceiling; the $1,000 bound is per call, and calls are unlimited. No second-person approval on anything. Most importantly, the credit route writes `cards.balance_cents` **directly**, so advocate-issued value never enters the ledger — it appears as invariant-3 drift the next morning rather than as a traceable transaction with an idempotency key. The audit trail for the largest discretionary money movement in the system is a `card_events` row, not a ledger entry.
+The credit route posts a real `card_activation` transaction through `activateCard()` — it draws from the cleared float and `post_ledger_transaction()` refreshes the projection in the same database transaction. Advocate-issued value is therefore a traceable ledger entry, not a direct write. (It wrote `balance_cents` directly until the ledger migration; that is fixed.)
+
+**Gap.** No per-advocate daily or weekly issuance ceiling; the $1,000 bound is per call, and calls are unlimited. No second-person approval on anything. And the idempotency is weaker than it looks: `funding_ref` is optional and defaults to a fresh `uuidv4()` when the caller omits it, which `src/app/advocate/bulk-load/page.tsx` does — so a double-submitted batch posts two activations with two different keys and puts the money on twice. The ledger will faithfully record both.
 
 **Status: PARTIAL.**
 
@@ -144,13 +146,13 @@ The Jest suite runs in CI and is green: 47 assertions across 6 files. Two failur
 
 **Mechanism.** `paper_qr` is a static string. Copy it, present it elsewhere.
 
-**Control.** Accepted, not defended, and the system is shaped around the acceptance. The bearer model already assumes holder equals spender (`src/app/wallet/[code]/page.tsx` header comment). Loss is bounded by the daily cap and the category gate, and by there being no cash-out. The upgrade path is pre-built: `credential_kind` is an enum from day one, `cards.credential_key_ref` and `cards.credential_tap_counter` exist for NTAG 424 DNA in SUN mode, and `resolveSun()` is a stub that returns `signature_invalid` — failing closed, so a SUN URL scanned today is declined rather than half-honoured. For `rotating_qr`, tokens are HS256 JWTs with a 5-minute expiry and a nonce, and `used_nonces` gives single-use replay rejection.
+**Control.** Accepted, not defended, and the system is shaped around the acceptance. The bearer model already assumes holder equals spender (`src/app/wallet/[code]/page.tsx` header comment). Loss is bounded by the daily cap and the category gate, and by there being no cash-out. The upgrade path is pre-built: `credential_kind` is an enum from day one, `cards.credential_key_ref` and `cards.credential_tap_counter` exist for NTAG 424 DNA in SUN mode, and `resolveSun()` is a stub that returns `signature_invalid` — failing closed, so a SUN URL scanned today is declined rather than half-honoured. For `rotating_qr`, tokens are HS256 JWTs with a 5-minute expiry and a random nonce claim.
 
-**Where.** `src/credentials/index.ts` (`resolveCredential`, `resolveSun`, `stateGate`); `supabase/migrations/005_ledger.sql` §SHAPE 4; `src/lib/qr.ts`; `supabase/migrations/001_schema.sql` (`used_nonces`).
+**Where.** `src/credentials/index.ts` (`resolveCredential`, `resolveSun`, `stateGate`); `supabase/migrations/005_ledger.sql` §SHAPE 4; `src/lib/qr.ts`.
 
-**Tested by.** `src/__tests__/qr.test.ts` covers signing, verification, expiry and tamper rejection. `src/__tests__/redemption-idempotency.test.ts` covers nonce replay rejection — but only against the **legacy** `attemptRedemption()` path, not the two-phase path the vendor UI actually uses.
+**Tested by.** `src/__tests__/qr.test.ts` — signing, verification, 5-minute expiry, nonce uniqueness across two signings, and rejection of a tampered token.
 
-**Gap.** The two-phase path does not consume nonces at all. `authorizations.nonce` is set to the authorization's own UUID when the credential is a bare card code (`authorize/route.ts` line 102), so for `paper_qr` the nonce column carries no replay protection. This is consistent with the bearer model but should not be mistaken for a control.
+**Gap.** Two-phase redemption does not consume nonces at all. The `used_nonces` table still exists in `001_schema.sql` and the clearance cron still prunes it, but **nothing writes to it** — the only writer was `src/lib/redemption.ts`, deleted with the legacy path. Replay rejection for `rotating_qr` is therefore expiry-based only. And `authorizations.nonce` is set to the authorization's own UUID when the credential is a bare card code (`authorize/route.ts` line 102), so for `paper_qr` that column carries no replay protection. This is consistent with the bearer model but should not be mistaken for a control.
 
 **Status: PARTIAL — accepted for `paper_qr`.**
 
@@ -166,7 +168,7 @@ The Jest suite runs in CI and is green: 47 assertions across 6 files. Two failur
 
 **Where.** `supabase/migrations/005_ledger.sql` (`generate_card_code`); `src/lib/utils.ts` (`validateCardCode`); `src/middleware.ts` (`RATE_LIMITS`); `vercel.json` (wallet headers).
 
-**Tested by.** `src/__tests__/card-code.test.ts` — **currently failing**, because it still asserts the pre-005 narrow format. The format widened; the test did not.
+**Tested by.** `src/__tests__/card-code.test.ts` — accepts the widened 8-character suffix, still rejects a 3-character prefix, a 3-character suffix, a missing dash, lowercase, empty, and a numeric prefix. `src/__tests__/card-token-resolution.test.ts` covers extraction from `/donate/` and `/wallet/` URLs and null-returns on anything that is not a card URL.
 
 **Gap.** Three of them. The rate limiter is an in-process `Map` (`src/middleware.ts` line 9) and Vercel runs multiple instances, so the effective limit is the stated number times the instance count. It only applies to paths under `/api/`, so the page routes `/wallet/[code]` and `/donate/[code]` — both of which return a balance — are not rate-limited at all. And `/api/lookup/[code]` matches none of the four prefixes, so it is unlimited.
 
@@ -300,10 +302,10 @@ What does exist: role gates on the layouts, and a charity scope on the fraud-fla
 
 1. **The signal is collected and never read.** `credential_lookup_pressure()` has no caller anywhere in `src/`. Nothing alerts. The logging is real; the alerting the spec asked for does not exist.
 2. **`/donate/[code]` returns a balance and logs nothing.** It is public, unauthenticated, un-rate-limited, and it renders balance, daily cap, state and categories. It is also the URL the printed QR points at.
-3. **`/api/cards/by-code/[code]/lookup` and `/api/cards/[id]/lookup` are unauthenticated and mint a signed JWT.** Both take a card code, return the full card row, and hand back a freshly signed 5-minute bearer token for the card — to any caller, with no auth. `/api/lookup/[code]` is likewise unauthenticated and matches none of the middleware rate-limit prefixes. None of the three writes a `credential_lookups` row.
+3. **Four unauthenticated routes mint a signed card token.** `/api/cards/by-code/[code]/lookup` and `/api/cards/[id]/lookup` take a code, return the full card row, and hand back a freshly signed 5-minute bearer JWT — to any caller, with no auth check. `/api/wallet/apple/[id]` and `/api/wallet/google/[id]` do the same from a card id. `/api/lookup/[code]` is unauthenticated too and matches none of the middleware rate-limit prefixes. None of the five writes a `credential_lookups` row. The first two are called by no UI in the repository.
 4. **The 50 seeded pilot cards are `HMLT-0001`…`HMLT-0050`.** For the pilot cohort, the non-enumerability control does not apply.
 
-**Status: PARTIAL.** Item 3 is the one to fix first: it turns knowledge of a card code into a signed credential.
+**Status: PARTIAL.** Item 3 is the one to fix first: it turns knowledge of a card code into a signed credential, which is a strictly stronger thing than the code itself.
 
 ---
 
@@ -317,7 +319,7 @@ What does exist: role gates on the layouts, and a charity scope on the fraud-fla
 
 **Where.** `src/app/api/stripe/webhook/route.ts` (`charge.dispute.created`, `charge.refunded`); `src/ledger/index.ts` `reverseDonation()`; `supabase/migrations/005_ledger.sql` (`clearance_due_at`, `reversed_at`); `supabase/migrations/007_invariants_and_views.sql` (`find_negative_card_balances`, scoped to `account_type = 'card'`); `src/app/api/cron/reconcile/route.ts` (float-health alert).
 
-**Tested by.** Nothing. No Jest test and no pgTAP case exercises `chargeback_reversal`, the cleared-versus-uncleared branch, or the negative-float alert. The one webhook test file in the repository tests category metadata, and is currently failing.
+**Tested by.** Partially. `src/__tests__/webhook-categories.test.ts` covers the inbound path — signature-missing rejection, Stripe-retry idempotency, the ledger post, and an explicit assertion that the webhook never writes `balance_cents` or `state`. **Nothing exercises the reversal path**: no Jest test and no pgTAP case covers `chargeback_reversal`, the cleared-versus-uncleared branch that decides which account eats the loss, or the negative-float alert. `reverseDonation` is mocked out in the one test file that imports it.
 
 **Gaps.** Identified donors clear **immediately** (`clearance_due_at` is set to `now()` when `donor_user_id` is present), so any donor who signs in bypasses the hold entirely — and "signed in" is a self-serve Supabase account, not a verified identity. There is no cap on total float exposure and no velocity limit on donations from one source. The negative-float condition logs at error level and nothing else; there is no circuit breaker that pauses activations while the pool is underwater.
 
@@ -329,8 +331,9 @@ What does exist: role gates on the layouts, and a charity scope on the fraud-fla
 
 Ordered by cost against consequence, not by severity alone.
 
-1. **Vector 14, item 3** — put auth on the two `lookup` routes that mint signed card tokens, or delete them. They are unused by any UI.
-2. **Vectors 8 and 9** — add the giving domain in words and the not-ID / not-medical-ID line to the printed card. One template edit covers both.
-3. **Vector 12** — a purpose prompt and an access log on admin reads of member records, and a `platform_support` role. The spec called these free; they are not free, but they are cheap, and nothing else in the document is a bigger gap against stated intent.
-4. **The red test gate** — reconcile `card-code.test.ts` and `webhook-categories.test.ts` with the code as it now stands. A failing suite trains everyone to ignore CI, which silently disarms every control in this document that is enforced by a test.
-5. **Vector 3 and Architecture tension 2** — route advocate credit through `activateCard()` so the largest discretionary money movement in the system is a ledger transaction rather than drift discovered the next morning.
+1. **Vector 14, item 3** — put auth on the two `lookup` routes that mint signed card tokens, or delete them. No UI calls them. This is the one item where a stranger with a card code gets something stronger than the card code.
+2. **Vectors 8 and 9** — add the giving domain in words and the not-ID / not-medical-ID line to the printed card. One template edit in `print-cards-pdf/route.ts` covers both, and both are controls the spec listed as free.
+3. **Vector 12** — a purpose prompt and an access log on admin reads of member records, and a `platform_support` role distinct from `charity_admin`. The largest gap in this document relative to stated intent.
+4. **Vector 3** — make `funding_ref` required, derived from the batch, so a double-submitted bulk load cannot activate twice.
+5. **Vector 5** — wire `reclaimCard()` and `reissueCard()` into the invalidate path. The wallet page promises a replacement card with the same money on it, and today nothing implements that promise.
+6. **The test gap on the redemption routes** — three route-level tests (auth required, wrong merchant refused, capture replay returns the original) would cover the most consequential unverified code in the system.

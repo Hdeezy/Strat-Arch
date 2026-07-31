@@ -191,6 +191,32 @@ for design.
 
 ---
 
+## 2026-07-31 — Authorization holds are reaped at the point of use, not by cron
+
+The Vercel deployment failed: Hobby accounts allow at most one cron run per
+day, and the clearance job was hourly.
+
+The clearance half of that job does not care — a 72-hour window does not need
+hourly granularity. The other half does. Reaping abandoned authorization
+holds only once a day would mean a vendor who opens a hold and closes their
+phone leaves a member unable to spend their own money for up to 24 hours.
+
+**Decision:** `reapExpiredAuthorizations()` moved to `src/ledger/expiry.ts`
+and is now called at the top of `/api/redemption/authorize` as well as by the
+cron. Any vendor touching any card releases every stale hold in the system.
+The cron drops to daily and becomes the backstop for a quiet day.
+
+**This is a better design than the hourly cron regardless of the billing
+constraint.** Self-healing at the point of use bounds the exposure to "until
+the next card is used here" — minutes at pilot volume — instead of to a
+schedule.
+
+**Rejected alternative:** upgrading to Vercel Pro. It would have bought the
+hourly cron and left the 24-hour worst case in place for any period the cron
+failed. Paying to keep a weaker design.
+
+---
+
 ## OPEN — not yet done
 
 - **Supabase region unverified.** See above. Blocks launch.

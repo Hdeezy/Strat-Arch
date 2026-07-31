@@ -15,6 +15,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { resolveCredential } from '@/credentials'
 import { holdAuthorization } from '@/ledger'
+import { reapExpiredAuthorizations } from '@/ledger/expiry'
 import { roomToday, isCategoryAllowed } from '@/lib/utils'
 import { z } from 'zod'
 import { v4 as uuidv4 } from 'uuid'
@@ -44,6 +45,19 @@ export async function POST(req: NextRequest) {
 
     const parsed = schema.safeParse(await req.json())
     if (!parsed.success) return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+
+    // Release any abandoned holds before reading this card's room.
+    //
+    // A hold takes value out of a member's spendable balance, so a hold
+    // nobody closed makes a card look emptier than it is. Reaping here means
+    // any vendor touching any card self-heals the whole system within
+    // minutes, rather than the member waiting on the daily cron. See
+    // src/ledger/expiry.ts.
+    const reaped = await reapExpiredAuthorizations()
+    if (reaped.errors.length) {
+      // Never block a sale on housekeeping — the cron is the backstop.
+      console.error('[authorize] stale-hold reap had errors:', reaped.errors)
+    }
 
     const resolution = await resolveCredential(parsed.data.credential)
     if (!resolution.ok) {

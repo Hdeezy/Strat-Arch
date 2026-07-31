@@ -20,7 +20,7 @@ Five surfaces:
 - **Advocate** — `/advocate`, gated in `src/app/advocate/layout.tsx` on an active `advocates` row.
 - **Vendor** — `/merchant`, gated on an active `merchant_staff` row.
 - **Admin** — `/admin`, gated in `src/app/admin/layout.tsx` on `profiles.role ∈ (charity_admin, super_admin)`.
-- **Three crons** (`vercel.json`) — clearance hourly, reconcile 07:00 daily, settlement Mondays 12:00. All authenticate with a bearer secret (`src/lib/cron-auth.ts`) and refuse to run if `CRON_SECRET` is unset.
+- **Three crons** (`vercel.json`) — clearance 06:00 daily, reconcile 07:00 daily, settlement Mondays 12:00. All authenticate with a bearer secret (`src/lib/cron-auth.ts`) and refuse to run if `CRON_SECRET` is unset. Daily is a Vercel Hobby-plan limit; nothing depends on a cron alone (see step 6 of the money path).
 
 RLS policies exist in `supabase/migrations/002_rls.sql`, but every server path uses the service-role client (`src/lib/supabase/admin.ts`), which bypasses them. Authorization is enforced in route handlers, not by the database. See Tensions.
 
@@ -39,12 +39,12 @@ RLS policies exist in `supabase/migrations/002_rls.sql`, but every server path u
 
 ## The money path
 
-1. **In.** Donor pays through Stripe Checkout. `src/app/api/stripe/webhook/route.ts` is the only way money enters. Signature verified; idempotent on the payment intent.
+1. **In.** Donor pays through Stripe Checkout. `src/app/api/stripe/webhook/route.ts` is the only way money enters. Signature verified; idempotent on the payment intent. The webhook writes the donor's chosen `allowed_categories` to the card — that is configuration, not money — and deliberately never writes `balance_cents` or `state`.
 2. **Clearance.** `recordDonation()` posts DEBIT `cash_stripe` / CREDIT `donor_clearing`. Not spendable yet. Anonymous gifts serve 72 hours (`donations.clearance_due_at`); identified donors clear immediately.
 3. **Float.** The hourly cron calls `clearDonation()` — DEBIT `donor_clearing` / CREDIT `card_float`.
-4. **Card.** `activateCard()` moves float onto one card — DEBIT `card_float` / CREDIT `card`. `post_ledger_transaction()` refreshes `cards.balance_cents` and the card state in the same database transaction. Cards are activated from the *pooled cleared float*, never from an individual gift, so a chargeback lands on the pool rather than on a person at a counter.
+4. **Card.** `activateCard()`, reached through `/api/cards/[id]/credit`, moves float onto one card — DEBIT `card_float` / CREDIT `card`. `post_ledger_transaction()` refreshes `cards.balance_cents` and the card state in the same database transaction. Cards are activated from the *pooled cleared float*, never from an individual gift, so a chargeback lands on the pool rather than on a person at a counter.
 5. **Hold.** Vendor scans; `/api/redemption/authorize` reserves `roomToday()` — DEBIT `card` / CREDIT `authorization_hold`. Spendable balance drops immediately, so a second terminal cannot authorize the same money. 15-minute expiry.
-6. **Capture.** One atomic transaction: DEBIT `authorization_hold` (authorized) / CREDIT `vendor_payable` (captured) / CREDIT `card` (remainder). Void, and the expiry cron, return the whole hold instead.
+6. **Capture.** One atomic transaction: DEBIT `authorization_hold` (authorized) / CREDIT `vendor_payable` (captured) / CREDIT `card` (remainder). Void returns the whole hold instead. Abandoned holds are reaped by `reapExpiredAuthorizations()` (`src/ledger/expiry.ts`) in two places: lazily at the top of every `authorize` call, so any vendor touching any card self-heals every stale hold in the system, and on the daily cron as the backstop. The lazy path is the primary one — a cron-only design would leave a member unable to spend their own money for up to 24 hours.
 7. **Out.** `settlement_instructions` lists who is owed what. A human makes the transfers. `recordSettlement()` records that they did — DEBIT `vendor_payable` / CREDIT `cash_stripe`.
 
 Chargebacks reverse against `donor_clearing` if still held, against `card_float` if already cleared. Card value is never clawed back; the pool carries the loss and `/api/cron/reconcile` logs an error when `card_float` goes negative.
@@ -59,11 +59,11 @@ Transaction history on the member view is absent for a different reason. It is a
 
 Listed, not resolved. Each is a real conflict between the spec and what is on disk.
 
-1. **Two redemption paths coexist.** The vendor UI uses the two-phase ledger path, but `src/lib/redemption.ts` and `src/app/api/cards/[id]/redeem/route.ts` are still live, still authenticate merchant staff, and debit `cards.balance_cents` directly with no ledger entry. Same for `/api/cards/validate-token`.
-2. **Advocate credit bypasses the ledger.** `src/app/api/cards/[id]/credit/route.ts` writes `balance_cents` straight to the row. Value issued this way never becomes a ledger transaction; it surfaces as invariant-3 drift, which is detection, not prevention.
-3. **Half the ledger is not wired.** `activateCard`, `reclaimCard`, `reissueCard` and `recordSettlement` have no callers outside `src/ledger/`. Steps 4 and 7 of the money path above are implemented and specified but not reachable from any UI or route.
-4. **The lint rule guards table names, not the invariant.** `.eslintrc.json` blocks `.from('ledger_*')` and the RPC. It does not block `.from('cards').update({ balance_cents })`, which is exactly how items 1 and 2 slip through.
-5. **RLS exists but nothing exercises it.** Policies are written and tested in `supabase/tests/02_rls_policies.sql`, which CI does not run; every live path uses the service role.
-6. **Stripe Connect residue.** `charities.stripe_connect_account_id` and `merchants.stripe_connect_account_id` still exist, and `src/app/merchant/reconcile/page.tsx` tells vendors they are paid "via Stripe Connect" — which contradicts shape decision 7.
-7. **The pilot codes are enumerable.** `generate_card_code()` produces 8 characters of Crockford base32, but the 50 seeded cards are `HMLT-0001`…`HMLT-0050`, and `validateCardCode()` still accepts a 4-character suffix.
-8. **`credential_lookups` is written but never read.** The wallet page logs, and `credential_lookup_pressure()` exists in `007`, but nothing calls it, so the enumeration signal is collected and ignored.
+1. **The end of the money path is not wired.** `reclaimCard`, `reissueCard` and `recordSettlement` have no callers outside `src/ledger/`. Step 7 above is implemented and specified but unreachable, and `/api/cards/[id]/invalidate` flips `cards.state` without reclaiming the balance — so the "same money on a new card" promise printed on the wallet page has nothing behind it yet.
+2. **The lint rule guards table names, not the invariant.** `.eslintrc.json` blocks `.from('ledger_*')` and the RPC. It does not block `.from('cards').update({ balance_cents })`, which is exactly how the two ledger bypasses that were removed during this migration got written in the first place. Nothing violates the rule today; nothing prevents the next one.
+3. **RLS exists but nothing exercises it.** Policies are written in `002_rls.sql` and tested in `supabase/tests/02_rls_policies.sql`, which CI does not run. Every live path uses the service-role client, so the policies never execute on a real request. Authorization is real, but it lives in route handlers.
+4. **Five unauthenticated routes read a card by code or id**, and four of them mint a signed 5-minute card token: `/api/lookup/[code]`, `/api/cards/[id]/lookup`, `/api/cards/by-code/[code]/lookup`, `/api/wallet/apple/[id]`, `/api/wallet/google/[id]`. Only the first is called by any UI.
+5. **Stripe Connect residue.** `charities.stripe_connect_account_id` and `merchants.stripe_connect_account_id` still exist, and `src/app/merchant/reconcile/page.tsx` tells vendors they are paid "via Stripe Connect" — which contradicts shape decision 7.
+6. **The pilot codes are enumerable.** `generate_card_code()` produces 8 characters of Crockford base32, but the 50 seeded cards are `HMLT-0001`…`HMLT-0050`, and `validateCardCode()` accepts a 4-character suffix so they keep working.
+7. **`credential_lookups` is written but never read.** The wallet page logs every lookup and `credential_lookup_pressure()` exists in `007`, but nothing calls it — the enumeration signal is collected and ignored. `weekly_reconciliation` likewise has no caller.
+8. **`used_nonces` has no writer.** The table and its cleanup cron survive; the only code that inserted into it went out with the legacy redemption path. Replay protection on signed tokens is expiry-only.

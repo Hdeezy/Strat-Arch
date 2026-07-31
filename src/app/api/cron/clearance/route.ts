@@ -9,13 +9,25 @@
  *
  *   1. Donations whose clearance window has elapsed join the spendable float.
  *   2. Authorizations nobody closed are voided and the held value returns to
- *      the card. Without this, a vendor who opens a hold and then closes
- *      their phone leaves a card quietly unusable until someone notices.
+ *      the card.
+ *
+ * DAILY, not hourly. Vercel's Hobby plan allows at most one run per day.
+ *
+ * That constraint is survivable because neither job depends on this cron
+ * alone. Clearance is a 72-hour window, so a few hours of granularity is
+ * noise. Stale holds are reaped on every /api/redemption/authorize call, so
+ * the moment any vendor touches any card the whole system self-heals — this
+ * run is the backstop for a quiet day, not the primary path.
+ *
+ * If the cron were the only reaper, a member could be unable to spend their
+ * own money for 24 hours. That would not be acceptable, and the lazy path in
+ * src/ledger/expiry.ts is what makes the daily schedule safe.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { clearDonation, voidAuthorization } from '@/ledger'
+import { clearDonation } from '@/ledger'
+import { reapExpiredAuthorizations } from '@/ledger/expiry'
 import { assertCron } from '@/lib/cron-auth'
 
 export const runtime = 'nodejs'
@@ -48,25 +60,10 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // ── 2. Reap stale authorizations ─────────────────────────────────────────
-  // expire_stale_authorizations() flips the rows and hands them back so the
-  // matching ledger voids go through the ledger module rather than SQL.
-  const { data: stale, error: staleError } = await admin.rpc('expire_stale_authorizations')
-  if (staleError) errors.push(`expire: ${staleError.message}`)
-
-  for (const a of (stale ?? []) as { id: string; card_id: string; authorized_cents: number }[]) {
-    try {
-      await voidAuthorization({
-        authorizationId: a.id,
-        cardId: a.card_id,
-        amountCents: a.authorized_cents,
-        reason: 'Authorization expired without capture',
-      })
-      voided.push(a.id)
-    } catch (err) {
-      errors.push(`void ${a.id}: ${err instanceof Error ? err.message : 'unknown'}`)
-    }
-  }
+  // ── 2. Reap stale authorizations (backstop; the authorize path is primary)
+  const reaped = await reapExpiredAuthorizations()
+  voided.push(...reaped.voided)
+  errors.push(...reaped.errors)
 
   // ── 3. Housekeeping ──────────────────────────────────────────────────────
   await admin.rpc('cleanup_expired_nonces')
