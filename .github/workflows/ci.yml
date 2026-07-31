@@ -86,7 +86,7 @@ jobs:
       # Validate that migration files are syntactically valid SQL
       - name: Check migration files exist
         run: |
-          for f in 001_schema 002_rls 003_seed 004_org_types 005_ledger 006_grants 007_invariants_and_views; do
+          for f in 001_schema 002_rls 003_seed 004_org_types 005_ledger 006_grants 007_invariants_and_views 008_rotate_enumerable_codes; do
             test -f "supabase/migrations/$f.sql" || (echo "Missing $f.sql" && exit 1)
           done
           echo "All migration files present"
@@ -146,7 +146,7 @@ jobs:
         env:
           PGPASSWORD: postgres
         run: |
-          for f in 001_schema 002_rls 004_org_types 005_ledger 006_grants 007_invariants_and_views; do
+          for f in 001_schema 002_rls 004_org_types 005_ledger 006_grants 007_invariants_and_views 008_rotate_enumerable_codes; do
             echo "── $f"
             psql -h localhost -p 5433 -U postgres -v ON_ERROR_STOP=1 -q \
               -f "supabase/migrations/$f.sql"

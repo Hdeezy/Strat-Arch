@@ -267,10 +267,47 @@ someone is using to find out whether they can buy dinner.
 
 ---
 
+## 2026-07-31 — Enumerable pilot codes rotated; issued cards go through reissue
+
+`HMLT-0001` … `HMLT-0050`. Guess one and you have guessed all fifty, which
+made `/wallet/[code]` a balance-scanning tool across the whole programme.
+
+Migration 008 rotates them to 8 characters of Crockford base32, **except**
+cards that have already been issued to a person.
+
+**Rotation is not reissue, and the difference matters.** Rotating changes an
+identifier: same `card_id`, same ledger account, same balance, no money
+moves. That is right for a card still in a drawer. It is wrong for a card in
+someone's pocket — the code printed on their plastic would silently stop
+working with no way for them to know why. So the migration checks for an
+`issued` event and skips those, naming them in the output.
+
+`scripts/reissue-enumerable-cards.mjs` handles the skipped ones properly:
+invalidate (reclaiming the value) then reissue onto a fresh non-enumerable
+card, driving the same API routes an advocate would use so the ledger and
+audit trail see nothing unusual. Dry run by default.
+
+A `card_code_not_enumerable` CHECK now refuses any new 4-character suffix.
+It is `NOT VALID` so already-issued legacy cards are grandfathered until
+they are reissued rather than blocking the migration.
+
+`card_code_rotations` keeps the old-to-new mapping permanently — when
+someone finds a `HMLT-0007` card in a box next year, that table is how they
+learn it was rotated and destroyed rather than lost.
+
+**Every rotated card must be re-printed before distribution.**
+
+---
+
 ## OPEN — not yet done
 
-- **Supabase region unverified.** See above. Blocks launch.
-- **Existing sequential card codes** not yet invalidated and reissued.
+- **Supabase region unverified.** Project `mzmwvxizvjmqplyxtgst`. The build
+  container cannot reach `supabase.co` (proxy returns 403 on CONNECT) and the
+  API host is behind Cloudflare, so the region is not determinable from here.
+  Check the dashboard: Settings → General → Region, or the connection string
+  (`aws-0-ca-central-1.pooler…` = good). **Blocks launch.**
+- **Migration 008 not yet applied to the live database**, and the reissue
+  script not yet run for any already-issued card.
 - **Advocate UI for invalidate and reissue.** Both routes exist and are
   ledger-backed, but there is no screen: an advocate taking a lost-card call
   currently needs someone to POST for them.
