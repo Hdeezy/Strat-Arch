@@ -4,5 +4,48 @@
   "rules": {
     "@typescript-eslint/no-unused-vars": ["error", {"argsIgnorePattern": "^_"}],
     "@typescript-eslint/no-explicit-any": "warn"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.ts", "src/**/*.tsx"],
+      "excludedFiles": ["src/ledger/**"],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "CallExpression[callee.property.name='from'][arguments.0.value='ledger_entries']",
+            "message": "Only src/ledger/ may touch ledger_entries. Import from '@/ledger' instead."
+          },
+          {
+            "selector": "CallExpression[callee.property.name='from'][arguments.0.value='ledger_transactions']",
+            "message": "Only src/ledger/ may touch ledger_transactions. Import from '@/ledger' instead."
+          },
+          {
+            "selector": "CallExpression[callee.property.name='from'][arguments.0.value='ledger_accounts']",
+            "message": "Only src/ledger/ may touch ledger_accounts. Import from '@/ledger' instead."
+          },
+          {
+            "selector": "CallExpression[callee.property.name='rpc'][arguments.0.value='post_ledger_transaction']",
+            "message": "post_ledger_transaction() is called by src/ledger/ only. Use the named ledger functions."
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/app/api/cron/settlement/**", "src/settlement/**"],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "MemberExpression[property.name='payouts']",
+            "message": "Settlement produces instructions. Humans execute payments. See Stack Decision Record §4 rule 4."
+          },
+          {
+            "selector": "MemberExpression[property.name='transfers']",
+            "message": "Settlement produces instructions. Humans execute payments. See Stack Decision Record §4 rule 4."
+          }
+        ]
+      }
+    }
+  ]
 }

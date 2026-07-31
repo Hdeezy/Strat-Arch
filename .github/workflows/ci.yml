@@ -86,7 +86,108 @@ jobs:
       # Validate that migration files are syntactically valid SQL
       - name: Check migration files exist
         run: |
-          test -f supabase/migrations/001_schema.sql || (echo "Missing 001_schema.sql" && exit 1)
-          test -f supabase/migrations/002_rls.sql || (echo "Missing 002_rls.sql" && exit 1)
-          test -f supabase/migrations/003_seed.sql || (echo "Missing 003_seed.sql" && exit 1)
+          for f in 001_schema 002_rls 003_seed 004_org_types 005_ledger 006_grants 007_invariants_and_views; do
+            test -f "supabase/migrations/$f.sql" || (echo "Missing $f.sql" && exit 1)
+          done
           echo "All migration files present"
+
+  # ─── the five ledger invariants ───────────────────────────────────────────
+  # Scrappy Cut §3: "Five, run in CI: entries sum to zero; no negative
+  # balances; balances equal replay; capture never exceeds authorization;
+  # no ledger row updated or deleted."
+  #
+  # These gate every merge. A ledger whose invariants are not checked on
+  # every change is a ledger whose central claim is unverified.
+  ledger-invariants:
+    name: Ledger invariants (pgTAP)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Postgres 16 and pgTAP
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-16 postgresql-16-pgtap
+          echo "/usr/lib/postgresql/16/bin" >> $GITHUB_PATH
+
+      - name: Start Postgres
+        run: |
+          sudo -u postgres /usr/lib/postgresql/16/bin/pg_ctl \
+            -D /var/lib/postgresql/16/main \
+            -o "-p 5433 -c config_file=/etc/postgresql/16/main/postgresql.conf" \
+            -l /tmp/pg.log start
+          sleep 3
+          sudo -u postgres psql -p 5433 -c "ALTER USER postgres PASSWORD 'postgres';"
+
+      # Supabase provides auth.* and the anon/authenticated/service_role
+      # roles at runtime. The migrations reference them, so CI supplies a
+      # minimal stand-in.
+      - name: Shim the Supabase-provided objects
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -p 5433 -U postgres <<'SQL'
+          create schema if not exists auth;
+          create table if not exists auth.users (
+            id uuid primary key default gen_random_uuid(), email text
+          );
+          create or replace function auth.uid() returns uuid
+            as $$ select null::uuid $$ language sql stable;
+          do $$ begin
+            if not exists (select 1 from pg_roles where rolname='anon') then create role anon; end if;
+            if not exists (select 1 from pg_roles where rolname='authenticated') then create role authenticated; end if;
+            if not exists (select 1 from pg_roles where rolname='service_role') then create role service_role; end if;
+          end $$;
+          create extension if not exists pgtap;
+          SQL
+
+      - name: Apply migrations
+        env:
+          PGPASSWORD: postgres
+        run: |
+          for f in 001_schema 002_rls 004_org_types 005_ledger 006_grants 007_invariants_and_views; do
+            echo "── $f"
+            psql -h localhost -p 5433 -U postgres -v ON_ERROR_STOP=1 -q \
+              -f "supabase/migrations/$f.sql"
+          done
+
+      # 003_seed depends on the real Supabase auth.users shape, so CI seeds
+      # only the reference rows the invariant fixtures need.
+      - name: Seed reference rows
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -p 5433 -U postgres -v ON_ERROR_STOP=1 <<'SQL'
+          insert into cities (id, name, province)
+            values ('00000000-0000-0000-0000-000000000001','Hamilton','Ontario');
+          insert into charities (id, city_id, name, contact_email)
+            values ('00000000-0000-0000-0000-000000000010',
+                    '00000000-0000-0000-0000-000000000001',
+                    'CI Charity','ci@example.invalid');
+          insert into merchants (id, city_id, charity_id, name, address, category)
+            values ('00000000-0000-0000-0000-000000000020',
+                    '00000000-0000-0000-0000-000000000001',
+                    '00000000-0000-0000-0000-000000000010',
+                    'CI Merchant','1 Test St','food');
+          SQL
+
+      - name: Run the five invariants
+        env:
+          PGPASSWORD: postgres
+        run: |
+          set -o pipefail
+          psql -h localhost -p 5433 -U postgres -f supabase/tests/04_ledger_invariants.sql \
+            2>&1 | tee /tmp/pgtap.out
+
+          if grep -q "^ not ok" /tmp/pgtap.out; then
+            echo "::error::Ledger invariant failure — see output above."
+            grep "^ not ok" /tmp/pgtap.out
+            exit 1
+          fi
+          if grep -qi "looks like you planned" /tmp/pgtap.out; then
+            echo "::error::pgTAP plan count mismatch."
+            grep -i "looks like you planned" /tmp/pgtap.out
+            exit 1
+          fi
+          echo "All ledger invariants hold ($(grep -c '^ ok' /tmp/pgtap.out) assertions)."
