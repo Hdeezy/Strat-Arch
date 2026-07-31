@@ -1,6 +1,24 @@
+/**
+ * INVALIDATE A CARD — lost, stolen, or reported.
+ *
+ * Two things have to happen and only one of them used to:
+ *
+ *   1. The card stops working. (This already did that.)
+ *   2. The value on it is RECLAIMED so it can be put on a replacement.
+ *
+ * Without step 2 the balance is stranded: unspendable because the state gate
+ * refuses it, and unreissuable because the ledger still shows it sitting on
+ * a dead card. The member who phoned the number on their card loses their
+ * money in exchange for reporting the theft, which is the opposite of what
+ * the phone number is for.
+ *
+ * LEDGER-SPEC §8.
+ */
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { reclaimCard } from '@/ledger'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -61,9 +79,16 @@ export async function POST(
     const parsed = schema.safeParse(body)
     const reason = parsed.success ? (parsed.data.reason || 'No reason provided') : 'No reason provided'
 
+    // Reclaim FIRST, while the card is still 'active'. The reclaim posts a
+    // ledger transaction that drives the balance to zero; doing it after the
+    // state flip would work, but this order means a failure part-way through
+    // leaves a live card with its money rather than a dead card holding
+    // value nobody can reach.
+    const reclaimTxn = await reclaimCard({ cardId: params.id })
+
     const { error: updateError } = await admin
       .from('cards')
-      .update({ state: 'invalidated' })
+      .update({ state: 'invalidated', invalidated_at: new Date().toISOString() })
       .eq('id', params.id)
 
     if (updateError) {
@@ -78,10 +103,21 @@ export async function POST(
       event_type: 'invalidated',
       actor_type: actorType,
       actor_ref: user.id,
-      metadata: { reason },
+      metadata: { reason, reclaim_transaction_id: reclaimTxn },
     })
 
-    return NextResponse.json({ success: true })
+    // reclaimCard returns null when there was nothing left to reclaim.
+    const { data: reclaimed } = await admin
+      .from('ledger_balances')
+      .select('balance_cents')
+      .eq('account_type', 'reclaimed')
+      .maybeSingle()
+
+    return NextResponse.json({
+      success: true,
+      reclaimed: reclaimTxn !== null,
+      reclaimed_pool_cents: Number(reclaimed?.balance_cents ?? 0),
+    })
   } catch (err) {
     console.error('Invalidate card error:', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

@@ -4,9 +4,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { normalizeCardCode } from '@/lib/utils'
+import { auditLookup } from '@/lib/lookup-audit'
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: { code: string } }
 ) {
   try {
@@ -20,8 +21,11 @@ export async function GET(
       .single()
 
     if (error || !card) {
+      await auditLookup({ headers: req.headers, cardId: null, outcome: 'not_found', surface: 'lookup' })
       return NextResponse.json({ error: 'Card not found' }, { status: 404 })
     }
+
+    await auditLookup({ headers: req.headers, cardId: card.id, outcome: 'found', surface: 'lookup' })
 
     return NextResponse.json({ card })
   } catch (err) {

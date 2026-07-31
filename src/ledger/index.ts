@@ -266,29 +266,64 @@ export async function reclaimCard(params: { cardId: string }): Promise<string | 
 }
 
 /**
+ * How much was reclaimed from a card when it was invalidated.
+ *
+ * Lives here rather than in the caller because it reads ledger_entries, and
+ * nothing outside this module may. Returns 0 if the card was never
+ * reclaimed, or was reclaimed with a zero balance.
+ */
+export async function reclaimedAmountFor(cardId: string): Promise<number> {
+  const admin = createAdminClient()
+
+  const { data: txn } = await admin
+    .from('ledger_transactions')
+    .select('id')
+    .eq('idempotency_key', idem.invalidationReclaim(cardId))
+    .maybeSingle()
+
+  if (!txn) return 0
+
+  const { data: entries } = await admin
+    .from('ledger_entries')
+    .select('amount_cents')
+    .eq('transaction_id', txn.id)
+
+  // The positive (debit) leg is what came off the card.
+  const debit = (entries ?? []).map(e => Number(e.amount_cents)).find(a => a > 0)
+  return debit ?? 0
+}
+
+/**
  * Put reclaimed value onto a replacement card.
  *
  *   DEBIT  reclaimed  +amount
  *   CREDIT card       -amount
+ *
+ * The amount is derived from the original reclaim rather than passed in, so
+ * a caller cannot reissue more than the old card actually held.
  */
 export async function reissueCard(params: {
   toCardId: string
   fromCardId: string
-  amountCents: number
-}): Promise<string> {
+}): Promise<{ transactionId: string; amountCents: number }> {
+  const amountCents = await reclaimedAmountFor(params.fromCardId)
+  if (amountCents <= 0) {
+    throw new Error(`No reclaimed value found for card ${params.fromCardId}`)
+  }
+
   const admin = createAdminClient()
   const [reclaimed, card] = await Promise.all([
     pooledAccount(admin, 'reclaimed'),
     cardAccount(admin, params.toCardId),
   ])
 
-  const txnId = await post(
+  const transactionId = await post(
     admin,
     'reissue',
     idem.reissue(params.toCardId),
     [
-      { account_id: reclaimed, amount_cents: params.amountCents },
-      { account_id: card, amount_cents: -params.amountCents },
+      { account_id: reclaimed, amount_cents: amountCents },
+      { account_id: card, amount_cents: -amountCents },
     ],
     { externalRef: params.toCardId, memo: `Reissued from ${params.fromCardId}` }
   )
@@ -298,7 +333,7 @@ export async function reissueCard(params: {
     .update({ reissued_from_card_id: params.fromCardId })
     .eq('id', params.toCardId)
 
-  return txnId
+  return { transactionId, amountCents }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

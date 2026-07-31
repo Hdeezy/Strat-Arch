@@ -33,10 +33,10 @@
 
 import { notFound } from 'next/navigation'
 import { headers } from 'next/headers'
-import { createHash } from 'crypto'
 import Link from 'next/link'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { normalizeCardCode, formatCAD, roomToday } from '@/lib/utils'
+import { auditLookup } from '@/lib/lookup-audit'
 import { CategoryBadge } from '@/components/category-badge'
 import type { CardCategory } from '@/lib/types'
 import WalletPassButtons from './wallet-pass-buttons'
@@ -45,22 +45,9 @@ export const dynamic = 'force-dynamic'
 
 const INVALIDATION_PHONE = process.env.NEXT_PUBLIC_HOPE_INVALIDATION_PHONE ?? '905-528-7625'
 
-/**
- * Salted hash of the requesting source. The raw IP and user agent are never
- * stored — shape decision 8, collect nothing that requires consent
- * machinery. This exists only to spot one device enumerating many cards.
- */
-function sourceHash(): string {
-  const h = headers()
-  const salt = process.env.HOPE_QR_SIGNING_SECRET ?? 'unsalted'
-  const raw = `${h.get('x-forwarded-for') ?? 'unknown'}|${h.get('user-agent') ?? 'unknown'}`
-  return createHash('sha256').update(`${salt}|${raw}`).digest('hex').slice(0, 32)
-}
-
 export default async function WalletCardPage({ params }: { params: { code: string } }) {
   const admin = createAdminClient()
   const code = normalizeCardCode(params.code)
-  const src = sourceHash()
 
   const { data: cardRow } = await admin
     .from('cards')
@@ -85,10 +72,11 @@ export default async function WalletCardPage({ params }: { params: { code: strin
   // the signature of someone other than the member. Log it and alert; never
   // silently block — a member checking their own balance ten times is normal
   // and must always work.
-  await admin.from('credential_lookups').insert({
-    card_id: card?.id ?? null,
-    source_hash: src,
+  await auditLookup({
+    headers: headers(),
+    cardId: card?.id ?? null,
     outcome: card ? 'found' : 'not_found',
+    surface: 'wallet',
   })
 
   if (!card || card.state === 'invalidated') notFound()

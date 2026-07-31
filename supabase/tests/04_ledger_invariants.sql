@@ -15,7 +15,7 @@
 
 begin;
 
-select plan(23);
+select plan(29);
 
 -- ── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -276,6 +276,101 @@ select is(
   (select balance_cents from cards where id = (select v from t_ids where k='card')),
   5000,
   'idempotency: the replay did not double the balance'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- LOST AND STOLEN — reclaim then reissue
+--
+-- The member view tells people to phone a number and promises "a new one
+-- with the same money on it." This asserts that promise holds: the value
+-- comes off the dead card, waits in the reclaimed pool, and lands intact on
+-- the replacement.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+do $$
+declare
+  v_city uuid; v_char uuid; v_old uuid; v_new uuid; v_amt bigint;
+begin
+  select id into v_city from cities limit 1;
+  select id into v_char from charities limit 1;
+
+  insert into cards (city_id, charity_id, card_code, state, balance_cents)
+    values (v_city, v_char, generate_card_code('LOST'), 'unloaded', 0) returning id into v_old;
+  insert into cards (city_id, charity_id, card_code, state, balance_cents)
+    values (v_city, v_char, generate_card_code('NEWC'), 'unloaded', 0) returning id into v_new;
+
+  insert into t_ids values ('old_card', v_old), ('new_card', v_new);
+
+  perform post_ledger_transaction('card_activation', 'pgtap-lost-activate',
+    jsonb_build_array(
+      jsonb_build_object('account_id', ledger_pooled_account('card_float'), 'amount_cents',  3000),
+      jsonb_build_object('account_id', ledger_card_account(v_old),          'amount_cents', -3000)));
+
+  -- Reported stolen.
+  v_amt := (select balance_cents from ledger_balances where card_id = v_old);
+  perform post_ledger_transaction('invalidation_reclaim', 'reclaim:' || v_old::text,
+    jsonb_build_array(
+      jsonb_build_object('account_id', ledger_card_account(v_old),        'amount_cents',  v_amt),
+      jsonb_build_object('account_id', ledger_pooled_account('reclaimed'),'amount_cents', -v_amt)));
+  update cards set state = 'invalidated', invalidated_at = now() where id = v_old;
+end $$;
+
+select is(
+  (select balance_cents from cards where id = (select v from t_ids where k='old_card')),
+  0,
+  'lost/stolen: the invalidated card holds nothing'
+);
+
+select is(
+  (select balance_cents::int from ledger_balances
+    where account_id = ledger_pooled_account('reclaimed')),
+  3000,
+  'lost/stolen: the value is waiting in the reclaimed pool'
+);
+
+-- Reissue derives its amount from the reclaim, so it cannot exceed it.
+do $$
+declare v_old uuid; v_new uuid; v_amt bigint;
+begin
+  select v into v_old from t_ids where k='old_card';
+  select v into v_new from t_ids where k='new_card';
+
+  select e.amount_cents into v_amt
+    from ledger_entries e
+    join ledger_transactions t on t.id = e.transaction_id
+   where t.idempotency_key = 'reclaim:' || v_old::text
+     and e.amount_cents > 0;
+
+  perform post_ledger_transaction('reissue', 'reissue:' || v_new::text,
+    jsonb_build_array(
+      jsonb_build_object('account_id', ledger_pooled_account('reclaimed'), 'amount_cents',  v_amt),
+      jsonb_build_object('account_id', ledger_card_account(v_new),         'amount_cents', -v_amt)));
+  update cards set reissued_from_card_id = v_old where id = v_new;
+end $$;
+
+select is(
+  (select balance_cents from cards where id = (select v from t_ids where k='new_card')),
+  3000,
+  'lost/stolen: the replacement carries the same money'
+);
+
+select is(
+  (select state::text from cards where id = (select v from t_ids where k='new_card')),
+  'active',
+  'lost/stolen: the replacement is live'
+);
+
+select is(
+  (select balance_cents::int from ledger_balances
+    where account_id = ledger_pooled_account('reclaimed')),
+  0,
+  'lost/stolen: the reclaimed pool is emptied, not double-spent'
+);
+
+select is(
+  (select count(*)::int from find_balance_drift()),
+  0,
+  'lost/stolen: the whole round trip leaves no drift'
 );
 
 select * from finish();
