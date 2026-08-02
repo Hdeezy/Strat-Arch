@@ -299,6 +299,49 @@ learn it was rotated and destroyed rather than lost.
 
 ---
 
+## 2026-07-31 — Seed fixed at source; dev users gated; phone fallback removed
+
+Three findings from the Codex audit on `codex/hope-intake-audit`. Two were
+real bugs I had missed.
+
+**1. `003_seed.sql` hardcoded enumerable codes.** It looped
+`'HMLT-' || lpad(i::text, 4, '0')`, so every *fresh* database seeded fifty
+sequential codes. Migration 008 rotates them, which meant a clean apply
+seeded the vulnerability and then immediately fixed it — correct end state,
+silly path, and a window where it existed.
+
+Fixed at the source: 003 now calls `generate_card_code()`. That function
+moved from 005 to 003, the earliest point of need, so there is one copy of
+the alphabet rather than two free to drift. 005 keeps a guarded no-op create
+for databases migrated before 003 carried it.
+
+**008 is still required, and is not redundant.** It is the only thing that
+fixes a database which already ran the old seed — which is exactly what the
+live project is. Codex framed these as alternatives; they are sequential.
+Fresh applies now report `rotated: 0`.
+
+**2. `003_seed.sql` planted two known-password accounts.** Bcrypt hashes of
+`hope-dev-password-1` and `-2`, with advocate privileges — the ability to
+load and invalidate cards. Inserted unconditionally, so `supabase db push`
+against a project about to take real donations created two accounts whose
+passwords are in the git history.
+
+Now gated behind `set hope.seed_dev_users = 'on'`. Default is off; the
+migration prints a notice and continues. The profiles and advocate rows are
+inside the same gate, since they reference those user ids.
+
+**3. The invalidation phone had a hardcoded fallback, not a placeholder.**
+`?? '905-528-7625'` rendered as a live `tel:` link on the lost-card page. I
+described this as showing a placeholder in an earlier summary; that was
+wrong. It fails badly in both directions — if the number reaches a real
+party they start taking calls they never agreed to, and if it reaches nobody
+a person whose card was just stolen hears dead air.
+
+The fallback is gone. Unset now renders "Ask your outreach worker, or
+anywhere that accepts this card." A missing phone number should look missing.
+
+---
+
 ## OPEN — not yet done
 
 - **Supabase region unverified.** Project `mzmwvxizvjmqplyxtgst`. The build

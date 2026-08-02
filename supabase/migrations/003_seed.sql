@@ -48,7 +48,42 @@ values (
 );
 
 -- ─────────────────────────────────────────────
--- SEED: 50 unloaded cards HMLT-0001 through HMLT-0050
+-- NON-ENUMERABLE CARD CODES
+--
+-- Defined here, at the earliest point of need, because the seed below uses
+-- it. Migration 005 documents the reasoning and 008 uses it to rotate any
+-- database that ran the ORIGINAL version of this file.
+--
+-- 8 characters of Crockford base32 with the ambiguous glyphs (I, L, O, U)
+-- removed, about 40 bits.
+-- ─────────────────────────────────────────────
+
+create or replace function generate_card_code(prefix text default 'HMLT')
+returns text as $$
+declare
+  alphabet constant text := '0123456789ABCDEFGHJKMNPQRSTVWXYZ';  -- no I, L, O, U
+  suffix text := '';
+  i integer;
+begin
+  for i in 1..8 loop
+    suffix := suffix || substr(alphabet, 1 + floor(random() * length(alphabet))::int, 1);
+  end loop;
+  return prefix || '-' || suffix;
+end;
+$$ language plpgsql volatile;
+
+-- ─────────────────────────────────────────────
+-- SEED: 50 unloaded cards with non-enumerable codes
+--
+-- This used to emit HMLT-0001 … HMLT-0050 via lpad(). Sequential codes make
+-- /wallet/[code] a balance-scanning tool across the whole programme: guess
+-- one and you have guessed all fifty. Scrappy Cut §3a control 1 prohibits
+-- exactly this, and seeding it here meant every fresh database shipped the
+-- vulnerability.
+--
+-- Databases that already ran the old version of this file are fixed by
+-- migration 008, which rotates the codes in place. This fixes the source so
+-- 008 is only ever needed once.
 -- ─────────────────────────────────────────────
 
 do $$
@@ -57,7 +92,12 @@ declare
   card_code_val text;
 begin
   for i in 1..50 loop
-    card_code_val := 'HMLT-' || lpad(i::text, 4, '0');
+    -- Retry on the vanishingly unlikely collision rather than aborting the
+    -- whole seed on a unique violation.
+    loop
+      card_code_val := generate_card_code('HMLT');
+      exit when not exists (select 1 from cards where card_code = card_code_val);
+    end loop;
     insert into cards (
       city_id,
       charity_id,
@@ -87,13 +127,33 @@ select
 from cards
 where card_code like 'HMLT-%';
 
--- ─────────────────────────────────────────────
--- SEED: Advocate users (dev only)
--- Two placeholder auth users so the advocate portal
--- works immediately after `supabase db push` without
--- requiring manual signup. Passwords are fixed test
--- values — change before any shared/staging environment.
--- ─────────────────────────────────────────────
+-- ═════════════════════════════════════════════════════════════════════════
+-- SEED: Advocate users — LOCAL DEVELOPMENT ONLY, OFF BY DEFAULT
+--
+-- These two accounts have bcrypt hashes of publicly-known passwords
+-- ('hope-dev-password-1' and '-2') and advocate privileges, which means the
+-- ability to load and invalidate cards. The previous version of this file
+-- inserted them unconditionally, so `supabase db push` against ANY project —
+-- including one about to take real donations — planted two known-password
+-- accounts with access to the money path.
+--
+-- They are now gated behind an explicit opt-in. To seed them locally:
+--
+--   psql "$DATABASE_URL" -c "set hope.seed_dev_users = 'on'" \
+--        -f supabase/migrations/003_seed.sql
+--
+-- or inside a session:  set hope.seed_dev_users = 'on';
+--
+-- Without that setting the block is skipped and the migration succeeds
+-- normally. Never set it on a shared or production project.
+-- ═════════════════════════════════════════════════════════════════════════
+
+do $seed_users$
+begin
+if coalesce(current_setting('hope.seed_dev_users', true), 'off') <> 'on' then
+  raise notice 'Skipping dev advocate users (set hope.seed_dev_users = ''on'' to seed them locally).';
+  return;
+end if;
 
 insert into auth.users (
   id,
@@ -175,3 +235,7 @@ insert into advocates (id, charity_id, user_id, full_name, phone) values
     'Jordan Lee',
     '905-555-0102'
   );
+
+raise notice 'Seeded 2 DEV advocate users with publicly-known passwords. Local use only.';
+end
+$seed_users$;

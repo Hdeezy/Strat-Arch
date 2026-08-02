@@ -43,7 +43,19 @@ import WalletPassButtons from './wallet-pass-buttons'
 
 export const dynamic = 'force-dynamic'
 
-const INVALIDATION_PHONE = process.env.NEXT_PUBLIC_HOPE_INVALIDATION_PHONE ?? '905-528-7625'
+/**
+ * The lost-and-stolen line.
+ *
+ * There is NO fallback number, deliberately. This previously defaulted to a
+ * hardcoded Hamilton number rendered as a live tel: link, which fails badly
+ * in both directions: if the number reaches a real party they start taking
+ * calls they never agreed to, and if it reaches nobody a person whose card
+ * was just stolen hears dead air.
+ *
+ * Unset means the page says so plainly and points at the outreach worker the
+ * cardholder already knows. A missing phone number should look missing.
+ */
+const INVALIDATION_PHONE = process.env.NEXT_PUBLIC_HOPE_INVALIDATION_PHONE?.trim() || null
 
 export default async function WalletCardPage({ params }: { params: { code: string } }) {
   const admin = createAdminClient()
@@ -171,16 +183,22 @@ export default async function WalletCardPage({ params }: { params: { code: strin
             Lost or stolen?
           </h2>
           <p className="text-base text-gray-800">
-            Call us and we will stop this card and give you a new one with the
-            same money on it.
+            We will stop this card and give you a new one with the same money
+            on it.
           </p>
-          <a
-            href={`tel:${INVALIDATION_PHONE.replace(/\D/g, '')}`}
-            className="block text-2xl font-bold text-hope-dark underline
-                       focus:outline-none focus:ring-4 focus:ring-hope-green rounded"
-          >
-            {INVALIDATION_PHONE}
-          </a>
+          {INVALIDATION_PHONE ? (
+            <a
+              href={`tel:${INVALIDATION_PHONE.replace(/\D/g, '')}`}
+              className="block text-2xl font-bold text-hope-dark underline
+                         focus:outline-none focus:ring-4 focus:ring-hope-green rounded"
+            >
+              {INVALIDATION_PHONE}
+            </a>
+          ) : (
+            <p className="text-base font-semibold text-gray-900">
+              Ask your outreach worker, or anywhere that accepts this card.
+            </p>
+          )}
         </section>
 
         {/* ── The standing reminder ───────────────────────────────────────

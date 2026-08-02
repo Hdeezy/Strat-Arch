@@ -96,19 +96,36 @@ create index cards_credential_kind_idx on cards(credential_kind);
 -- pilot codes keep working; the format check widens rather than changing.
 -- ───────────────────────────────────────────────────────────────────────────
 
-create or replace function generate_card_code(prefix text default 'HMLT')
-returns text as $$
-declare
-  alphabet constant text := '0123456789ABCDEFGHJKMNPQRSTVWXYZ';  -- no I, L, O, U
-  suffix text := '';
-  i integer;
+-- generate_card_code() is DEFINED IN 003_seed.sql, at the earliest point of
+-- need, because the seed itself must produce non-enumerable codes. Defining
+-- it here as well would be two copies of the alphabet free to drift apart.
+--
+-- The clause below is a no-op guard for any database that was migrated
+-- before 003 carried the function — it creates it only if missing, using the
+-- identical body.
+
+do $$
 begin
-  for i in 1..8 loop
-    suffix := suffix || substr(alphabet, 1 + floor(random() * length(alphabet))::int, 1);
-  end loop;
-  return prefix || '-' || suffix;
-end;
-$$ language plpgsql volatile;
+  if not exists (
+    select 1 from pg_proc where proname = 'generate_card_code'
+  ) then
+    execute $fn$
+      create function generate_card_code(prefix text default 'HMLT')
+      returns text as $body$
+      declare
+        alphabet constant text := '0123456789ABCDEFGHJKMNPQRSTVWXYZ';  -- no I, L, O, U
+        suffix text := '';
+        i integer;
+      begin
+        for i in 1..8 loop
+          suffix := suffix || substr(alphabet, 1 + floor(random() * length(alphabet))::int, 1);
+        end loop;
+        return prefix || '-' || suffix;
+      end;
+      $body$ language plpgsql volatile;
+    $fn$;
+  end if;
+end $$;
 
 -- Widen the accepted format. Old HMLT-0001 codes (4 chars) still validate;
 -- new codes are 8. Enforced in the app layer via validateCardCode().
