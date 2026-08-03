@@ -28,11 +28,15 @@ than half-finishing.
 Then:
 
 ```bash
-bash scripts/make-me-admin.sh
+bash scripts/finish-setup.sh
 ```
 
-after you've created your account in the Supabase dashboard — it prints the
-link and walks you through it.
+No dashboard, no copying UUIDs. It generates any missing secrets, creates
+your admin account through the Supabase API using the keys already in
+`.env.local`, grants it charity_admin and advocate, and checks all five
+ledger invariants — from the terminal.
+
+Then `npm run dev`.
 
 **You do not need to read the rest of this file.** It is the same sequence
 written out by hand, for when something goes wrong or you want to know what
