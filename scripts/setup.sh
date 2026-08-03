@@ -245,6 +245,24 @@ step "Creating your .env.local file"
 
 if [ -f ".env.local" ]; then
   ok ".env.local already exists — leaving it alone"
+elif [ -f ".env" ]; then
+  # Next.js reads both and .env.local WINS. Writing a blank .env.local next
+  # to a filled-in .env would silently override real keys with empty ones,
+  # and the resulting failure looks nothing like its cause.
+  warn "You have a .env file with settings in it."
+  printf "\n  This project expects ${B}.env.local${X}. Next.js reads both, and\n"
+  printf "  .env.local takes priority — so creating a blank one now would\n"
+  printf "  override the keys you already put in .env.\n\n"
+  printf "  Rename .env to .env.local and keep what's in it? [Y/n] "
+  read -r reply
+  case "$reply" in
+    [nN]*) warn "Left alone. Make sure only ONE of them holds your keys." ;;
+    *)
+      mv .env .env.local && ok "Renamed .env to .env.local — your keys are intact"
+      printf "  Check it still has HOPE_QR_SIGNING_SECRET and CRON_SECRET:\n"
+      printf "    ${C}grep -c SECRET .env.local${X}   (should print 2 or more)\n"
+      ;;
+  esac
 else
   # Generated here so nobody has to invent them, and so they're actually random.
   QR_SECRET=$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
