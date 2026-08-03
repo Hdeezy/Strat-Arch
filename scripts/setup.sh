@@ -58,16 +58,40 @@ command -v node >/dev/null 2>&1 || die "Node.js is not installed." \
 "  Install it from https://nodejs.org (pick the LTS version), then run this again."
 ok "node $(node --version)"
 
-if ! command -v supabase >/dev/null 2>&1; then
-  die "The Supabase command-line tool is not installed." \
-"  Install it with:
+# The Supabase CLI can be a real binary (brew) or run on demand through npx.
+# Both work. npx matters because it avoids sending someone who doesn't have
+# Homebrew off on a 15-minute install detour just to run one command.
+SUPABASE=""
+if command -v supabase >/dev/null 2>&1; then
+  SUPABASE="supabase"
+  ok "supabase $($SUPABASE --version 2>/dev/null | head -1)"
+else
+  warn "The Supabase tool isn't installed as a program."
+  printf "\n  Two ways forward:\n\n"
+  printf "    ${B}A${X}  Install it properly (faster every time after this):\n"
+  printf "         ${C}brew install supabase/tap/supabase${X}\n"
+  printf "         Needs Homebrew. If 'brew' isn't found, that's option B.\n\n"
+  printf "    ${B}B${X}  Run it on demand through npx — nothing to install.\n"
+  printf "         Slower to start each time, otherwise identical.\n\n"
+  printf "  Use option B now? [Y/n] "
+  read -r reply
+  case "$reply" in
+    [nN]*) die "Stopped. Run the brew line above, then start this script again." ;;
+  esac
+
+  printf "\n  Fetching the Supabase tool (first run takes a minute)...\n\n"
+  if npx --yes supabase@latest --version >/dev/null 2>&1; then
+    SUPABASE="npx --yes supabase@latest"
+    ok "Using supabase via npx"
+  else
+    die "Couldn't fetch the Supabase tool through npx either." \
+"  Install it with Homebrew instead:
 
       brew install supabase/tap/supabase
 
-  If 'brew' isn't found either, install Homebrew first from https://brew.sh
-  then run the line above, then run this script again."
+  If 'brew' is also missing, get Homebrew from https://brew.sh first."
+  fi
 fi
-ok "supabase $(supabase --version 2>/dev/null | head -1)"
 
 # ── 3. right code ──────────────────────────────────────────────────────────
 step "Checking you have the latest code"
@@ -119,15 +143,15 @@ fi
 # ── 5. supabase login ──────────────────────────────────────────────────────
 step "Connecting to Supabase"
 
-if ! supabase projects list >/dev/null 2>&1; then
+if ! $SUPABASE projects list >/dev/null 2>&1; then
   warn "You're not logged in to Supabase yet."
   printf "  A browser window will open. Log in, then come back here.\n\n"
-  supabase login || die "Login failed or was cancelled."
+  $SUPABASE login || die "Login failed or was cancelled."
 fi
 ok "Logged in"
 
 printf "\n  Your Supabase projects:\n"
-supabase projects list 2>/dev/null | sed 's/^/    /'
+$SUPABASE projects list 2>/dev/null | sed 's/^/    /'
 printf "\n  ${B}Check that %s shows a Canadian region above.${X}\n" "$PROJECT_REF"
 printf "  Continue? [y/N] "
 read -r reply
@@ -143,7 +167,7 @@ else
   printf "  That is NOT your login password. Find it at:\n"
   printf "  ${C}https://supabase.com/dashboard/project/%s/settings/database${X}\n" "$PROJECT_REF"
   printf "  (If you never set one, click 'Reset database password' there first.)\n\n"
-  supabase link --project-ref "$PROJECT_REF" || die "Linking failed. Usually a wrong database password — see the link above."
+  $SUPABASE link --project-ref "$PROJECT_REF" || die "Linking failed. Usually a wrong database password — see the link above."
   ok "Linked"
 fi
 
@@ -152,7 +176,7 @@ step "Setting up the database"
 printf "  This creates the tables, the money ledger, and 50 cards.\n\n"
 
 PUSH_LOG=$(mktemp)
-if supabase db push 2>&1 | tee "$PUSH_LOG"; then
+if $SUPABASE db push 2>&1 | tee "$PUSH_LOG"; then
   ok "Database is set up"
 else
   if grep -qi "already exists" "$PUSH_LOG"; then
