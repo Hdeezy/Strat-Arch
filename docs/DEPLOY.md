@@ -1,5 +1,36 @@
 # DEPLOYING TO A SUPABASE PROJECT
 
+## If you just want it done
+
+Open Terminal, and run these two lines:
+
+```bash
+cd ~/Projects/Strat-Arch
+bash scripts/setup.sh
+```
+
+That checks your machine, gets the right code, sets up the database, verifies
+the money ledger, and writes your `.env.local` with two secrets generated for
+you. It stops at the first problem and tells you what to do about it, rather
+than half-finishing.
+
+Then:
+
+```bash
+bash scripts/make-me-admin.sh
+```
+
+after you've created your account in the Supabase dashboard — it prints the
+link and walks you through it.
+
+**You do not need to read the rest of this file.** It is the same sequence
+written out by hand, for when something goes wrong or you want to know what
+the script is doing.
+
+---
+
+## The manual sequence
+
 One correct sequence. Written because three agents were about to run three
 different versions of it against two different project refs.
 
