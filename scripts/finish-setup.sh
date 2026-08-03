@@ -85,6 +85,54 @@ api() {
   fi
 }
 
+# Confirm this is really the service role key BEFORE using it.
+#
+# Reading a table is not proof: `charities` has a public-read policy, so the
+# anon key sails through and the first real failure is a 403 from the admin
+# API several steps later, with a message that doesn't name the cause.
+#
+# Supabase keys carry their role. Legacy keys are JWTs with a "role" claim;
+# newer ones are prefixed sb_secret_ / sb_publishable_.
+KEY_ROLE=$(printf '%s' "$SERVICE_KEY" | node -e "
+let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{
+  const k=s.trim();
+  if(k.startsWith('sb_secret_'))      return console.log('service_role');
+  if(k.startsWith('sb_publishable_')) return console.log('anon');
+  try{
+    const p=JSON.parse(Buffer.from(k.split('.')[1],'base64').toString());
+    console.log(p.role||'unknown');
+  }catch(e){ console.log('unreadable') }
+})" 2>/dev/null)
+
+case "$KEY_ROLE" in
+  service_role) ok "Service role key looks right" ;;
+  anon)
+    die "That's the wrong Supabase key." \
+"  SUPABASE_SERVICE_ROLE_KEY in .env.local holds the ${B}anon${X} key — the public
+  one. Creating accounts needs the ${B}service_role${X} key, which is a different
+  value on the same page.
+
+  Open:
+    ${C}https://supabase.com/dashboard/project/avwtfnfmkxeksfvtkyei/settings/api${X}
+
+  Look for the row labelled ${B}service_role${X} (it says 'secret' and is hidden
+  until you click reveal). Copy THAT, and replace the value after
+  SUPABASE_SERVICE_ROLE_KEY= in .env.local.
+
+  The anon key is fine to keep in NEXT_PUBLIC_SUPABASE_ANON_KEY — the two
+  are different keys and both are needed.
+
+  Never share the service_role key. It bypasses every security rule."
+    ;;
+  unreadable)
+    die "Couldn't read SUPABASE_SERVICE_ROLE_KEY." \
+"  It's probably truncated — these keys are long and easy to half-copy.
+  Re-copy the whole thing from:
+    https://supabase.com/dashboard/project/avwtfnfmkxeksfvtkyei/settings/api"
+    ;;
+  *) warn "Key role reads as '$KEY_ROLE' — carrying on, but this may fail." ;;
+esac
+
 CHARITIES=$(api GET "/rest/v1/charities?select=id,name&limit=1")
 CHARITY_ID=$(printf '%s' "$CHARITIES" | node -e "
 let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{
