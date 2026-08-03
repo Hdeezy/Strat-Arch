@@ -2,12 +2,23 @@
 
 ## If you just want it done
 
-Open Terminal, and run these two lines:
+Open Terminal. Paste this whole block at once, then press Enter:
 
 ```bash
 cd ~/Projects/Strat-Arch
+git fetch origin
+git checkout claude/hope-card-mvp-BDgun
+git pull origin claude/hope-card-mvp-BDgun
 bash scripts/setup.sh
 ```
+
+**The first four lines are not optional.** `scripts/setup.sh` only exists on
+the `claude/hope-card-mvp-BDgun` branch. If your copy is on `main` you will
+get `No such file or directory`, because the script that fetches the right
+branch is itself on that branch. Fetch first, then run it.
+
+If `git checkout` complains about local changes, stop and ask — do not force
+it.
 
 That checks your machine, gets the right code, sets up the database, verifies
 the money ledger, and writes your `.env.local` with two secrets generated for
