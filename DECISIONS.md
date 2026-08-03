@@ -342,15 +342,45 @@ anywhere that accepts this card." A missing phone number should look missing.
 
 ---
 
+## 2026-08-03 — Supabase region resolved: new Canadian project, old one retired
+
+**Shape decision 6 is satisfied.** The project is `avwtfnfmkxeksfvtkyei`,
+created fresh in the Canadian region. Confirmed by the account owner from the
+dashboard; the region will be visible again in `supabase projects list` at
+link time, which is the natural double-check.
+
+`mzmwvxizvjmqplyxtgst` was a test environment and is being retired. That
+retires several open items with it:
+
+- **The enumerable pilot codes do not matter.** They only ever existed in the
+  test project. No card was issued to a real person, so nothing needs
+  rotating and nothing needs re-printing.
+- **`scripts/reissue-enumerable-cards.mjs` will not be needed for launch.**
+  It stays in the repo because invalidate-and-reissue is a real operation the
+  programme needs — a member reporting a stolen card is exactly this path —
+  but it has no launch-day role.
+- **Migration 008 will report `rotated: 0`** on the new project, which is
+  correct. 003 now seeds non-enumerable codes at source, so there is nothing
+  to rotate. 008 remains in the chain as the repair path for any database
+  that ran the old seed.
+
+The new project is empty, so `supabase db push` applies 001–008 cleanly with
+a proper `schema_migrations` history. See `docs/DEPLOY.md`.
+
+---
+
 ## OPEN — not yet done
 
-- **Supabase region unverified.** Project `mzmwvxizvjmqplyxtgst`. The build
-  container cannot reach `supabase.co` (proxy returns 403 on CONNECT) and the
-  API host is behind Cloudflare, so the region is not determinable from here.
-  Check the dashboard: Settings → General → Region, or the connection string
-  (`aws-0-ca-central-1.pooler…` = good). **Blocks launch.**
-- **Migration 008 not yet applied to the live database**, and the reissue
-  script not yet run for any already-issued card.
+- **Migrations not yet pushed** to `avwtfnfmkxeksfvtkyei`.
+- **No admin or advocate account exists** on the new project. The dev
+  accounts are gated off, so the first real one must be created by hand —
+  `docs/DEPLOY.md` §3.
+- **Environment variables not yet set** in Vercel, including `CRON_SECRET`,
+  without which all three crons return 503 and clearance never releases.
+- **Real lost-card phone number** still unknown. Until
+  `NEXT_PUBLIC_HOPE_INVALIDATION_PHONE` is set the wallet page points at the
+  outreach worker instead of dialling a wrong number, which is the safe
+  failure, but it is not the intended one.
 - **Advocate UI for invalidate and reissue.** Both routes exist and are
   ledger-backed, but there is no screen: an advocate taking a lost-card call
   currently needs someone to POST for them.

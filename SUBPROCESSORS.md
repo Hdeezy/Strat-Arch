@@ -39,7 +39,7 @@ this scope is a SQL query rather than a subsystem.
 
 | Processor | Purpose | Data | Processing location | Status |
 |---|---|---|---|---|
-| **Supabase** | Postgres, Auth | All of the above | **Must be `ca-central-1`** | ⚠️ **Region unverified — see DECISIONS.md** |
+| **Supabase** | Postgres, Auth | All of the above | Canadian region | ✅ Verified 2026-08-03 — project `avwtfnfmkxeksfvtkyei`, created in Canada. The prior project `mzmwvxizvjmqplyxtgst` was a test environment and is being retired. |
 | **Vercel** | Application hosting, cron | Request data in transit; logs | Functions pinned to `yul1` (Montreal) | ✅ Pinned 2026-07-31 |
 | **Stripe** | Donation processing | Donor email, card details, payment metadata | US / global | ✅ Foundation's own account, no Connect |
 | **Sentry** | Error monitoring | Stack traces | US | ❌ **Not yet integrated.** Register before enabling, and ship the member-identifier scrubber in the same PR. |
@@ -55,10 +55,8 @@ is short on purpose.
 
 ## Before launch
 
-1. **Verify the Supabase project region is `ca-central-1`.** Everything else
-   in this register is moot if the database is not in Canada. A move means a
-   new project and a full data migration, which is survivable now and is not
-   survivable once real money has moved.
+1. ~~Verify the Supabase project region.~~ **Done.** A new Canadian project
+   was created rather than migrating the test one.
 2. Register Sentry and the email provider as subprocessors **on the day they
    are integrated**, not afterwards.
 3. Confirm the Stripe account is the Foundation's own, on a restricted API

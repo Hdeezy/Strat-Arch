@@ -10,26 +10,18 @@ history table.
 
 ---
 
-## 0. Which project, and which branch
-
-Two things have to be pinned before anything runs.
+## 0. The project, and the branch
 
 ### The project ref
 
-Two refs have been named in this project's history:
-
-| Ref | Where it came from |
-|---|---|
-| `mzmwvxizvjmqplyxtgst` | Given as the live project |
-| `avwtfnfmkxeksfvtkyei` | Named later in a separate session |
-
-**These are different databases.** Confirm which one you mean before running
-anything. Pushing to the wrong one leaves two half-migrated projects and no
-clean way to tell them apart afterwards.
-
-```bash
-supabase projects list
 ```
+avwtfnfmkxeksfvtkyei        Canadian region. Empty. This is the one.
+```
+
+`mzmwvxizvjmqplyxtgst` was a **test environment and is being retired.** Do
+not push to it. Nothing in it needs migrating — no card was ever issued to a
+real person, which is why the enumerable-code rotation has no launch-day
+role.
 
 ### The branch
 
@@ -51,29 +43,21 @@ wrong branch or have not pulled.
 
 ---
 
-## 1. Region — do this before you push, not after
+## 1. Region — already confirmed, verify once more at link time
 
-```
-https://supabase.com/dashboard/project/<ref>/settings/general
-```
+`avwtfnfmkxeksfvtkyei` was created in the Canadian region. Shape decision 6
+is satisfied.
 
-Read **Region**.
-
-- `Canada (Central)` / `ca-central-1` → proceed.
-- Anything else → **stop.** Region cannot be changed in place. Create a new
-  project in Canada (Central) and use that ref. Doing this before data exists
-  is trivial; doing it after real donations is a migration on a live money
-  ledger.
-
-This is shape decision 6 in the Scrappy Cut, and it is the reason it is a
-shape decision.
+`supabase projects list` prints the region alongside the ref. Glance at it
+when you link — it costs nothing and it is the last cheap moment to catch a
+wrong project. Region cannot be changed in place afterwards.
 
 ---
 
 ## 2. Link and push
 
 ```bash
-supabase link --project-ref <ref>
+supabase link --project-ref avwtfnfmkxeksfvtkyei
 supabase db push
 ```
 
@@ -100,16 +84,16 @@ non-enumerable codes directly, so 008 finds nothing to fix. It stays in the
 chain because it is the only thing that repairs a database which already ran
 the old seed.
 
-### If the project is NOT empty
+### If it fails on `relation already exists`
 
-`db push` on a database whose objects exist but whose history table is empty
-will fail on `relation already exists`. That happens when earlier migrations
-were applied by pasting into the SQL Editor. Options, in order of preference:
+The project is not as empty as expected — objects exist but the history table
+does not know about them, which is what pasting into the SQL Editor produces.
 
-1. **Start a fresh project.** At pilot scale with test data, this is faster
-   and safer than reconciling history.
-2. `supabase migration repair --status applied <version>` for each migration
-   already present, then push the remainder.
+Given this project was created fresh, that result means you are pointed at
+the wrong ref. Check before doing anything else. If it genuinely is the right
+project and someone has pasted migrations into it, either start another fresh
+project or run `supabase migration repair --status applied <version>` for
+each migration already present, then push the remainder.
 
 Do not paste 005–008 into the SQL Editor to "catch up". It works once and
 leaves the history table lying to you forever after.
@@ -190,26 +174,29 @@ Redeploy after setting them.
 
 ---
 
-## 6. Only if `rotated > 0`
+## 6. Print the cards
 
-That means you pushed to a database that had run the old seed. Any card the
-migration reported as `skipped` is in someone's hands and needs the real
-operation rather than a rename:
+`/admin/print-cards` generates the PDF sheet from the 50 seeded cards.
 
-```bash
-node scripts/reissue-enumerable-cards.mjs            # dry run
-node scripts/reissue-enumerable-cards.mjs --execute
-```
+The codes are non-enumerable from the moment they are seeded, so this is a
+straight print — no rotation, no swap, nothing to destroy. That is the whole
+benefit of having caught the seed bug before the first push rather than
+after.
 
-Have replacement cards printed first — this invalidates the old one.
+---
 
-Every card the migration *rotated* also needs re-printing. `/admin/print-cards`
-generates the sheet.
+## Not applicable to this deployment
+
+**`scripts/reissue-enumerable-cards.mjs`** and the `rotated > 0` path exist
+for a database that ran the old sequential seed. This project never will.
+The script stays in the repo because invalidate-and-reissue is a real
+operation the programme needs — a member reporting a stolen card is exactly
+that path — but it has no launch-day role.
 
 ---
 
 ## What is still a human decision
 
 - The real lost-card phone number, and who answers it.
-- Whether to retire the old project once the new one is verified.
-- Printing and physically swapping card stock.
+- Deleting the old test project once this one is verified.
+- Printing the card stock.
