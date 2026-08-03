@@ -122,12 +122,13 @@ ok "On $BRANCH at $(git rev-parse --short HEAD)"
 # no double-entry accounting and sequential card codes.
 MISSING=""
 for f in 001_schema 002_rls 003_seed 004_org_types 005_ledger 006_grants \
-         007_invariants_and_views 008_rotate_enumerable_codes; do
+         007_invariants_and_views 008_rotate_enumerable_codes \
+         009_fix_signup_trigger; do
   [ -f "supabase/migrations/$f.sql" ] || MISSING="$MISSING $f"
 done
 [ -n "$MISSING" ] && die "Missing migration files:$MISSING" \
 "  Your copy of the code is out of date. Try:  git pull origin $BRANCH"
-ok "All 8 migrations present"
+ok "All 9 migrations present"
 
 # ── 4. dependencies ────────────────────────────────────────────────────────
 step "Installing project dependencies (this can take a minute)"
