@@ -1,8 +1,16 @@
+/**
+ * TILL HOME.
+ *
+ * One job: get to the scanner. Everything else on this screen is smaller
+ * than the button, because a customer is standing there.
+ */
+
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { formatCAD } from '@/lib/utils'
 import Link from 'next/link'
+import { ScanLine, ChevronRight, ReceiptText, Wallet } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,61 +20,76 @@ export default async function MerchantHomePage() {
   if (!user) redirect('/auth/login?redirectTo=/merchant')
 
   const admin = createAdminClient()
-  const { data: staffRecord } = await admin
+  const { data: staff } = await admin
     .from('merchant_staff')
     .select('merchant_id')
     .eq('user_id', user.id)
     .eq('is_active', true)
-    .single()
+    .maybeSingle()
 
-  if (!staffRecord) redirect('/auth/login')
+  if (!staff) redirect('/merchant')
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  const midnight = new Date()
+  midnight.setHours(0, 0, 0, 0)
 
-  const { data: todayRedemptions } = await admin
+  const { data } = await admin
     .from('redemptions')
     .select('amount_cents')
-    .eq('merchant_id', staffRecord.merchant_id)
+    .eq('merchant_id', staff.merchant_id)
     .eq('status', 'succeeded')
-    .gte('occurred_at', today.toISOString())
+    .gte('occurred_at', midnight.toISOString())
 
-  const todayTotal = todayRedemptions?.reduce((sum, r) => sum + r.amount_cents, 0) || 0
-  const todayCount = todayRedemptions?.length || 0
+  const rows = (data ?? []) as unknown as { amount_cents: number }[]
+  const todayTotal = rows.reduce((s, r) => s + Number(r.amount_cents), 0)
 
   return (
-    <div className="space-y-6">
-      {/* Today's stats */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-hope-dark text-white rounded-2xl p-4">
-          <div className="text-xs text-hope-light">Today&apos;s Volume</div>
-          <div className="text-2xl font-bold mt-1">{formatCAD(todayTotal)}</div>
-        </div>
-        <div className="bg-white rounded-2xl shadow-sm p-4">
-          <div className="text-xs text-muted-foreground">Transactions</div>
-          <div className="text-2xl font-bold text-hope-dark mt-1">{todayCount}</div>
-        </div>
-      </div>
-
-      {/* Big scan button */}
+    <div className="space-y-5">
+      {/* The button is the page. */}
       <Link
         href="/merchant/scan"
-        className="block w-full bg-hope-green hover:bg-hope-teal text-white rounded-2xl py-8 text-center transition-colors"
+        className="flex flex-col items-center justify-center gap-3 w-full bg-hope-green hover:bg-hope-teal
+                   text-white rounded-2xl py-10 transition-colors
+                   focus:outline-none focus-visible:ring-4 focus-visible:ring-hope-green/40"
       >
-        <div className="text-5xl mb-3">📷</div>
-        <div className="text-xl font-bold">Scan HOPE Card</div>
-        <div className="text-sm text-hope-light mt-1">Open camera to accept payment</div>
+        <ScanLine className="h-14 w-14" strokeWidth={1.75} aria-hidden="true" />
+        <span className="text-2xl font-bold">Take a payment</span>
+        <span className="text-base text-hope-pale">Scan the card, or type its code</span>
       </Link>
 
-      {/* Quick links */}
-      <div className="grid grid-cols-2 gap-3">
-        <Link href="/merchant/history" className="bg-white rounded-2xl shadow-sm p-4 text-center hover:bg-hope-pale transition-colors">
-          <div className="text-2xl mb-1">📋</div>
-          <div className="text-sm font-semibold text-hope-dark">Transaction History</div>
+      <div className="bg-white rounded-2xl border border-slate-200 p-5">
+        <p className="text-base font-medium text-slate-600">Taken today</p>
+        <p className="text-5xl font-bold text-slate-900 leading-none mt-2 tabular-nums">
+          {formatCAD(todayTotal)}
+        </p>
+        <p className="text-base text-slate-500 mt-2">
+          {rows.length === 0
+            ? 'No HOPE Card payments yet today'
+            : `${rows.length} payment${rows.length === 1 ? '' : 's'}`}
+        </p>
+      </div>
+
+      <div className="space-y-3">
+        <Link
+          href="/merchant/history"
+          className="flex items-center gap-4 w-full bg-white hover:bg-slate-50 border border-slate-200 rounded-2xl p-4 transition-colors
+                     focus:outline-none focus-visible:ring-4 focus-visible:ring-hope-green/40"
+        >
+          <ReceiptText className="h-6 w-6 flex-none text-hope-green" strokeWidth={2} aria-hidden="true" />
+          <span className="flex-1 text-lg font-bold text-slate-900">Today&apos;s payments</span>
+          <ChevronRight className="h-6 w-6 flex-none text-slate-400" strokeWidth={2.5} aria-hidden="true" />
         </Link>
-        <Link href="/merchant/reconcile" className="bg-white rounded-2xl shadow-sm p-4 text-center hover:bg-hope-pale transition-colors">
-          <div className="text-2xl mb-1">💰</div>
-          <div className="text-sm font-semibold text-hope-dark">Weekly Reconcile</div>
+
+        <Link
+          href="/merchant/reconcile"
+          className="flex items-center gap-4 w-full bg-white hover:bg-slate-50 border border-slate-200 rounded-2xl p-4 transition-colors
+                     focus:outline-none focus-visible:ring-4 focus-visible:ring-hope-green/40"
+        >
+          <Wallet className="h-6 w-6 flex-none text-hope-green" strokeWidth={2} aria-hidden="true" />
+          <span className="flex-1 min-w-0">
+            <span className="block text-lg font-bold text-slate-900">Getting paid</span>
+            <span className="block text-sm text-slate-600">What you&apos;re owed and when it arrives</span>
+          </span>
+          <ChevronRight className="h-6 w-6 flex-none text-slate-400" strokeWidth={2.5} aria-hidden="true" />
         </Link>
       </div>
     </div>

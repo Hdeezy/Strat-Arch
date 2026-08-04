@@ -1,8 +1,16 @@
+/**
+ * TODAY'S PAYMENTS.
+ *
+ * Shows the card CODE, never anything about the person holding it. The
+ * counter needs to match a line to a sale; it has no business knowing who
+ * anyone is.
+ */
+
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { formatCAD, formatDateHamilton } from '@/lib/utils'
-import { type CardCategory } from '@/lib/types'
+import { ReceiptText } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,58 +20,74 @@ export default async function MerchantHistoryPage() {
   if (!user) redirect('/auth/login?redirectTo=/merchant/history')
 
   const admin = createAdminClient()
-  const { data: staffRecord } = await admin
+  const { data: staff } = await admin
     .from('merchant_staff')
     .select('merchant_id')
     .eq('user_id', user.id)
     .eq('is_active', true)
-    .single()
+    .maybeSingle()
 
-  if (!staffRecord) redirect('/merchant')
+  if (!staff) redirect('/merchant')
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+  const midnight = new Date()
+  midnight.setHours(0, 0, 0, 0)
 
-  const { data: redemptions } = await admin
+  const { data } = await admin
     .from('redemptions')
-    .select('*, card:cards(card_code, allowed_categories)')
-    .eq('merchant_id', staffRecord.merchant_id)
+    .select('id, amount_cents, occurred_at, card:cards(card_code)')
+    .eq('merchant_id', staff.merchant_id)
     .eq('status', 'succeeded')
-    .gte('occurred_at', today.toISOString())
+    .gte('occurred_at', midnight.toISOString())
     .order('occurred_at', { ascending: false })
 
-  const totalToday = redemptions?.reduce((sum, r) => sum + r.amount_cents, 0) || 0
+  const rows = (data ?? []) as unknown as {
+    id: string
+    amount_cents: number
+    occurred_at: string
+    card: { card_code: string } | null
+  }[]
+
+  const total = rows.reduce((s, r) => s + Number(r.amount_cents), 0)
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-hope-dark">Today&apos;s Transactions</h1>
-        <div className="text-right">
-          <div className="text-xs text-muted-foreground">Total</div>
-          <div className="font-bold text-hope-dark">{formatCAD(totalToday)}</div>
-        </div>
+      <div className="bg-white rounded-2xl border border-slate-200 p-5">
+        <p className="text-base font-medium text-slate-600">Taken today</p>
+        <p className="text-4xl font-bold text-slate-900 leading-none mt-2 tabular-nums">
+          {formatCAD(total)}
+        </p>
+        <p className="text-base text-slate-500 mt-2">
+          {rows.length} payment{rows.length === 1 ? '' : 's'}
+        </p>
       </div>
 
-      {!redemptions || redemptions.length === 0 ? (
-        <div className="bg-white rounded-2xl shadow-sm p-8 text-center space-y-2">
-          <div className="text-3xl">📋</div>
-          <div className="text-sm text-muted-foreground">No transactions today</div>
+      {rows.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-slate-200 px-6 py-12 text-center">
+          <ReceiptText className="mx-auto h-8 w-8 text-slate-300" strokeWidth={1.5} aria-hidden="true" />
+          <p className="mt-3 text-lg font-semibold text-slate-900">Nothing yet today</p>
+          <p className="mt-1 text-base text-slate-600">
+            Payments appear here the moment you take one.
+          </p>
         </div>
       ) : (
-        <div className="space-y-2">
-          {redemptions.map(r => {
-            const card = r.card as { card_code: string; allowed_categories: CardCategory[] } | null
-            return (
-              <div key={r.id} className="bg-white rounded-xl shadow-sm p-4 flex items-center gap-3">
-                <div className="flex-1 min-w-0">
-                  <div className="font-mono font-semibold text-sm text-hope-dark">{card?.card_code || '—'}</div>
-                  <div className="text-xs text-muted-foreground">{formatDateHamilton(r.occurred_at)}</div>
-                </div>
-                <div className="font-bold text-hope-dark">{formatCAD(r.amount_cents)}</div>
+        <ul className="space-y-2">
+          {rows.map(r => (
+            <li
+              key={r.id}
+              className="bg-white rounded-xl border border-slate-200 p-4 flex items-center gap-3"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="font-mono text-base font-semibold text-slate-900">
+                  {r.card?.card_code ?? '—'}
+                </p>
+                <p className="text-sm text-slate-500">{formatDateHamilton(r.occurred_at)}</p>
               </div>
-            )
-          })}
-        </div>
+              <p className="text-xl font-bold text-slate-900 tabular-nums">
+                {formatCAD(r.amount_cents)}
+              </p>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   )
