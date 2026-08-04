@@ -1,66 +1,122 @@
+/**
+ * REDEMPTIONS — every capture, newest first.
+ *
+ * Shows the CAPTURED amount, which is what the vendor is owed and what the
+ * member actually spent. Under the two-phase model an authorization reserves
+ * the whole room available and the capture takes only what was rung up, so
+ * "authorized" and "spent" are different numbers and only one of them is
+ * money owed to anybody.
+ */
+
 import { createAdminClient } from '@/lib/supabase/admin'
-import { formatCAD, formatDateHamilton } from '@/lib/utils'
+import { formatDateHamilton } from '@/lib/utils'
+import {
+  PageHeader, Panel, Money, Status, Table, THead, TH, TBody, TR, TD, Empty,
+} from '@/components/ui/primitives'
+import { Receipt } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
+
+const STATUS_TONE = {
+  succeeded: 'ok',
+  failed: 'danger',
+  pending: 'warn',
+  refunded: 'muted',
+} as const
 
 export default async function AdminRedemptionsPage() {
   const admin = createAdminClient()
 
-  const { data: redemptions } = await admin
+  const { data } = await admin
     .from('redemptions')
     .select('*, card:cards(card_code), merchant:merchants(name, category)')
     .order('occurred_at', { ascending: false })
     .limit(200)
 
-  const succeeded = redemptions?.filter(r => r.status === 'succeeded') || []
-  const total = succeeded.reduce((s, r) => s + r.amount_cents, 0)
+  const rows = (data ?? []) as unknown as {
+    id: string
+    amount_cents: number
+    status: keyof typeof STATUS_TONE
+    occurred_at: string
+    card: { card_code: string } | null
+    merchant: { name: string; category: string } | null
+  }[]
+
+  const succeeded = rows.filter(r => r.status === 'succeeded')
+  const total = succeeded.reduce((s, r) => s + Number(r.amount_cents), 0)
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-hope-dark">Redemptions ({redemptions?.length ?? 0})</h1>
-        <div className="text-right">
-          <div className="text-xs text-muted-foreground">Total Redeemed</div>
-          <div className="font-bold text-hope-dark">{formatCAD(total)}</div>
-        </div>
+    <div className="space-y-6">
+      <PageHeader
+        title="Redemptions"
+        description="Every capture at a vendor counter. The amount shown is what was actually spent, not what was held."
+      />
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        <Panel className="p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Total captured</p>
+          <p className="mt-1.5 text-2xl font-semibold tabular-nums text-slate-900">
+            <Money cents={total} />
+          </p>
+        </Panel>
+        <Panel className="p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Successful</p>
+          <p className="mt-1.5 text-2xl font-semibold tabular-nums text-slate-900">
+            {succeeded.length}
+          </p>
+        </Panel>
+        <Panel className="p-4">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">Average</p>
+          <p className="mt-1.5 text-2xl font-semibold tabular-nums text-slate-900">
+            <Money cents={succeeded.length ? Math.round(total / succeeded.length) : 0} />
+          </p>
+        </Panel>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b border-border">
-            <tr>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Date</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Card</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground">Merchant</th>
-              <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground">Amount</th>
-              <th className="text-center px-4 py-3 text-xs font-semibold text-muted-foreground">Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {redemptions?.map(r => {
-              const card = r.card as { card_code: string } | null
-              const merchant = r.merchant as { name: string; category: string } | null
-              return (
-                <tr key={r.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-xs text-muted-foreground">{formatDateHamilton(r.occurred_at)}</td>
-                  <td className="px-4 py-3 font-mono font-semibold text-hope-dark">{card?.card_code || '—'}</td>
-                  <td className="px-4 py-3 text-sm">{merchant?.name || '—'}</td>
-                  <td className="px-4 py-3 text-right font-semibold">{formatCAD(r.amount_cents)}</td>
-                  <td className="px-4 py-3 text-center">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                      r.status === 'succeeded' ? 'bg-hope-pale text-hope-dark' :
-                      r.status === 'failed' ? 'bg-red-100 text-red-800' :
-                      'bg-gray-100 text-gray-700'
-                    }`}>
-                      {r.status}
-                    </span>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
+      {rows.length === 0 ? (
+        <Panel>
+          <Empty
+            icon={Receipt}
+            title="No redemptions yet"
+            description="A row appears here the first time a vendor captures against a card. Until then, cards may be funded but nothing has been spent."
+          />
+        </Panel>
+      ) : (
+        <Table>
+          <THead>
+            <TH>When</TH>
+            <TH>Card</TH>
+            <TH>Vendor</TH>
+            <TH align="right">Amount</TH>
+            <TH>Status</TH>
+          </THead>
+          <TBody>
+            {rows.map(r => (
+              <TR key={r.id}>
+                <TD className="text-slate-500 whitespace-nowrap">
+                  {formatDateHamilton(r.occurred_at)}
+                </TD>
+                <TD mono className="font-semibold text-slate-900">
+                  {r.card?.card_code ?? '—'}
+                </TD>
+                <TD>{r.merchant?.name ?? '—'}</TD>
+                <TD align="right" className="font-semibold">
+                  <Money cents={r.amount_cents} />
+                </TD>
+                <TD>
+                  <Status tone={STATUS_TONE[r.status] ?? 'muted'}>{r.status}</Status>
+                </TD>
+              </TR>
+            ))}
+          </TBody>
+        </Table>
+      )}
+
+      {rows.length >= 200 && (
+        <p className="text-xs text-slate-500">
+          Showing the most recent 200. Use the CSV export for the full record.
+        </p>
+      )}
     </div>
   )
 }
