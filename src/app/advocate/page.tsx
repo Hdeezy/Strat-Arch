@@ -1,8 +1,21 @@
+/**
+ * ADVOCATE HOME.
+ *
+ * Answers one question in the first second: how many working cards do I have
+ * on me right now? Everything else is secondary to that, because it is the
+ * thing an advocate actually needs to know before walking out the door.
+ *
+ * The "ready to hand out" figure counts UNLOADED cards, not active ones — an
+ * unloaded card is a blank you can still give away, and a card already in
+ * someone's hands is not yours to count.
+ */
+
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { formatCAD } from '@/lib/utils'
 import Link from 'next/link'
+import { Layers, CreditCard, ChevronRight, AlertCircle } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,70 +30,96 @@ export default async function AdvocatePage() {
     .select('id, charity_id, full_name')
     .eq('user_id', user.id)
     .eq('is_active', true)
-    .single()
+    .maybeSingle()
 
-  if (!advocate) redirect('/auth/login')
+  if (!advocate) redirect('/advocate')
 
-  const { data: cards } = await admin
+  const { data: cardRows } = await admin
     .from('cards')
     .select('id, state, balance_cents')
     .eq('charity_id', advocate.charity_id)
 
-  const stats = {
-    active: cards?.filter(c => c.state === 'active').length || 0,
-    unloaded: cards?.filter(c => c.state === 'unloaded').length || 0,
-    exhausted: cards?.filter(c => c.state === 'exhausted').length || 0,
-    totalLoaded: cards?.filter(c => c.state === 'active').reduce((s, c) => s + c.balance_cents, 0) || 0,
-  }
+  const cards = (cardRows ?? []) as unknown as { state: string; balance_cents: number }[]
+  const count = (s: string) => cards.filter(c => c.state === s).length
+
+  const readyToGive = count('unloaded')
+  const inPeoplesHands = count('active')
+  const valueOut = cards
+    .filter(c => c.state === 'active')
+    .reduce((s, c) => s + Number(c.balance_cents), 0)
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-hope-dark">Welcome back, {advocate.full_name.split(' ')[0]}</h1>
-        <p className="text-sm text-muted-foreground">Outreach toolkit</p>
+    <div className="space-y-5">
+      {/* The one number that matters before you leave. */}
+      <div className="bg-white rounded-2xl border border-slate-200 p-5">
+        <p className="text-base font-medium text-slate-600">Blank cards ready to hand out</p>
+        <p className="text-6xl font-bold text-hope-dark leading-none mt-2 tabular-nums">
+          {readyToGive}
+        </p>
+        {readyToGive === 0 && (
+          <p className="mt-3 flex items-start gap-2 text-base text-amber-800 bg-amber-50 rounded-xl p-3">
+            <AlertCircle className="h-5 w-5 flex-none mt-0.5" strokeWidth={2} aria-hidden="true" />
+            <span>
+              You have none left. Ask your programme lead to print and register more
+              before your next shift.
+            </span>
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-hope-dark text-white rounded-2xl p-4">
-          <div className="text-xs text-hope-light">Active Cards</div>
-          <div className="text-3xl font-bold">{stats.active}</div>
+        <div className="bg-white rounded-2xl border border-slate-200 p-4">
+          <p className="text-sm font-medium text-slate-600">In people&apos;s hands</p>
+          <p className="text-3xl font-bold text-slate-900 mt-1 tabular-nums">{inPeoplesHands}</p>
         </div>
-        <div className="bg-white rounded-2xl shadow-sm p-4">
-          <div className="text-xs text-muted-foreground">Total Value Active</div>
-          <div className="text-2xl font-bold text-hope-dark">{formatCAD(stats.totalLoaded)}</div>
-        </div>
-        <div className="bg-white rounded-2xl shadow-sm p-4">
-          <div className="text-xs text-muted-foreground">Unloaded Cards</div>
-          <div className="text-2xl font-bold text-hope-dark">{stats.unloaded}</div>
-        </div>
-        <div className="bg-white rounded-2xl shadow-sm p-4">
-          <div className="text-xs text-muted-foreground">Fully Used</div>
-          <div className="text-2xl font-bold text-hope-dark">{stats.exhausted}</div>
+        <div className="bg-white rounded-2xl border border-slate-200 p-4">
+          <p className="text-sm font-medium text-slate-600">Value out there</p>
+          <p className="text-3xl font-bold text-slate-900 mt-1 tabular-nums">
+            {formatCAD(valueOut)}
+          </p>
         </div>
       </div>
 
       <div className="space-y-3">
-        <Link href="/advocate/bulk-load" className="block w-full bg-hope-green hover:bg-hope-teal text-white rounded-2xl p-4 transition-colors">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">💳</span>
-            <div>
-              <div className="font-semibold">Load Cards for Distribution</div>
-              <div className="text-xs text-hope-light">Fund multiple cards before hitting the streets</div>
-            </div>
-            <span className="ml-auto">→</span>
-          </div>
+        <Link
+          href="/advocate/bulk-load"
+          className="flex items-center gap-4 w-full bg-hope-green hover:bg-hope-teal text-white rounded-2xl p-5 transition-colors
+                     focus:outline-none focus-visible:ring-4 focus-visible:ring-hope-green/40"
+        >
+          <Layers className="h-7 w-7 flex-none" strokeWidth={2} aria-hidden="true" />
+          <span className="flex-1 min-w-0">
+            <span className="block text-lg font-bold">Put money on cards</span>
+            <span className="block text-sm text-hope-pale mt-0.5">
+              Load a batch before your shift
+            </span>
+          </span>
+          <ChevronRight className="h-6 w-6 flex-none" strokeWidth={2.5} aria-hidden="true" />
         </Link>
 
-        <Link href="/advocate/cards" className="block w-full bg-white hover:bg-hope-pale rounded-2xl p-4 shadow-sm transition-colors">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">📋</span>
-            <div>
-              <div className="font-semibold text-hope-dark">Manage Distributed Cards</div>
-              <div className="text-xs text-muted-foreground">Mark as issued, view status, invalidate</div>
-            </div>
-            <span className="ml-auto text-hope-green">→</span>
-          </div>
+        <Link
+          href="/advocate/cards"
+          className="flex items-center gap-4 w-full bg-white hover:bg-slate-50 border border-slate-200 rounded-2xl p-5 transition-colors
+                     focus:outline-none focus-visible:ring-4 focus-visible:ring-hope-green/40"
+        >
+          <CreditCard className="h-7 w-7 flex-none text-hope-green" strokeWidth={2} aria-hidden="true" />
+          <span className="flex-1 min-w-0">
+            <span className="block text-lg font-bold text-slate-900">Find a card</span>
+            <span className="block text-sm text-slate-600 mt-0.5">
+              Check a balance, or stop a lost card
+            </span>
+          </span>
+          <ChevronRight className="h-6 w-6 flex-none text-slate-400" strokeWidth={2.5} aria-hidden="true" />
         </Link>
+      </div>
+
+      {/* The lost-card path is the one an advocate needs under pressure, on a
+          phone call, so it does not get buried behind a menu. */}
+      <div className="bg-slate-100 rounded-2xl p-4">
+        <p className="text-base font-semibold text-slate-900">Someone lost their card?</p>
+        <p className="text-base text-slate-600 mt-1">
+          Find it under <span className="font-semibold">Cards</span>, stop it, and give
+          them a new one. The money moves across — they don&apos;t lose a cent.
+        </p>
       </div>
     </div>
   )
