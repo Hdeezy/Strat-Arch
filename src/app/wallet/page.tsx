@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { validateCardCode, normalizeCardCode } from '@/lib/utils'
 
 export default function WalletPage() {
   const [code, setCode] = useState('')
@@ -9,9 +10,11 @@ export default function WalletPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const normalized = code.trim().toUpperCase()
-    if (!/^[A-Z]{4}-[A-Z0-9]{4}$/.test(normalized)) {
-      setError('Card code format: HMLT-0001')
+    const normalized = normalizeCardCode(code)
+    // Shared validator, not a private copy — a local regex here is exactly
+    // what silently rejected every 8-character code after the codes changed.
+    if (!validateCardCode(normalized)) {
+      setError('That doesn\u2019t look like a card code. It looks like HMLT-3F7K2QX9.')
       return
     }
     setLoading(true)

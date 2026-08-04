@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { formatCAD } from '@/lib/utils'
+import { formatCAD, validateCardCode } from '@/lib/utils'
 import { AMOUNT_PRESETS } from '@/lib/types'
 
 interface CardEntry {
@@ -52,7 +52,7 @@ export default function BulkLoadPage() {
 
   async function addCard(code: string = inputCode) {
     const normalized = code.trim().toUpperCase()
-    if (!normalized || !/^[A-Z]{4}-[A-Z0-9]{4}$/.test(normalized)) {
+    if (!normalized || !validateCardCode(normalized)) {
       setError('Invalid card code format (e.g. HMLT-0001)')
       return
     }
@@ -79,7 +79,7 @@ export default function BulkLoadPage() {
     const codes = text
       .split(/[\n,;\t]+/)
       .map(s => s.trim().toUpperCase())
-      .filter(s => /^[A-Z]{4}-[A-Z0-9]{4}$/.test(s))
+      .filter(s => validateCardCode(s))
       .filter(s => !cards.some(c => c.code === s))
 
     if (codes.length === 0) {

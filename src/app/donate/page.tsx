@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import { validateCardCode, normalizeCardCode, extractCardCodeFromQR } from '@/lib/utils'
 
 export default function DonatePage() {
   const [manualCode, setManualCode] = useState('')
@@ -45,33 +46,37 @@ export default function DonatePage() {
   }
 
   async function handleScannedValue(value: string) {
-    // Extract card code from QR — could be a URL or raw code
-    let code = value.trim()
-    const urlMatch = code.match(/\/donate\/([A-Z]{4}-[A-Z0-9]{4})/i)
-    if (urlMatch) code = urlMatch[1].toUpperCase()
+    // Card codes are parsed by the SHARED helper. A private regex here is
+    // what quietly broke this scanner when codes went from 4 characters of
+    // suffix to 8 — the camera read the card fine and the page said the QR
+    // was invalid.
+    const fromUrl = extractCardCodeFromQR(value)
+    const code = fromUrl ?? normalizeCardCode(value)
 
-    // Could also be a JWT — extract card_code from it
-    if (code.includes('.')) {
-      // It's a JWT-style payload — redirect to lookup
-      setLoading(true)
-      router.push(`/donate/scan-result?token=${encodeURIComponent(code)}`)
+    if (validateCardCode(code)) {
+      router.push(`/donate/${code}`)
       return
     }
 
-    if (/^[A-Z]{4}-[A-Z0-9]{4}$/i.test(code)) {
-      router.push(`/donate/${code.toUpperCase()}`)
-    } else {
-      setError('Invalid QR code. Please try again or enter the card code manually.')
+    // A signed token rather than a card URL. There is no route that trades a
+    // token for a card here, so say so plainly instead of pushing to
+    // /donate/scan-result, which does not exist and 404s.
+    if (value.split('.').length === 3) {
+      setError('That code is for a shop till, not for giving. Type the card code printed on the card instead.')
+      return
     }
+
+    setError('That didn\u2019t scan as a HOPE Card. Try again, or type the code printed on the card.')
   }
 
   async function handleManualSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const code = manualCode.trim().toUpperCase()
-    if (!/^[A-Z]{4}-[A-Z0-9]{4}$/.test(code)) {
-      setError('Card code format: XXXX-XXXX (e.g. HMLT-0001)')
+    const code = normalizeCardCode(manualCode)
+    if (!validateCardCode(code)) {
+      setError('That doesn\u2019t look like a card code. It looks like HMLT-3F7K2QX9.')
       return
     }
+    setLoading(true)
     router.push(`/donate/${code}`)
   }
 
