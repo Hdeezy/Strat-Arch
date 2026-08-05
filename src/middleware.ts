@@ -92,10 +92,70 @@ export async function middleware(request: NextRequest) {
     )
   }
 
-  // Supabase session refresh + auth-guard redirect for /advocate, /merchant, /admin
-  const res = await updateSession(request)
+  // Supabase session refresh + auth-guard redirect for /advocate, /merchant, /admin.
+  //
+  // Wrapped because middleware failure is total: an exception here returns
+  // MIDDLEWARE_INVOCATION_FAILED for every route, including whichever page
+  // would have explained the problem. Whatever goes wrong, the request still
+  // gets served.
+  let res: NextResponse
+  try {
+    const session = await updateSession(request)
+
+    if (session.kind === 'unconfigured') {
+      return applySecurityHeaders(unconfiguredResponse(request, session.missing))
+    }
+    res = session.response
+  } catch (err) {
+    console.error('[middleware] session refresh failed; serving request unauthenticated:', err)
+    // Pass through rather than 500. Every protected layout independently
+    // checks auth server-side, so a failure here degrades the session
+    // refresh — it does not open a door.
+    res = NextResponse.next({ request })
+  }
 
   return applySecurityHeaders(res)
+}
+
+/**
+ * The app is deployed but its environment variables are not set.
+ *
+ * A raw 500 for this is unkind: the cause is a dashboard setting, and the
+ * only person who sees the error is the one who can fix it. So say which
+ * variables are missing and where they go.
+ */
+function unconfiguredResponse(request: NextRequest, missing: string[]): NextResponse {
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    return new NextResponse(
+      JSON.stringify({ error: 'Server is not configured', missing }),
+      { status: 503, headers: { 'Content-Type': 'application/json' } }
+    )
+  }
+
+  const list = missing.map(m => `<li><code>${m}</code></li>`).join('')
+  return new NextResponse(
+    `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+     <title>Not configured</title>
+     <style>
+       body{font:16px/1.6 ui-sans-serif,system-ui,sans-serif;background:#020617;color:#e2e8f0;
+            display:grid;place-items:center;min-height:100vh;margin:0;padding:2rem}
+       main{max-width:34rem}
+       h1{font-size:1.5rem;margin:0 0 .75rem;color:#fff}
+       code{background:#1e293b;padding:.15em .4em;border-radius:4px;font-size:.9em;color:#6ee7b7}
+       ul{padding-left:1.2rem} li{margin:.25rem 0}
+       p{color:#94a3b8} a{color:#6ee7b7}
+     </style>
+     <main>
+       <h1>This deployment isn't configured yet</h1>
+       <p>The app is running, but these environment variables are missing:</p>
+       <ul>${list}</ul>
+       <p>Add them in Vercel under <strong>Settings → Environment Variables</strong>,
+          then redeploy. Values in a local <code>.env.local</code> are not used by
+          a deployment — Vercel has its own copy.</p>
+       <p>See <code>docs/DEPLOY.md</code> §5 for the full list.</p>
+     </main>`,
+    { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+  )
 }
 
 export const config = {
