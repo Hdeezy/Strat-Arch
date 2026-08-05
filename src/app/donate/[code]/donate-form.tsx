@@ -240,7 +240,7 @@ export default function DonateForm({ cardId, cardCode, currentBalance }: Props) 
       </button>
 
       <p className="text-xs text-center text-muted-foreground">
-        Powered by Stripe · Secured by Living Rock Ministries<br />
+        Payments handled by Stripe<br />
         Funds go directly to the card — no overhead, no cash conversion
       </p>
     </form>

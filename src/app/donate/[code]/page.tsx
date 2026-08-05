@@ -64,7 +64,7 @@ export default async function DonateCardPage({ params }: { params: { code: strin
           <div className="text-sm text-muted-foreground">
             {card.state === 'exhausted'
               ? 'The card balance has been fully used. A new card can be funded.'
-              : 'Please contact Living Rock Ministries for assistance.'}
+              : 'Please contact the charity that issued this card.'}
           </div>
         </div>
       ) : (
