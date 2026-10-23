@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0E1A26">
+<title>HOPE · Essentials today. A way out for good.</title>
+<meta name="description" content="HOPE is building Hamilton's connective infrastructure for hope: daily essentials through local vendors, and a relationship-led way out for good. Pre-launch, with the first cards targeted for 2027.">
+<link rel="canonical" href="https://hopecard.ca/">
+<meta property="og:site_name" content="HOPE">
+<meta property="og:title" content="HOPE · Essentials today. A way out for good.">
+<meta property="og:description" content="Citizens, charities, churches and Corporate Canada, pulling in one direction for our unhoused neighbours in Hamilton.">
+<meta property="og:url" content="https://hopecard.ca/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_CA">
+<meta property="og:image" content="https://hopecard.ca/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Two hands pass a HOPE card beside the words Essentials Today. A way out for good.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HOPE · Essentials today. A way out for good.">
+<meta name="twitter:description" content="Hamilton's connective infrastructure for hope. Pre-launch, building now.">
+<meta name="twitter:image" content="https://hopecard.ca/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231B4332'/%3E%3Cpath d='M18 16v32M46 16v32M18 32h28' stroke='%2395D5B2' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preload" as="image" href="plates/escarpment-summer.webp" fetchpriority="high">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+/* A Hamilton photo stack is fixed behind the page. Scrolling walks the camera from the
+   Mountain at midday, over the lower city, to the bay at sunset. Content scrolls over it.
+   The HOPE wordmark sits behind the escarpment ledge cutout. */
+:root{
+  --night:#0E1A26;
+  --ink:#10261C;
+  --green:#2D6A4F;
+  --green-deep:#1B4332;
+  --mint:#95D5B2;
+  --pale:#D8F3DC;
+  --bone:#F3F5F0;
+  --card:#F7F9F5;
+  --card-ill:#E9F3EC;
+  --muted:#4B5D54;
+  --body-ink:#24382E;
+  --rule:rgba(16,38,28,.14);
+  --font:'Archivo','Helvetica Neue',Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--night);color:var(--bone);font:400 17px/1.55 var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:2.5px solid var(--mint);outline-offset:3px;border-radius:6px}
+h1,h2,h3{margin:0;text-wrap:balance}
+p{text-wrap:pretty}
+.sr{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-80px;z-index:30;background:var(--bone);color:var(--ink);padding:10px 14px;border-radius:8px;font-weight:650;text-decoration:none}
+.skip:focus{top:12px}
+
+/* ---------- fixed scene layers ---------- */
+#plates,#fore,#dim,#scrim{position:fixed;inset:0;pointer-events:none}
+#plates{z-index:0;background:#2b4a3a}
+#plates img,#fore img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:opacity,transform}
+#plates img{opacity:0}
+#plates img.p0{opacity:1}
+#fore,#dim,#scrim{z-index:2}
+#dim{background:#0b0c10;opacity:.03}
+#scrim{background:linear-gradient(180deg,rgba(10,12,16,.3),rgba(10,12,16,.02) 38%,rgba(10,12,16,.28))}
+.vig{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(6,12,22,.38))}
+.grain{position:fixed;inset:0;z-index:9;pointer-events:none;opacity:.07;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:8;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) max(16px,4.5vw) 14px;transition:background .35s}
+.nav::before{content:"";position:absolute;inset:0 0 -30px;z-index:-1;pointer-events:none;background:linear-gradient(rgba(6,16,26,.45),transparent);transition:opacity .35s}
+.nav.solid::before{opacity:0}
+.nav.solid{background:#0b1812}
+.prog{position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--mint);transform:scaleX(0);transform-origin:0 50%;opacity:0;transition:opacity .35s}
+.nav.solid .prog{opacity:.9}
+.brand{display:flex;align-items:baseline;gap:12px;text-decoration:none}
+.brand b{font-weight:850;font-stretch:125%;font-size:22px;letter-spacing:.01em}
+.brand span{font-weight:600;font-stretch:75%;font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.75}
+.nav-links{display:flex;align-items:center;gap:26px}
+.nav-links a{font-weight:600;font-stretch:80%;font-size:13px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;opacity:.82}
+.nav-links a:hover{opacity:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;padding:12px 20px;font:650 15px/1 var(--font);text-decoration:none;border:1.5px solid transparent;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.btn-go{background:var(--green);color:#fff}
+.btn-go:hover{background:var(--green-deep)}
+.btn-line{border-color:rgba(243,245,240,.7);color:var(--bone)}
+.btn-line:hover{background:var(--bone);color:var(--ink)}
+.btn-soft{border-color:var(--green);color:var(--green-deep);background:transparent}
+.btn-soft:hover{background:var(--green);color:#fff}
+.nav .btn{padding:10px 18px;font-size:14px;opacity:1!important;letter-spacing:0;text-transform:none;font-stretch:100%}
+@media(max-width:860px){.nav-links a:not(.btn),.brand span{display:none}}
+
+/* ---------- rail ---------- */
+.rail{position:fixed;right:max(16px,2vw);top:50%;transform:translateY(-50%);z-index:7;display:none;flex-direction:column;gap:16px}
+@media(min-width:1440px){.rail{display:flex}}
+.rail a{display:flex;align-items:center;justify-content:flex-end;gap:10px;font-weight:600;font-stretch:75%;font-size:11px;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;color:rgba(243,245,240,.5);transition:color .3s}
+.rail a i{display:block;width:16px;height:1.5px;background:currentColor;transition:width .35s,background .35s}
+.rail a:hover,.rail a.on{color:var(--bone)}
+.rail a.on i{width:34px;background:var(--mint)}
+
+/* ---------- page ---------- */
+main{position:relative;padding-inline:max(16px,4.5vw);overflow-x:clip}
+.wrap{max-width:1160px;margin-inline:auto}
+.c{position:relative;z-index:3}
+.eyebrow{display:flex;align-items:center;gap:10px;margin:0;font-weight:650;font-stretch:75%;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--pale)}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--mint);flex:none}
+.scene{position:relative;padding-block:clamp(110px,22vh,240px)}
+.shadowed{text-shadow:0 2px 26px rgba(4,10,20,.72),0 1px 3px rgba(4,10,20,.6)}
+.h2{font-weight:760;font-size:clamp(30px,4.4vw,56px);line-height:1.04;letter-spacing:-.025em;margin:14px 0 0}
+.lede{font-size:clamp(17px,1.9vw,21px);max-width:38ch;margin:0 0 28px;opacity:.95}
+.row{display:flex;flex-wrap:wrap;gap:12px}
+.light{color-scheme:light}
+
+.js .rv{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.js .rv.in{opacity:1;transform:none}
+
+/* hero */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;padding-top:calc(env(safe-area-inset-top,0px) + 112px)}
+.hero .c{max-width:780px}
+.hero .c::before{content:"";position:absolute;inset:-40px -60px -40px -80px;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,rgba(6,14,24,.4),transparent)}
+.h1{font-weight:760;font-size:clamp(36px,5.8vw,76px);line-height:1.02;letter-spacing:-.028em;margin:18px 0}
+.slot{display:inline-block;position:relative;overflow:hidden;vertical-align:bottom;height:1.08em;transition:width .45s cubic-bezier(.6,0,.2,1)}
+.slot i{text-shadow:none;font-style:normal;position:absolute;left:0;top:0;white-space:nowrap;transform:translateY(105%);opacity:0;transition:transform .55s cubic-bezier(.5,0,.1,1),opacity .35s}
+.slot i.in{transform:none;opacity:1}
+.slot i.out{transform:translateY(-105%);opacity:0}
+.h1 .soft{opacity:.78}
+.wordmark{position:relative;z-index:1;margin-top:auto;width:100%;text-align:center;white-space:nowrap;line-height:.72;
+  font-weight:850;font-stretch:125%;letter-spacing:-.025em;color:var(--bone);pointer-events:none;user-select:none;font-size:22vw;
+  -webkit-mask-image:linear-gradient(180deg,#000 64%,transparent 100%);mask-image:linear-gradient(180deg,#000 64%,transparent 100%);opacity:.95}
+.wordmark span{display:inline-block;transform:translateY(-6%)}
+@media(max-aspect-ratio:4/5){.hero{padding-bottom:8svh}}
+.cue{position:absolute;z-index:3;left:0;bottom:clamp(20px,4vh,40px);display:flex;align-items:center;gap:12px;
+  font-weight:650;font-stretch:75%;font-size:11px;letter-spacing:.22em;text-transform:uppercase;text-decoration:none}
+.cue i{display:block;width:56px;height:1.5px;background:rgba(243,245,240,.35);position:relative;overflow:hidden}
+.cue i::after{content:"";position:absolute;inset:0;background:var(--bone);transform:translateX(-100%);animation:cue 2.4s cubic-bezier(.6,0,.3,1) infinite}
+@keyframes cue{to{transform:translateX(100%)}}
+
+/* numbers */
+.grp{display:flex;align-items:center;gap:12px;margin:40px 0 14px;font-weight:650;font-stretch:75%;font-size:12px;letter-spacing:.2em;text-transform:uppercase}
+.grp hr{flex:1;border:0;height:1px;background:rgba(243,245,240,.35);margin:0}
+.chip{border-radius:999px;padding:5px 11px;font-weight:700;font-stretch:75%;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;background:var(--pale);color:var(--green-deep)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.stat{position:relative;background:var(--card);color:var(--ink);border-radius:14px;padding:22px 22px 16px;display:flex;flex-direction:column;gap:6px;min-width:0;
+  box-shadow:0 24px 60px -34px rgba(4,14,10,.7);transition:transform .3s cubic-bezier(.2,.7,.2,1),box-shadow .3s}
+.stat:hover{transform:translateY(-3px);box-shadow:0 30px 70px -34px rgba(4,14,10,.8)}
+.stat.ill{background:var(--card-ill);outline:1.5px dashed var(--green);outline-offset:-7px}
+.stat .chip{position:absolute;top:14px;right:14px;padding:4px 9px;font-size:9.5px}
+.num{font-weight:820;font-stretch:112%;font-size:clamp(42px,4.8vw,62px);line-height:.95;letter-spacing:-.035em;color:var(--green);font-variant-numeric:tabular-nums}
+.lab{font-weight:620;font-size:15.5px;line-height:1.35}
+.src{font-weight:650;font-stretch:75%;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.dive{margin-top:6px;border-top:1px solid var(--rule)}
+.dive summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding-top:12px;
+  font-weight:650;font-stretch:80%;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--green)}
+.dive summary::-webkit-details-marker{display:none}
+.dive summary::after{content:"+";font-size:20px;line-height:1;font-weight:400;transition:transform .25s}
+.dive[open] summary::after{transform:rotate(45deg)}
+.dive p{margin:10px 0 4px;font-size:14.5px;line-height:1.55;color:var(--body-ink)}
+.dive a{color:var(--green);font-weight:600}
+@media(max-width:760px){
+  .stats{grid-template-columns:1fr}
+  .stat{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:16px;row-gap:2px;align-items:center;padding:16px 16px 12px}
+  .stat .num{grid-row:span 2;font-size:40px}
+  .stat .dive{grid-column:1/-1}
+  .stat .chip{top:10px;right:10px}
+}
+
+/* the dial: 2,129 dots, one per person counted in Hamilton */
+.panel{background:var(--card);color:var(--ink);border-radius:18px;padding:clamp(22px,3.4vw,40px);box-shadow:0 30px 80px -36px rgba(4,14,10,.75)}
+.panel .eyebrow{color:var(--green)}
+.panel .eyebrow::before{background:var(--green)}
+.dial{margin-top:14px}
+.dial-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px 32px}
+.h3{font-weight:760;font-size:clamp(24px,2.8vw,34px);line-height:1.08;letter-spacing:-.02em;margin-top:12px;max-width:21ch}
+.h3 em{font-style:normal;color:var(--green);font-variant-numeric:tabular-nums}
+.ctrl{display:flex;flex-direction:column;gap:12px;width:min(100%,360px)}
+.picks{display:flex;gap:6px}
+.pick{flex:1;border:1.5px solid var(--rule);background:#fff;color:var(--ink);border-radius:999px;padding:9px 0;font:650 14px/1 var(--font);cursor:pointer;font-variant-numeric:tabular-nums;transition:background .2s,border-color .2s,color .2s}
+.pick:hover{border-color:var(--green)}
+.pick[aria-pressed="true"]{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+.range{display:flex;align-items:center;gap:12px;font-weight:650;font-stretch:80%;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.range input{flex:1;min-width:0;accent-color:var(--green);height:30px;margin:0;cursor:pointer}
+.dots{margin-top:24px}
+.dots canvas{display:block;width:100%;height:150px}
+.legend{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 18px;margin-top:12px;font-size:13px;color:var(--muted)}
+.legend>span{display:inline-flex;align-items:baseline;gap:7px}
+.legend i{width:9px;height:9px;border-radius:50%;background:#D3DBD5;flex:none}
+.legend i.on{background:var(--green)}
+.reads{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
+.read{border-top:2px solid var(--green);padding-top:12px;min-width:0}
+.read b{display:block;font-weight:820;font-stretch:112%;font-size:clamp(32px,3.6vw,46px);line-height:1;letter-spacing:-.03em;color:var(--green);font-variant-numeric:tabular-nums}
+.read span{display:block;margin-top:7px;font-weight:620;font-size:15px;line-height:1.3}
+.read small span{display:inline;margin:0;font:inherit}
+.read small{display:block;margin-top:5px;font-weight:650;font-stretch:75%;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.fine{font-size:13.5px;line-height:1.55;color:var(--muted);margin:20px 0 0;max-width:86ch}
+.fine a{color:var(--green);font-weight:600}
+@media(max-width:760px){
+  .reads{grid-template-columns:1fr;gap:12px}
+  .read{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;align-items:center}
+  .read b{grid-row:span 2;font-size:30px;min-width:4.4em}
+  .read span{margin-top:0}
+  .read small{margin-top:2px}
+}
+
+/* why */
+.why .c{max-width:1000px}
+.why .c::before{content:"";position:absolute;inset:-12% -10%;z-index:-1;pointer-events:none;background:radial-gradient(closest-side,rgba(6,12,14,.6),transparent)}
+.why .l1,.why .l2{display:block;font-weight:780;font-size:clamp(34px,6.6vw,92px);line-height:1;letter-spacing:-.032em}
+.why .l2{color:var(--mint);margin-top:.12em}
+.why p{font-size:clamp(17px,1.9vw,21px);max-width:44ch;margin:28px 0 0}
+.why p b{font-weight:650;color:var(--pale)}
+
+/* how */
+.panel-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 24px}
+.panel .h2{color:var(--ink)}
+.tag{font-weight:650;font-size:clamp(15px,1.6vw,18px);color:var(--green);margin:0}
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:28px}
+.step{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px 6px 16px;border-radius:12px;border:1.5px solid var(--rule);
+  background:#fff;color:var(--ink);font:inherit;cursor:pointer;transition:border-color .2s,background .2s,transform .2s}
+.step:hover{border-color:var(--green);transform:translateY(-2px)}
+.step[aria-pressed="true"]{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+.step svg{width:30px;height:30px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.step:not([aria-pressed="true"]) svg{stroke:var(--green)}
+.step b{font-weight:680;font-size:14px;line-height:1.1;text-align:center}
+.step:not(:last-child)::after{content:"";position:absolute;right:-8px;top:50%;width:8px;height:1.5px;background:var(--green);opacity:.5}
+.step .bar{position:absolute;left:12px;right:12px;bottom:7px;height:2px;border-radius:2px;background:rgba(255,255,255,.22);overflow:hidden;opacity:0}
+.step .bar::after{content:"";position:absolute;inset:0;background:var(--mint);transform:scaleX(0);transform-origin:0 50%}
+.steps.auto .step[aria-pressed="true"] .bar{opacity:1}
+.steps.auto .step[aria-pressed="true"] .bar::after{animation:fillbar 5.2s linear forwards}
+@keyframes fillbar{to{transform:scaleX(1)}}
+.step-text{min-height:3.2em;margin:18px 0 0;font-size:16.5px;line-height:1.5;max-width:62ch}
+.step-text .k{font-weight:700;color:var(--green)}
+.spine{display:grid;grid-template-columns:3fr 1fr 1fr;gap:8px;margin-top:22px}
+.spine span{border-top:2px solid var(--green);padding-top:8px;font-weight:700;font-stretch:75%;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--green)}
+@media(max-width:560px){
+  .step{padding:12px 2px 13px;gap:7px}
+  .step svg{width:24px;height:24px}
+  .step b{font-size:11.5px}
+  .step .bar{left:8px;right:8px;bottom:5px}
+  .spine span{font-size:9.5px;letter-spacing:.1em}
+}
+
+/* join */
+.ways{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:34px;align-items:start}
+@media(max-width:1020px){.ways{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.ways{grid-template-columns:1fr}}
+.way{background:var(--card);color:var(--ink);border-radius:16px;box-shadow:0 26px 60px -34px rgba(4,14,10,.75);min-width:0;transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.way:not([open]):hover{transform:translateY(-3px)}
+.way summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;gap:12px;padding:22px}
+.way summary::-webkit-details-marker{display:none}
+.way .av{width:52px;height:52px;border-radius:50%;background:var(--pale);display:grid;place-items:center}
+.way .av svg{width:26px;height:26px;stroke:var(--green-deep);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.way h3{font-weight:760;font-size:22px;letter-spacing:-.015em;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.way h3::after{content:"";width:10px;height:10px;border-right:2px solid var(--green);border-bottom:2px solid var(--green);transform:rotate(45deg) translateY(-3px);transition:transform .25s;flex:none}
+.way[open] h3::after{transform:rotate(225deg) translateY(-1px)}
+.way .one{font-size:15.5px;line-height:1.4;color:#2B3F35}
+.way .kind{align-self:flex-start;background:var(--ink);color:var(--pale)}
+.way .more{display:flex;flex-direction:column;gap:14px;border-top:1px solid var(--rule);margin-inline:22px;padding:16px 0 22px}
+.way .more p{margin:0;font-size:15px;line-height:1.55;color:var(--body-ink)}
+.way .more .note{font-size:13px;color:var(--muted);background:#EEF2EC;border-radius:8px;padding:9px 11px}
+.way .more .row{gap:8px}
+@media(max-width:560px){
+  .way summary{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;row-gap:4px;align-items:center;padding:16px}
+  .way .av{grid-row:1/span 2;width:46px;height:46px}
+  .way .kind{grid-column:2;grid-row:1;justify-self:start}
+  .way .kind+h3{grid-row:2}
+  .way .one{grid-column:2}
+  .way h3{font-size:20px}
+  .way .more{margin-inline:16px;padding-bottom:16px}
+}
+
+/* faq + connect */
+.split{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(24px,5vw,64px);align-items:start}
+@media(max-width:900px){.split{grid-template-columns:1fr}}
+.split .lede{margin:22px 0 24px}
+.faqs{background:var(--card);color:var(--ink);border-radius:18px;padding:4px clamp(18px,2.6vw,30px);box-shadow:0 30px 80px -36px rgba(4,14,10,.75)}
+.faqs details{border-bottom:1px solid var(--rule)}
+.faqs details:last-child{border-bottom:0}
+.faqs summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:18px 0;font-weight:680;font-size:17px;line-height:1.3}
+.faqs summary::-webkit-details-marker{display:none}
+.faqs summary::after{content:"+";font-size:24px;font-weight:400;color:var(--green);transition:transform .25s;line-height:.8;flex:none}
+.faqs details[open] summary::after{transform:rotate(45deg)}
+.faqs p{margin:0 0 18px;font-size:15.5px;line-height:1.6;color:var(--body-ink);max-width:68ch}
+.faqs a{color:var(--green);font-weight:600}
+
+.form{background:var(--card);color:var(--ink);border-radius:18px;padding:clamp(20px,3vw,34px);box-shadow:0 30px 80px -36px rgba(4,14,10,.75)}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.f{display:flex;flex-direction:column;gap:7px;min-width:0}
+.f.full{grid-column:1/-1}
+.f label{font-weight:650;font-stretch:80%;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--green-deep)}
+.f label small{font-weight:500;letter-spacing:.06em;text-transform:none;color:var(--muted);font-size:12px}
+.f input,.f select,.f textarea{font:400 16px/1.4 var(--font);color:var(--ink);background:#fff;border:1.5px solid rgba(16,38,28,.22);border-radius:10px;padding:12px;width:100%;transition:border-color .2s,box-shadow .2s}
+.f select{appearance:none;-webkit-appearance:none;padding-right:38px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%232D6A4F' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 14px center}
+.f textarea{min-height:112px;resize:vertical}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--green);outline:none;box-shadow:0 0 0 3px rgba(45,106,79,.2)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.consent{display:flex;gap:11px;align-items:flex-start;margin-top:18px;font-size:14px;line-height:1.45;color:var(--body-ink);cursor:pointer}
+.consent input{margin:2px 0 0;width:18px;height:18px;accent-color:var(--green);flex:none}
+.consent a{color:var(--green);font-weight:600}
+.form .send{width:100%;margin-top:18px;padding:16px 20px;font-size:16px}
+.form .send[disabled]{opacity:.7;cursor:progress}
+.fnote{font-size:13px;color:var(--muted);margin:12px 0 0}
+.fnote a{color:var(--green)}
+.fstatus{margin:10px 0 0;font-weight:650;font-size:15px;line-height:1.4;color:var(--green-deep)}
+.fstatus:empty{display:none}
+.fstatus.err{color:#8A2E1E}
+.fstatus.ok{background:var(--pale);border-radius:10px;padding:12px 14px}
+@media(max-width:560px){.fields{grid-template-columns:1fr}}
+.side-links{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.side-links a{display:inline-flex;align-items:center;gap:10px;font-weight:650;font-size:15px;text-decoration:none;color:var(--bone);opacity:.92}
+.side-links a::after{content:"";width:8px;height:8px;border-right:2px solid var(--mint);border-top:2px solid var(--mint);transform:rotate(45deg);transition:transform .2s}
+.side-links a:hover{opacity:1}
+.side-links a:hover::after{transform:translateX(3px) rotate(45deg)}
+
+/* footer */
+.foot{position:relative;padding-block:clamp(90px,16vh,170px) 40px}
+.foot::before{content:"";position:absolute;inset:0 calc(-1*max(16px,4.5vw));z-index:0;pointer-events:none;background:linear-gradient(180deg,transparent 18%,rgba(10,12,16,.78) 60%)}
+.foot .c{display:flex;flex-direction:column;gap:28px}
+.status{font-weight:650;font-size:clamp(20px,2.6vw,30px);line-height:1.25;letter-spacing:-.015em;max-width:32ch;margin:0}
+.status span{color:var(--mint)}
+.flinks{display:flex;flex-wrap:wrap;gap:12px 26px}
+.flinks a{font-weight:600;font-stretch:80%;font-size:13px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;opacity:.85}
+.flinks a:hover{opacity:1;color:var(--mint)}
+.sources summary{cursor:pointer;font-weight:600;font-stretch:80%;font-size:13px;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.sources ol{margin:14px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:14px;line-height:1.5;max-width:80ch;opacity:.86}
+.sources a{color:var(--pale)}
+.op{font-size:13px;line-height:1.55;max-width:90ch;opacity:.72;margin:0}
+.op a{color:var(--pale)}
+.legal{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;border-top:1px solid rgba(243,245,240,.2);padding-top:18px;font-size:12.5px;opacity:.6}
+.legal a{color:inherit}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .cue i::after{animation:none;transform:none}
+  .js .rv{opacity:1;transform:none}
+  *{transition:none!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#numbers">Skip to content</a>
+
+<div id="plates" aria-hidden="true"><img class="p0" src="plates/escarpment-summer.webp" alt="" fetchpriority="high" decoding="async" width="1680" height="944"></div>
+<div id="fore" aria-hidden="true"><img src="plates/escarpment-ledge.webp" alt="" decoding="async" width="1680" height="944"></div>
+<div id="dim" aria-hidden="true"></div>
+<div id="scrim" aria-hidden="true"></div>
+<div class="vig" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="HOPE, back to top"><b>HOPE</b><span>Helping Other People Everyday</span></a>
+  <nav class="nav-links" aria-label="Main">
+    <a href="#numbers">The numbers</a>
+    <a href="#how">How it will work</a>
+    <a href="#join">Get involved</a>
+    <a class="btn btn-go" href="/give" data-track="nav_give">Give</a>
+  </nav>
+  <i class="prog" id="prog" aria-hidden="true"></i>
+</header>
+
+<nav class="rail" id="rail" aria-label="Scenes">
+  <a href="#top">Mountain<i></i></a>
+  <a href="#numbers">City<i></i></a>
+  <a href="#how">Bay<i></i></a>
+  <a href="#join">Sunset<i></i></a>
+</nav>
+
+<main id="top">
+
+  <!-- 0 · THE MOUNTAIN · midday -->
+  <section class="hero" data-scene="0">
+    <div class="wrap c shadowed">
+      <p class="eyebrow">Hamilton, Ontario</p>
+      <h1 class="h1"><span class="slot" id="slot" aria-hidden="true"><i class="in" style="position:relative">Hamilton's</i></span><span class="sr">Hamilton's</span><br><span class="soft">connective infrastructure for hope.</span></h1>
+      <p class="lede">Citizens, charities, churches and Corporate Canada, pulling in one direction.</p>
+      <div class="row">
+        <a class="btn btn-go" href="/give" data-track="hero_give">Give</a>
+        <a class="btn btn-line" href="#how" data-track="hero_how">See how it will work</a>
+      </div>
+    </div>
+    <div class="wordmark" aria-hidden="true"><span id="mark">HOPE</span></div>
+    <a class="cue shadowed" href="#numbers"><i></i>Scroll down the Mountain</a>
+  </section>
+
+  <!-- 1 · THE CITY · lead-off numbers -->
+  <section class="scene" id="numbers" data-scene="1">
+    <div class="wrap c">
+      <p class="eyebrow shadowed">The numbers</p>
+      <h2 class="h2 shadowed">Proven elsewhere. Built for here.</h2>
+
+      <div class="grp shadowed">Proven elsewhere<hr></div>
+      <div class="stats light">
+        <article class="stat rv">
+          <div class="num">48 days</div>
+          <div class="lab">sooner into stable housing</div>
+          <div class="src">New Leaf Project · BC</div>
+          <details class="dive"><summary>Dive in</summary>
+            <p>50 people who had recently lost housing each received a one-time $7,500. They moved into stable housing in 96 days on average, against 144 for the comparison group. Foundations for Social Change with UBC; peer-reviewed in PNAS, 2023.</p>
+            <p>HOPE will pay for essentials and restoration costs directly rather than hand over cash. The lesson carries: resources plus trust move people forward.</p>
+          </details>
+        </article>
+        <article class="stat rv">
+          <div class="num">86%</div>
+          <div class="lab">still out of homelessness 6 to 9 months later</div>
+          <div class="src">Greater Change · UK</div>
+          <details class="dive"><summary>Dive in</summary>
+            <p>Personalised budgets agreed with a support worker and paid straight to providers. This is the program's own figure for people it supported in its last reported year, out of about 2,500 helped to date. Results from a government-funded randomised trial are expected in fall 2026.</p>
+          </details>
+        </article>
+        <article class="stat rv">
+          <div class="num">$8,100</div>
+          <div class="lab">saved per person in a year, from shelter costs alone</div>
+          <div class="src">New Leaf Project · BC</div>
+          <details class="dive"><summary>Dive in</summary>
+            <p>Fewer nights in shelter across the 50 recipients freed about $405,000 in one year. Even after the $7,500 transfer, the project reports a net saving of about $600 per person.</p>
+          </details>
+        </article>
+      </div>
+
+      <div class="grp shadowed">What it could mean here<hr></div>
+      <div class="stats light">
+        <article class="stat rv">
+          <div class="num">2,129</div>
+          <div class="lab">people recorded as experiencing homelessness in Hamilton</div>
+          <div class="src">City of Hamilton · June 30, 2026</div>
+          <details class="dive"><summary>Dive in</summary>
+            <p>Recorded in Hamilton's homelessness information system, including anyone with a shelter stay in the previous 90 days. It is administrative data, not a one-night census. <a href="/numbers">Source and limits</a></p>
+          </details>
+        </article>
+        <article class="stat ill rv">
+          <span class="chip">Illustrative</span>
+          <div class="num">$810K</div>
+          <div class="lab">a year in shelter costs freed if 100 Hamiltonians reach a stable restoration</div>
+          <div class="src">100 × $8,100 · not a forecast</div>
+          <details class="dive"><summary>Show the math</summary>
+            <p>Simple arithmetic on New Leaf's per-person saving, which reflects Vancouver shelter costs. Hamilton's own cost per shelter stay replaces it once confirmed. Try other numbers in the dial below.</p>
+          </details>
+        </article>
+        <article class="stat rv">
+          <div class="num">6 mo.</div>
+          <div class="lab">how HOPE will count success: a restoration that still holds six months on</div>
+          <div class="src">Our north star</div>
+          <details class="dive"><summary>Dive in</summary>
+            <p>We will count stable restorations, not cards handed out or dollars moved. A restoration only counts if it holds.</p>
+          </details>
+        </article>
+      </div>
+
+      <!-- the dial -->
+      <div class="grp shadowed">Move the dial<hr><span class="chip">Illustrative</span></div>
+      <div class="panel dial light rv" id="dial">
+        <div class="dial-head">
+          <div>
+            <p class="eyebrow">Hamilton, one person at a time</p>
+            <h3 class="h3">What <em id="dH">100</em> stable restorations would mean here.</h3>
+          </div>
+          <div class="ctrl">
+            <div class="picks" role="group" aria-label="Choose a number of restorations">
+              <button class="pick" type="button" data-n="25" aria-pressed="false">25</button>
+              <button class="pick" type="button" data-n="100" aria-pressed="true">100</button>
+              <button class="pick" type="button" data-n="250" aria-pressed="false">250</button>
+              <button class="pick" type="button" data-n="500" aria-pressed="false">500</button>
+            </div>
+            <label class="range"><span>10</span><input id="dRange" type="range" min="10" max="500" step="5" value="100" aria-label="Number of stable restorations"><span>500</span></label>
+          </div>
+        </div>
+        <div class="dots">
+          <canvas id="dots" role="img" aria-label="2,129 dots, one for each person recorded as experiencing homelessness in Hamilton. 100 are filled."></canvas>
+          <div class="legend"><span><i class="on"></i><span><b id="dLit">100</b> restored</span></span><span><i></i><span>Each dot is one of the 2,129 people recorded in Hamilton</span></span></div>
+        </div>
+        <div class="reads">
+          <div class="read"><b id="dSave">$810K</b><span>a year in shelter costs freed</span><small><span id="dSaveM">100</span> × $8,100 · New Leaf, BC</small></div>
+          <div class="read"><b id="dCost">$750K</b><span>to fund it at New Leaf's level</span><small><span id="dCostM">100</span> × $7,500, one time</small></div>
+          <div class="read"><b id="dPct">4.7%</b><span>of everyone counted in Hamilton</span><small>of 2,129 · June 30, 2026</small></div>
+        </div>
+        <p class="sr" id="dLive" aria-live="polite"></p>
+        <p class="fine">Illustrative arithmetic, not a forecast. New Leaf's figures reflect Vancouver shelter costs and a one-time cash transfer; HOPE will pay providers directly and will publish its own Hamilton costs once the pilot measures them. In New Leaf's first year, shelter savings outran the transfer by about $600 a person. <a href="/numbers#illustrative">See the method</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · OVER THE CITY · the why -->
+  <section class="scene why" data-scene="2">
+    <div class="wrap c shadowed rv">
+      <p class="eyebrow">Why HOPE</p>
+      <h2 style="margin-top:18px"><span class="l1">Homelessness is what you see.</span><span class="l2">Hopelessness is what put them there.</span></h2>
+      <p>Every person carries a gift, a trade, a thing they were made to build. <b>We want to be the first backers of their vision.</b></p>
+    </div>
+  </section>
+
+  <!-- 3 · THE BAY · how it will work -->
+  <section class="scene" id="how" data-scene="3">
+    <div class="wrap c">
+      <div class="panel light rv">
+        <div class="panel-head">
+          <div><p class="eyebrow">How it will work</p><h2 class="h2">One rail. Five moves.</h2></div>
+          <p class="tag">Essentials today. A way out for good.</p>
+        </div>
+        <div class="steps" id="steps" role="group" aria-label="The five moves">
+          <button class="step" type="button" aria-pressed="true" data-t="A neighbour or a company funds one Hamilton pool. A receiving charity, named before any payment, will hold the funds.">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 26s-9-5.6-9-12a5 5 0 0 1 9-3 5 5 0 0 1 9 3c0 6.4-9 12-9 12z"/></svg><b>Give</b><i class="bar"></i></button>
+          <button class="step" type="button" aria-pressed="false" data-t="A screened, trained advocate hands over a card inside a real relationship, face to face.">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="10" r="3.6"/><circle cx="21.5" cy="11" r="3.2"/><path d="M4.5 25c.8-5 3.5-7.5 6.5-7.5s5.7 2.5 6.5 7.5M16.5 21.5c1.1-2.6 2.9-4 5-4 3 0 5 2.4 5.8 6.5"/></svg><b>Meet</b><i class="bar"></i></button>
+          <button class="step" type="button" aria-pressed="false" data-t="Food, transit, clothing and hygiene at vetted local shops. Nobody will have to qualify to eat.">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 15h22a11 11 0 0 1-22 0z"/><path d="M12 9c0-2 2-2 2-4M18 9c0-2 2-2 2-4"/></svg><b>Essentials</b><i class="bar"></i></button>
+          <button class="step" type="button" aria-pressed="false" data-t="The person and a qualified professional build the way out together, and funding is released milestone by milestone.">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 26c4 0 4-6 9-6s4-8 10-8"/><path d="M22 5v8M22 5h6l-2 2 2 2h-6"/><circle cx="6" cy="26" r="1.8"/></svg><b>Plan</b><i class="bar"></i></button>
+          <button class="step" type="button" aria-pressed="false" data-t="Rent, treatment, tuition and tools, paid straight to the provider. The person holds a plan, never a large sum.">
+            <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 27h22"/><path d="M8 27V14l8-7 8 7v13"/><path d="M13.5 27v-7h5v7"/></svg><b>Out</b><i class="bar"></i></button>
+        </div>
+        <p class="step-text" id="step-text"><span class="k">1 of 5.</span> A neighbour or a company funds one Hamilton pool. A receiving charity, named before any payment, will hold the funds.</p>
+        <div class="spine" aria-label="Contact, then relationship, then restoration"><span>Contact</span><span>Relationship</span><span>Restoration</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · SUNSET · choose your way in -->
+  <section class="scene" id="join" data-scene="4">
+    <div class="wrap c">
+      <p class="eyebrow shadowed">Get involved</p>
+      <h2 class="h2 shadowed">Choose your way in.</h2>
+      <div class="ways light">
+        <details class="way rv" id="give" data-track="way_give">
+          <summary>
+            <span class="av"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.3-7-9.4A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.6C19 15.7 12 20 12 20z"/></svg></span>
+            <h3>Give</h3>
+            <span class="one">Fund daily essentials and the way out.</span>
+          </summary>
+          <div class="more">
+            <p>Give once or monthly. Gifts will go to one Hamilton pool, never to a named person.</p>
+            <p class="note">Secure checkout opens once the receiving charity is confirmed. Today you can reserve a founding gift; no payment is taken.</p>
+            <div class="row">
+              <a class="btn btn-go" href="/give" data-track="way_give_reserve">Reserve a gift</a>
+              <a class="btn btn-soft" href="/trust">How funds will work</a>
+            </div>
+          </div>
+        </details>
+        <details class="way rv" data-track="way_inspired">
+          <summary>
+            <span class="av"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg></span>
+            <h3>Get inspired</h3>
+            <span class="one">Why Hamilton, and why now.</span>
+          </summary>
+          <div class="more">
+            <p>The founder's story, how a restoration is meant to work, and the research behind it.</p>
+            <div class="row">
+              <a class="btn btn-go" href="/about" data-track="way_story">Read the story</a>
+              <a class="btn btn-soft" href="/numbers">Check our numbers</a>
+            </div>
+          </div>
+        </details>
+        <details class="way rv" data-track="way_plugged">
+          <summary>
+            <span class="av"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3.5 19c.6-3.7 2.7-5.6 5.5-5.6s4.9 1.9 5.5 5.6M14 15.2c.8-1.4 1.9-2.1 3.2-2.1 2.2 0 3.6 1.8 4.1 4.9"/></svg></span>
+            <h3>Get plugged in</h3>
+            <span class="one">Carry cards. Bring your church or team.</span>
+          </summary>
+          <div class="more">
+            <p>Advocates will be screened and trained before they meet anyone. Congregations, clubs and teams can join together.</p>
+            <div class="row">
+              <a class="btn btn-go" href="#connect" data-interest="Register advocate interest" data-track="way_advocate">Become an advocate</a>
+              <a class="btn btn-soft" href="#connect" data-interest="Join the founding list" data-track="way_list">Join the founding list</a>
+            </div>
+          </div>
+        </details>
+        <details class="way rv" data-track="way_partner">
+          <summary>
+            <span class="av"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M4 20h16M9 20v-5h6v5M8 11h2M14 11h2"/></svg></span>
+            <span class="chip kind">Organizations</span>
+            <h3>Partner</h3>
+            <span class="one">Businesses, charities and agencies.</span>
+          </summary>
+          <div class="more">
+            <p>Accept HOPE at your counter, distribute cards as an agency, or sponsor a restoration cohort.</p>
+            <div class="row">
+              <a class="btn btn-go" href="#connect" data-interest="Explore a partnership" data-track="way_partnership">Start a conversation</a>
+              <a class="btn btn-soft" href="#connect" data-interest="Register vendor interest" data-track="way_vendor">Become a vendor</a>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="scene" id="faq">
+    <div class="wrap c split">
+      <div class="shadowed rv">
+        <p class="eyebrow">Questions worth asking</p>
+        <h2 class="h2">Clear before you commit.</h2>
+        <p class="lede">HOPE is ambitious and still in development. These are the straight answers today. Confirmed partner, funding and launch details will replace development language as agreements close.</p>
+        <div class="side-links">
+          <a href="/trust">See the trust commitments</a>
+          <a href="/for-members">Information for members</a>
+          <a href="/privacy">Read the privacy notice</a>
+        </div>
+      </div>
+      <div class="faqs light rv" id="faqs">
+        <details open><summary>What is the HOPE Card?</summary><p>A closed-loop program access card, in development. It is not a bank or credit product. The chip and card format make it familiar and visible; the proposed model would open approved essentials at participating vendors and provider-paid Restoration Track steps.</p></details>
+        <details><summary>Can I donate right now?</summary><p>Not through secure checkout yet. The Stripe environment is prepared, but it will activate only when the receiving charity and fund-stewardship pathway are confirmed. Until then, the <a href="/give">giving page</a> records your intended amount so the HOPE team can follow up.</p></details>
+        <details><summary>Will I receive a charitable tax receipt?</summary><p>The receiving-charity pathway is in process. Before any payment, the giving page will name that charity and state whether an official receipt is available. An eligible receipt will come from that receiving charity, not HOPE Tech Inc. <a href="/trust#receipts">Read the full commitment.</a></p></details>
+        <details><summary>Are Hamilton organizations already official partners?</summary><p>Community conversations are active, but HOPE will not present a conversation as an endorsement. Organizations will be named only after an agreement is finalized and permission to publish the relationship is clear.</p></details>
+        <details><summary>Where will the money go?</summary><p>The proposed model uses one stewarded Hamilton pool for approved daily essentials, pilot infrastructure and verified Restoration Track steps. The final receiving entity, uses, fees and settlement process will be published before live partner-processed giving opens.</p></details>
+        <details><summary>How is member privacy protected?</summary><p>Donors should see pooled impact and honest outcomes, never names, daily purchase histories or private case notes. A member controls whether and how their story is shared. The public contact form is separate from future member systems. <a href="/privacy">Read the current privacy notice.</a></p></details>
+        <details><summary>When does the Hamilton pilot launch?</summary><p>The first card-supported essentials are targeted for the first half of 2027. That is a target, not a promise: funding, signed partner agreements, safeguarding, vendor readiness and a confirmed receiving charity must all be in place first.</p></details>
+        <details><summary>How can a business or community organization help?</summary><p>Vendors can register interest in approved redemptions, service providers can help shape Restoration Track supports, and community organizations can discuss referrals, advocates, safeguarding and fund stewardship. No conversation is presented as a partnership before terms and permission are confirmed. Choose the relevant pathway in the form below and we will come back with real terms.</p></details>
+        <details><summary>Is this surveillance? Can anyone track a member?</summary><p>The proposed system is designed to prevent donor access to a member's name, vendor, location or purchase history. HOPE will collect only what is necessary to operate support safely. Information may still be disclosed when consent is given, a child-protection duty applies, serious imminent harm must be addressed, or disclosure is legally compelled. Those limits will be explained before participation.</p></details>
+        <details><summary>Does someone have to earn help, or perform progress?</summary><p>No. Food, transit, clothing and personal care are unconditional and stay that way whether or not a person engages, makes progress, shares a story or wants a relationship. Larger commitments like rent or tuition are planned with the member and approved by a qualified professional, because those are decisions with consequences, not because someone has to prove they deserve them. A member can take a card and never speak to us again.</p></details>
+        <details><summary>HOPE is faith-rooted. Does that change who gets help?</summary><p>No. Anyone can receive and anyone can give. Faith-rooted support is offered only to people who want it and is never attached to essentials, the plan or the Restoration Track. Larger restoration steps would be approved under published program criteria by an appropriately qualified professional, not by a donor or on the basis of faith.</p></details>
+        <details><summary>Is this paternalistic?</summary><p>That risk is real whenever one group designs support for another. HOPE's answer is to keep essentials unconditional, let the member refuse without penalty, write the plan together and give donors no control over an individual. The member-facing rules and complaint path will be tested with people who have lived experience before launch.</p></details>
+        <details><summary>Are you replacing services, or privatizing them?</summary><p>No. HOPE is being designed to complement public and community services, not replace them. Hamilton's coordinated-access process remains the housing pathway; any future HOPE support would work around that process and never claim authority over it.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONNECT -->
+  <section class="scene" id="connect">
+    <div class="wrap c split">
+      <div class="shadowed rv">
+        <p class="eyebrow">Say hello</p>
+        <h2 class="h2">Put your name beside the comeback.</h2>
+        <p class="lede">Reserve a founding gift, register as an advocate or vendor, offer your expertise, or help build the first Hamilton network. We aim to reply personally within two business days.</p>
+      </div>
+      <form class="form light rv" id="interestForm" action="/api/interest" method="post">
+        <input type="hidden" name="selectedGift" id="leadGift" value="">
+        <div class="fields">
+          <div class="f full"><label for="leadInterest">I want to</label>
+            <select id="leadInterest" name="interest">
+              <option value="Sponsor a Comeback">Sponsor a Comeback</option>
+              <option value="Discuss a founding gift">Discuss a founding gift</option>
+              <option value="Join the founding list">Join the founding list</option>
+              <option value="Get involved">Get involved</option>
+              <option value="Register advocate interest">Register advocate interest</option>
+              <option value="Register vendor interest">Register vendor interest</option>
+              <option value="Build with us">Build with us</option>
+              <option value="Explore a partnership">Explore a partnership</option>
+              <option value="Privacy request">Privacy request</option>
+            </select></div>
+          <div class="f"><label for="leadName">Name</label><input id="leadName" name="name" autocomplete="name" maxlength="120" required></div>
+          <div class="f"><label for="leadEmail">Email</label><input id="leadEmail" name="email" type="email" autocomplete="email" maxlength="200" required></div>
+          <div class="f full"><label for="leadPhone">Phone <small>optional</small></label><input id="leadPhone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>
+          <div class="f full"><label for="leadMessage">Anything we should know? <small>optional</small></label><textarea id="leadMessage" name="message" maxlength="2000" placeholder="Tell us how you want to help."></textarea></div>
+          <div class="hp" aria-hidden="true"><label for="leadWebsite">Website</label><input id="leadWebsite" name="website" tabindex="-1" autocomplete="off"></div>
+        </div>
+        <label class="consent"><input type="checkbox" id="leadConsent" name="consent" value="yes" required><span>I understand HOPE Tech Inc. will use these details to respond to me and plan the project, as described in the <a href="/privacy">privacy notice</a>.</span></label>
+        <button class="btn btn-go send" id="interestSubmit" type="submit">Send my interest</button>
+        <p class="fnote">Your details go directly to the HOPE team and are handled as described in the <a href="/privacy">privacy notice</a>.</p>
+        <p class="fstatus" id="formStatus" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- 5 · DUSK · footer -->
+  <footer class="foot" data-scene="5">
+    <div class="wrap c shadowed">
+      <p class="status">HOPE is pre-launch. <span>We are building in Hamilton now, with the first cards targeted for the first half of 2027.</span></p>
+      <nav class="flinks" aria-label="Footer">
+        <a href="/about">About</a>
+        <a href="/trust">How funds will work</a>
+        <a href="/numbers">Numbers and sources</a>
+        <a href="/for-members">For members</a>
+        <a href="#faq">FAQ</a>
+        <a href="#connect">Contact</a>
+      </nav>
+      <details class="sources">
+        <summary>Sources</summary>
+        <ol>
+          <li>New Leaf Project, Foundations for Social Change with UBC: <a href="https://forsocialchange.org/impact" target="_blank" rel="noopener noreferrer">forsocialchange.org/impact</a>. Peer-reviewed as "Unconditional cash transfers reduce homelessness," PNAS, 2023.</li>
+          <li>Greater Change and the Centre for Homelessness Impact trial: <a href="https://www.greaterchange.co.uk/post/test-and-learn-a-randomised-control-trial" target="_blank" rel="noopener noreferrer">greaterchange.co.uk</a>.</li>
+          <li>City of Hamilton Housing and Homelessness Dashboard, June 30, 2026: <a href="https://www.hamilton.ca/housing-data" target="_blank" rel="noopener noreferrer">hamilton.ca/housing-data</a>.</li>
+          <li>Illustrative figures are arithmetic on the sources above and are labelled where they appear. Full definitions and limits: <a href="/numbers">Numbers and sources</a>.</li>
+        </ol>
+      </details>
+      <p class="op">This website and project inquiries are operated by HOPE Tech Inc., an Ontario corporation based in Hamilton. HOPE Tech Inc. is not a registered charity and does not issue official donation receipts. Any future charitable gift will be accepted only through the receiving charity named before payment. Privacy Officer: <a href="mailto:harrisonemery10@gmail.com">harrisonemery10@gmail.com</a>.</p>
+      <div class="legal">
+        <span>© 2026 HOPE Tech Inc. · Hamilton, Ontario · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/accessibility">Accessibility</a></span>
+        <span>Photo by <a href="https://unsplash.com/@geoffreyafaber" target="_blank" rel="noopener noreferrer">Geoffrey Faber</a> on Unsplash. Other scenes are AI renders of Hamilton.</span>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<script>
+(function(){
+'use strict';
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var clamp=function(v,a,b){return Math.max(a,Math.min(b,v))};
+
+/* ---------- tracking: dataLayer always; Vercel Web Analytics if it is enabled ---------- */
+function track(name,data){
+  try{window.dataLayer=window.dataLayer||[];window.dataLayer.push(Object.assign({event:name},data||{}));
+    if(typeof window.va==='function')window.va('event',{name:name,data:data||{}});}catch(e){}
+}
+document.addEventListener('click',function(e){var el=e.target.closest('[data-track]:not(details)');if(el)track(el.getAttribute('data-track'))});
+
+/* ---------- kinetic place word, paused when hidden ---------- */
+(function(){
+  var slot=document.getElementById('slot');
+  var words=[["Hamilton's",2300],["Ontario's",1400],["Canada's",2900],["Hamilton's",1300],["Ontario's",1100],["Canada's",2200]];
+  var i=0,cur=null,timer=0,visible=true;
+  function width(t){var g=document.createElement('i');g.textContent=t;g.style.cssText='visibility:hidden;position:absolute';slot.appendChild(g);var w=g.offsetWidth;g.remove();return w}
+  function show(){
+    timer=0;
+    var t=words[i][0],hold=words[i][1];
+    var el=document.createElement('i');el.textContent=t;
+    slot.style.width=width(t)+'px';slot.appendChild(el);
+    requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add('in')})});
+    if(cur){var o=cur;o.classList.remove('in');o.classList.add('out');setTimeout(function(){o.remove()},650)}
+    cur=el;i=(i+1)%words.length;
+    schedule(hold+Math.round((Math.random()-.5)*500));
+  }
+  function schedule(ms){if(!timer&&visible&&!document.hidden)timer=setTimeout(show,ms)}
+  function stop(){clearTimeout(timer);timer=0}
+  function still(){slot.style.width='auto';var el=document.createElement('i');el.textContent="Hamilton's";el.className='in';el.style.position='relative';slot.appendChild(el)}
+  function start(){
+    slot.textContent='';
+    if(reduce){still();return}
+    show();
+    document.addEventListener('visibilitychange',function(){document.hidden?stop():schedule(900)});
+    if('IntersectionObserver' in window)new IntersectionObserver(function(es){visible=es[0].isIntersecting;visible?schedule(700):stop()}).observe(slot);
+  }
+  (document.fonts?document.fonts.ready:Promise.resolve()).then(start);
+})();
+
+/* ---------- wordmark fit ---------- */
+var mark=document.getElementById('mark');
+function fitMark(){var box=mark.parentElement;box.style.fontSize='100px';var w=mark.getBoundingClientRect().width||1;box.style.fontSize=(100*box.clientWidth/w*.99)+'px'}
+
+/* ---------- five moves: auto-plays while in view until someone taps ---------- */
+(function(){
+  var wrap=document.getElementById('steps'),steps=[].slice.call(wrap.querySelectorAll('.step')),text=document.getElementById('step-text');
+  var touched=false,inView=false;
+  function pick(b){
+    steps.forEach(function(x){x.setAttribute('aria-pressed','false')});
+    b.setAttribute('aria-pressed','true');
+    var k=document.createElement('span');k.className='k';k.textContent=(steps.indexOf(b)+1)+' of 5. ';
+    text.textContent='';text.append(k,b.dataset.t);
+  }
+  function setAuto(){wrap.classList.toggle('auto',!touched&&inView&&!reduce)}
+  steps.forEach(function(b){b.addEventListener('click',function(){touched=true;text.setAttribute('aria-live','polite');setAuto();pick(b);track('step_select',{step:b.textContent.trim()})})});
+  wrap.addEventListener('animationend',function(e){
+    if(touched||e.animationName!=='fillbar')return;
+    var cur=steps.findIndex(function(x){return x.getAttribute('aria-pressed')==='true'});
+    pick(steps[(cur+1)%steps.length]);
+    wrap.classList.remove('auto');void wrap.offsetWidth;setAuto();
+  });
+  if('IntersectionObserver' in window)new IntersectionObserver(function(es){inView=es[0].isIntersecting;setAuto()},{threshold:.5}).observe(wrap);
+})();
+
+/* ---------- the dial ---------- */
+(function(){
+  var TOTAL=2129,SAVE=8100,COST=7500;
+  var cv=document.getElementById('dots'),ctx=cv.getContext('2d');
+  var range=document.getElementById('dRange'),picks=[].slice.call(document.querySelectorAll('.pick'));
+  var out={h:document.getElementById('dH'),lit:document.getElementById('dLit'),save:document.getElementById('dSave'),cost:document.getElementById('dCost'),pct:document.getElementById('dPct'),sm:document.getElementById('dSaveM'),cm:document.getElementById('dCostM')};
+  var shown=0,goal=100,started=false,anim=0,L=null;
+  function money(v){return v>=1e6?'$'+(Math.round(v/1e5)/10).toFixed(1)+'M':'$'+Math.round(v/1e3)+'K'}
+  function layout(){
+    var w=cv.clientWidth||600,dpr=Math.min(2,window.devicePixelRatio||1);
+    var wide=w>=560,p=wide?(w>=900?8:7.5):6;
+    var cols,rows;
+    if(wide){rows=Math.ceil(TOTAL/Math.floor(w/p));cols=Math.ceil(TOTAL/rows);p=Math.min(p,w/cols)}
+    else{cols=Math.floor(w/p);rows=Math.ceil(TOTAL/cols)}
+    var h=Math.ceil(rows*p);
+    cv.style.height=h+'px';cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    L={w:w,h:h,p:p,cols:cols,rows:rows,wide:wide,ox:(w-cols*p)/2};
+  }
+  function pos(i){
+    /* wide screens fill like a bar from the left; phones fill like a thermometer from the bottom */
+    if(L.wide){var c=Math.floor(i/L.rows),r=i%L.rows;return[L.ox+c*L.p+L.p/2,r*L.p+L.p/2]}
+    var r2=Math.floor(i/L.cols),c2=i%L.cols;return[L.ox+c2*L.p+L.p/2,L.h-(r2*L.p+L.p/2)]
+  }
+  function draw(n){
+    if(!L)layout();
+    ctx.clearRect(0,0,L.w,L.h);
+    var r=Math.max(1.4,L.p*.31),rl=Math.max(1.7,L.p*.36),full=Math.floor(n),i,q;
+    ctx.fillStyle='#D3DBD5';ctx.beginPath();
+    for(i=full+1;i<TOTAL;i++){q=pos(i);ctx.moveTo(q[0]+r,q[1]);ctx.arc(q[0],q[1],r,0,6.2832)}
+    ctx.fill();
+    ctx.fillStyle='#2D6A4F';ctx.beginPath();
+    for(i=0;i<full&&i<TOTAL;i++){q=pos(i);ctx.moveTo(q[0]+rl,q[1]);ctx.arc(q[0],q[1],rl,0,6.2832)}
+    ctx.fill();
+    if(full<TOTAL){var f=n-full;q=pos(full);ctx.fillStyle='rgb('+Math.round(211-166*f)+','+Math.round(219-113*f)+','+Math.round(213-134*f)+')';ctx.beginPath();ctx.arc(q[0],q[1],r+(rl-r)*f,0,6.2832);ctx.fill()}
+  }
+  function readouts(n){
+    var k=Math.round(n);
+    out.h.textContent=k;out.lit.textContent=k.toLocaleString('en-CA');out.sm.textContent=k;out.cm.textContent=k;
+    out.save.textContent=money(k*SAVE);out.cost.textContent=money(k*COST);
+    out.pct.textContent=(k/TOTAL*100).toFixed(1)+'%';
+  }
+  function settle(){
+    cv.setAttribute('aria-label','2,129 dots, one for each person recorded as experiencing homelessness in Hamilton. '+goal+' are filled.');
+    picks.forEach(function(b){b.setAttribute('aria-pressed',String(+b.dataset.n===goal))});
+  }
+  function go(n,dur){
+    goal=clamp(n,10,500);settle();
+    cancelAnimationFrame(anim);
+    if(reduce||!dur){shown=goal;draw(shown);readouts(shown);return}
+    var from=shown,t0=performance.now();
+    (function step(now){var t=clamp((now-t0)/dur,0,1),e=1-Math.pow(1-t,3);shown=from+(goal-from)*e;draw(shown);readouts(shown);if(t<1)anim=requestAnimationFrame(step)})(t0);
+  }
+  var tt=0;
+  var live=document.getElementById('dLive');
+  function changed(src){clearTimeout(tt);tt=setTimeout(function(){
+    live.textContent=goal+' restorations: '+money(goal*SAVE)+' a year in shelter costs freed, '+money(goal*COST)+' to fund at New Leaf\'s level, '+(goal/TOTAL*100).toFixed(1)+'% of everyone counted in Hamilton.';
+    track('dial_change',{n:goal,source:src})},600)}
+  picks.forEach(function(b){b.addEventListener('click',function(){range.value=b.dataset.n;go(+b.dataset.n,700);changed('chip')})});
+  range.addEventListener('input',function(){go(+range.value,180);changed('slider')});
+  layout();
+  if(reduce||!('IntersectionObserver' in window)){started=true;go(100,0)}
+  else{draw(0);readouts(0);out.h.textContent='100';
+    new IntersectionObserver(function(es,ob){if(es[0].isIntersecting&&!started){started=true;ob.disconnect();go(goal,1800)}},{threshold:.4}).observe(cv)}
+  var rz=0;addEventListener('resize',function(){clearTimeout(rz);rz=setTimeout(function(){var w=cv.clientWidth;if(L&&Math.abs(w-L.w)<1)return;layout();draw(started?shown:0)},150)});
+})();
+
+/* ---------- photo plates ---------- */
+var PLATES=[
+  {src:'plates/escarpment-summer.webp',pos:'50% 50%',posTall:'40% 50%',dim:.03},
+  {src:'plates/downtown-aerial.webp',pos:'50% 50%',posTall:'48% 50%',dim:.12},
+  {src:'plates/downtown-towers.webp',pos:'50% 50%',posTall:'60% 50%',dim:.22},
+  {src:'plates/bayfront-golden.webp',pos:'50% 50%',posTall:'80% 50%',dim:.06},
+  {src:'plates/pier-sunset.webp',pos:'50% 62%',posTall:'50% 50%',dim:.03},
+  null
+];
+var plateBox=document.getElementById('plates'),dimEl=document.getElementById('dim'),foreImg=document.querySelector('#fore img');
+var SCENES=6,filled=PLATES.map(function(p,i){return p?i:-1}).filter(function(i){return i>=0}),runs=[];
+for(var si=0;si<SCENES;si++){
+  var k=PLATES[si]?si:filled.reduce(function(b,j){return Math.abs(j-si)<Math.abs(b-si)?j:b},filled[0]);
+  var last=runs[runs.length-1];
+  if(last&&last.k===k)last.b=si;else runs.push({k:k,a:si,b:si,p:PLATES[k]});
+}
+runs[0].el=plateBox.querySelector('img');
+function loadRest(){runs.forEach(function(r,i){if(i===0||r.el)return;var im=new Image();im.alt='';im.decoding='async';if('fetchPriority' in im)im.fetchPriority='low';im.src=r.p.src;im.style.objectPosition=objPos(r.p);plateBox.appendChild(im);r.el=im});dirty=true;kick()}
+var tallView=false;
+function objPos(p){return tallView?(p.posTall||p.pos):p.pos}
+function placePlates(){tallView=innerWidth/innerHeight<.9;runs.forEach(function(r){if(r.el)r.el.style.objectPosition=objPos(r.p)});foreImg.style.objectPosition=objPos(runs[0].p)}
+function updatePlates(s){
+  var dv=0;
+  runs.forEach(function(r,idx){
+    if(!r.el)return;
+    var op=idx===0?1:clamp(s-(r.a-1),0,1);
+    var covered=idx<runs.length-1&&s>=runs[idx+1].a&&runs[idx+1].el&&runs[idx+1].el.complete;
+    r.el.style.visibility=covered||op<=0?'hidden':'visible';
+    r.el.style.opacity=op.toFixed(3);
+    var pr=clamp((s-(r.a-.6))/((r.b+.6)-(r.a-.6)),0,1);
+    r.el.style.transform=reduce?'scale(1.04)':'scale('+(1.04+.1*pr).toFixed(4)+') translate3d(0,'+((.5-pr)*2.4).toFixed(3)+'%,0)';
+    if(!covered)dv=dv+((r.p.dim||0)-dv)*op;
+  });
+  var fo=1-clamp(s-runs[0].b,0,1);
+  foreImg.style.opacity=fo.toFixed(3);foreImg.style.visibility=fo<=0?'hidden':'visible';foreImg.style.transform=runs[0].el.style.transform;
+  dimEl.style.opacity=dv.toFixed(3);
+}
+
+/* ---------- scroll to scene mapping; animates only while something is moving ---------- */
+var scenes=[].slice.call(document.querySelectorAll('[data-scene]')),keysY=[];
+function measure(){
+  var max=Math.max(1,document.documentElement.scrollHeight-innerHeight);
+  keysY=scenes.map(function(el){var top=el.getBoundingClientRect().top+scrollY;return Math.min(top+el.offsetHeight/2-innerHeight/2,max)});
+  keysY[0]=0;keysY[keysY.length-1]=max;
+  for(var i=1;i<keysY.length-1;i++)keysY[i]=clamp(keysY[i],keysY[i-1]+1,max-(keysY.length-1-i));
+  maxY=max;dirty=true;
+}
+function targetS(){var y=scrollY;for(var i=0;i<keysY.length-1;i++){if(y<keysY[i+1])return i+clamp((y-keysY[i])/(keysY[i+1]-keysY[i]),0,1)}return keysY.length-1}
+var nav=document.getElementById('nav'),prog=document.getElementById('prog'),railLinks=[].slice.call(document.querySelectorAll('#rail a'));
+var sNow=0,dirty=true,raf=0,lastRail=-1,maxY=1;
+function updateChrome(s){
+  nav.classList.toggle('solid',scrollY>40);
+  prog.style.transform='scaleX('+clamp(scrollY/maxY,0,1).toFixed(4)+')';
+  var r=s<.5?0:s<1.5?1:s<3.5?2:3;
+  if(r!==lastRail){railLinks.forEach(function(a,i){a.classList.toggle('on',i===r);i===r?a.setAttribute('aria-current','location'):a.removeAttribute('aria-current')});lastRail=r}
+}
+function loop(){
+  raf=0;
+  var t=targetS(),d=t-sNow;
+  sNow=reduce||Math.abs(d)<.0005?t:sNow+d*.085;
+  updatePlates(sNow);updateChrome(sNow);dirty=false;
+  if(Math.abs(t-sNow)>.0005)kick();
+}
+function kick(){if(!raf)raf=requestAnimationFrame(loop)}
+addEventListener('scroll',kick,{passive:true});
+var rt=0;
+function resize(){placePlates();fitMark();measure();kick()}
+addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(resize,120)});
+addEventListener('load',function(){measure();kick();(window.requestIdleCallback||function(f){setTimeout(f,200)})(loadRest)});
+if(document.fonts)document.fonts.ready.then(function(){fitMark();measure();kick()});
+document.querySelectorAll('details').forEach(function(d){d.addEventListener('toggle',function(){measure();kick();if(d.open&&d.dataset.track)track(d.dataset.track+'_open')})});
+/* fall back if load is slow: start fetching the other scenes once someone starts scrolling */
+addEventListener('scroll',function once(){removeEventListener('scroll',once);loadRest()},{passive:true});
+placePlates();fitMark();measure();sNow=targetS();loop();
+
+/* ---------- reveals ---------- */
+if(!reduce&&'IntersectionObserver' in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px',threshold:.08});
+  document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
+}else document.querySelectorAll('.rv').forEach(function(el){el.classList.add('in')});
+
+/* ---------- FAQ: one open at a time on phones ---------- */
+if(matchMedia('(max-width:620px)').matches){
+  var faqs=[].slice.call(document.querySelectorAll('#faqs details'));
+  faqs.forEach(function(item){item.addEventListener('toggle',function(){if(item.open)faqs.forEach(function(o){if(o!==item)o.open=false})})});
+}
+
+/* ---------- interest form: posts to /api/interest, which feeds the HOPE sheet ---------- */
+(function(){
+  var form=document.getElementById('interestForm'),status=document.getElementById('formStatus'),submit=document.getElementById('interestSubmit');
+  var sel=document.getElementById('leadInterest'),msg=document.getElementById('leadMessage'),gift=document.getElementById('leadGift');
+  var valid=function(v){return [].some.call(sel.options,function(o){return o.value===v})};
+  var q=new URLSearchParams(location.search);
+  if(q.get('interest')&&valid(q.get('interest')))sel.value=q.get('interest');
+  if(q.get('message'))msg.value=q.get('message').slice(0,2000);
+  if(q.get('gift'))gift.value=q.get('gift').slice(0,80);
+  if(q.get('form_error')){status.className='fstatus err';status.textContent='We could not send your details: '+q.get('form_error').slice(0,160)+'. Please review the form and try again.'}
+  document.querySelectorAll('[data-interest]').forEach(function(a){a.addEventListener('click',function(){var v=a.getAttribute('data-interest');if(valid(v))sel.value=v})});
+  /* arriving from /give or an email link with #connect: land on the form once layout settles */
+  if(location.hash==='#connect'||location.hash==='#faq'){var go=function(){var t=document.querySelector(location.hash);if(t)t.scrollIntoView({block:'start'})};(document.fonts?document.fonts.ready:Promise.resolve()).then(function(){setTimeout(go,60)})}
+  function say(text,kind){status.className='fstatus'+(kind?' '+kind:'');status.textContent=text}
+  form.addEventListener('submit',async function(e){
+    e.preventDefault();
+    var name=document.getElementById('leadName'),email=document.getElementById('leadEmail'),consent=document.getElementById('leadConsent');
+    if(!name.value.trim()){say('Please add your name.','err');name.focus();return}
+    if(!email.value.trim()||!email.checkValidity()){say('Please add an email address we can reply to.','err');email.focus();return}
+    if(!consent.checked){say('Please tick the consent box so we can reply to you.','err');consent.focus();return}
+    var entry={
+      name:name.value.trim(),email:email.value.trim(),
+      phone:document.getElementById('leadPhone').value.trim(),
+      interest:sel.value,message:msg.value.trim(),selectedGift:gift.value,
+      website:document.getElementById('leadWebsite').value,consent:'yes'
+    };
+    submit.disabled=true;submit.textContent='Sending…';form.setAttribute('aria-busy','true');say('Sending your interest to the HOPE team…');
+    try{
+      var res=await fetch('/api/interest',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(entry)});
+      var out=await res.json().catch(function(){return {}});
+      if(!res.ok||!out.ok)throw new Error(out.error||'Submission failed');
+      say('Thank you, '+entry.name.split(' ')[0]+'. Your note is with the HOPE team and we aim to reply within two business days.','ok');
+      track('interest_form_submitted',{interest:entry.interest});
+      form.reset();gift.value='';
+    }catch(err){
+      say('We could not send your details just now. Please try again in a moment, or email harrisonemery10@gmail.com.','err');
+      track('interest_form_error',{interest:entry.interest});
+    }finally{
+      submit.disabled=false;submit.textContent='Send my interest';form.removeAttribute('aria-busy');
+    }
+  });
+})();
+})();
+</script>
+</body>
+</html>
