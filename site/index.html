@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
-<script>document.documentElement.classList.add('js')</script>
+<script>document.documentElement.classList.add('js');window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
 <style>
 /* A Hamilton photo stack is fixed behind the page. Scrolling walks the camera from the
    Mountain at midday, over the lower city, to the bay at sunset. Content scrolls over it.
@@ -59,7 +59,7 @@ p{text-wrap:pretty}
 .skip:focus{top:12px}
 
 /* ---------- fixed scene layers ---------- */
-#plates,#fore,#dim,#scrim{position:fixed;inset:0;pointer-events:none}
+#plates,#fore,#dim,#scrim,.vig{position:fixed;top:0;left:0;width:100%;height:100vh;height:100lvh;pointer-events:none}
 #plates{z-index:0;background:#2b4a3a}
 #plates img,#fore img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:opacity,transform}
 #plates img{opacity:0}
@@ -67,9 +67,10 @@ p{text-wrap:pretty}
 #fore,#dim,#scrim{z-index:2}
 #dim{background:#0b0c10;opacity:.03}
 #scrim{background:linear-gradient(180deg,rgba(10,12,16,.3),rgba(10,12,16,.02) 38%,rgba(10,12,16,.28))}
-.vig{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(6,12,22,.38))}
+.vig{z-index:2;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(6,12,22,.38))}
 .grain{position:fixed;inset:0;z-index:9;pointer-events:none;opacity:.07;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+@media(pointer:coarse){.grain{display:none}}
 
 /* ---------- nav ---------- */
 .nav{position:fixed;top:0;left:0;right:0;z-index:8;display:flex;align-items:center;justify-content:space-between;gap:16px;
@@ -244,33 +245,28 @@ main{position:relative;padding-inline:max(16px,4.5vw);overflow-x:clip}
   .spine span{font-size:9.5px;letter-spacing:.1em}
 }
 
-/* join */
-.ways{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:34px;align-items:start}
+/* join: four doors, no expanding needed */
+.ways{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:34px;align-items:stretch}
 @media(max-width:1020px){.ways{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.ways{grid-template-columns:1fr}}
-.way{background:var(--card);color:var(--ink);border-radius:16px;box-shadow:0 26px 60px -34px rgba(4,14,10,.75);min-width:0;transition:transform .3s cubic-bezier(.2,.7,.2,1)}
-.way:not([open]):hover{transform:translateY(-3px)}
-.way summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;gap:12px;padding:22px}
-.way summary::-webkit-details-marker{display:none}
-.way .av{width:52px;height:52px;border-radius:50%;background:var(--pale);display:grid;place-items:center}
+.way{display:flex;flex-direction:column;gap:12px;background:var(--card);color:var(--ink);border-radius:16px;padding:22px;box-shadow:0 26px 60px -34px rgba(4,14,10,.75);min-width:0;transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.way:hover{transform:translateY(-3px)}
+.way .top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.way .av{width:52px;height:52px;border-radius:50%;background:var(--pale);display:grid;place-items:center;flex:none}
 .way .av svg{width:26px;height:26px;stroke:var(--green-deep);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.way h3{font-weight:760;font-size:22px;letter-spacing:-.015em;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.way h3::after{content:"";width:10px;height:10px;border-right:2px solid var(--green);border-bottom:2px solid var(--green);transform:rotate(45deg) translateY(-3px);transition:transform .25s;flex:none}
-.way[open] h3::after{transform:rotate(225deg) translateY(-1px)}
-.way .one{font-size:15.5px;line-height:1.4;color:#2B3F35}
-.way .kind{align-self:flex-start;background:var(--ink);color:var(--pale)}
-.way .more{display:flex;flex-direction:column;gap:14px;border-top:1px solid var(--rule);margin-inline:22px;padding:16px 0 22px}
-.way .more p{margin:0;font-size:15px;line-height:1.55;color:var(--body-ink)}
-.way .more .note{font-size:13px;color:var(--muted);background:#EEF2EC;border-radius:8px;padding:9px 11px}
-.way .more .row{gap:8px}
+.way h3{font-weight:760;font-size:22px;letter-spacing:-.015em}
+.way .one{margin:0;font-size:15.5px;line-height:1.45;color:#2B3F35}
+.way .kind{background:var(--ink);color:var(--pale)}
+.way .acts{margin-top:auto;padding-top:6px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
+.tlink{font-weight:650;font-size:14.5px;color:var(--green);text-underline-offset:3px}
 @media(max-width:560px){
-  .way summary{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;row-gap:4px;align-items:center;padding:16px}
+  .way{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:14px;row-gap:6px;padding:16px}
+  .way .top{display:contents}
   .way .av{grid-row:1/span 2;width:46px;height:46px}
-  .way .kind{grid-column:2;grid-row:1;justify-self:start}
-  .way .kind+h3{grid-row:2}
-  .way .one{grid-column:2}
-  .way h3{font-size:20px}
-  .way .more{margin-inline:16px;padding-bottom:16px}
+  .way .kind{grid-column:2;grid-row:1;justify-self:start;padding:3px 9px;font-size:9.5px}
+  .way h3{font-size:20px;grid-column:2}
+  .way .one{grid-column:1/-1}
+  .way .acts{grid-column:1/-1;padding-top:4px}
 }
 
 /* faq + connect */
@@ -310,6 +306,48 @@ main{position:relative;padding-inline:max(16px,4.5vw);overflow-x:clip}
 .fstatus.err{color:#8A2E1E}
 .fstatus.ok{background:var(--pale);border-radius:10px;padding:12px 14px}
 @media(max-width:560px){.fields{grid-template-columns:1fr}}
+.choose{border:0;margin:0 0 16px;padding:0;min-width:0}
+.flabel{display:block;padding:0;margin:0 0 9px;font-weight:650;font-stretch:80%;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--green-deep)}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tile{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:84px;padding:12px 6px;border-radius:12px;border:1.5px solid rgba(16,38,28,.2);background:#fff;cursor:pointer;text-align:center;transition:border-color .2s,background .2s,color .2s}
+.tile:hover{border-color:var(--green)}
+.tile input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.tile svg{width:26px;height:26px;stroke:var(--green);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.tile b{font-weight:700;font-size:15px;line-height:1.15}
+.tile.on{background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+.tile.on svg,.tile:has(input:checked) svg{stroke:var(--mint)}
+.tile:has(input:checked){background:var(--green-deep);border-color:var(--green-deep);color:#fff}
+.tile:has(input:focus-visible){outline:2.5px solid var(--green);outline-offset:2px}
+.tile[hidden]{display:none}
+.tiles.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.hint{margin:10px 0 0;font-size:14px;line-height:1.45;color:var(--body-ink)}
+.giftbox{margin:0 0 18px;padding:16px;border-radius:14px;background:#EEF4EF}
+.giftbox[hidden]{display:none}
+.seg{display:inline-grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:999px;background:#fff;border:1.5px solid rgba(16,38,28,.14)}
+.seg button{border:0;border-radius:999px;padding:8px 16px;background:transparent;color:var(--muted);font:650 14px/1 var(--font);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--green-deep);color:#fff}
+.amts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-top:12px}
+.amt{min-height:46px;border-radius:10px;border:1.5px solid rgba(16,38,28,.2);background:#fff;color:var(--ink);font:700 16px/1 var(--font);cursor:pointer;font-variant-numeric:tabular-nums}
+.amt:hover{border-color:var(--green)}
+.amt[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}
+.giftbox .f{margin-top:12px}
+[hidden]{display:none!important}
+.impact{margin:12px 0 0;font-size:14.5px;line-height:1.45;color:var(--body-ink)}
+.impact b{color:var(--green-deep)}
+.impact small{display:block;margin-top:4px;font-size:12.5px;color:var(--muted)}
+.alt{margin:14px 0 0;font-size:13px;color:var(--muted)}
+.linkish{border:0;background:none;padding:0;font:inherit;color:var(--green);font-weight:650;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+@media(max-width:560px){
+  .tile{min-height:76px;padding:10px 4px}
+  .tile b{font-size:13.5px}
+  .giftbox{padding:14px 12px}
+  .amt{font-size:15px;min-height:44px}
+}
+.founder{margin-top:26px;padding:18px 20px;border-radius:14px;background:rgba(8,18,14,.55);border:1px solid rgba(149,213,178,.25);max-width:40ch;text-shadow:none}
+.founder p{margin:0}
+.founder .who{font-weight:700;font-size:17px}
+.founder .who span{font-weight:500;opacity:.8}
+.founder a{display:inline-flex;align-items:center;gap:8px;margin-top:8px;font-weight:650;color:var(--mint);text-underline-offset:3px;word-break:break-all}
 .side-links{display:flex;flex-direction:column;gap:10px;margin-top:6px}
 .side-links a{display:inline-flex;align-items:center;gap:10px;font-weight:650;font-size:15px;text-decoration:none;color:var(--bone);opacity:.92}
 .side-links a::after{content:"";width:8px;height:8px;border-right:2px solid var(--mint);border-top:2px solid var(--mint);transform:rotate(45deg);transition:transform .2s}
@@ -357,7 +395,7 @@ main{position:relative;padding-inline:max(16px,4.5vw);overflow-x:clip}
     <a href="#numbers">The numbers</a>
     <a href="#how">How it will work</a>
     <a href="#join">Get involved</a>
-    <a class="btn btn-go" href="/give" data-track="nav_give">Give</a>
+    <a class="btn btn-go" href="#interestForm" data-interest="Sponsor a Comeback" data-track="nav_give">Give</a>
   </nav>
   <i class="prog" id="prog" aria-hidden="true"></i>
 </header>
@@ -378,7 +416,7 @@ main{position:relative;padding-inline:max(16px,4.5vw);overflow-x:clip}
       <h1 class="h1"><span class="slot" id="slot" aria-hidden="true"><i class="in" style="position:relative">Hamilton's</i></span><span class="sr">Hamilton's</span><br><span class="soft">connective infrastructure for hope.</span></h1>
       <p class="lede">Citizens, charities, churches and Corporate Canada, pulling in one direction.</p>
       <div class="row">
-        <a class="btn btn-go" href="/give" data-track="hero_give">Give</a>
+        <a class="btn btn-go" href="#interestForm" data-interest="Sponsor a Comeback" data-track="hero_give">Give</a>
         <a class="btn btn-line" href="#how" data-track="hero_how">See how it will work</a>
       </div>
     </div>
@@ -524,64 +562,30 @@ main{position:relative;padding-inline:max(16px,4.5vw);overflow-x:clip}
       <p class="eyebrow shadowed">Get involved</p>
       <h2 class="h2 shadowed">Choose your way in.</h2>
       <div class="ways light">
-        <details class="way rv" id="give" data-track="way_give">
-          <summary>
-            <span class="av"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.3-7-9.4A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.6C19 15.7 12 20 12 20z"/></svg></span>
-            <h3>Give</h3>
-            <span class="one">Fund daily essentials and the way out.</span>
-          </summary>
-          <div class="more">
-            <p>Give once or monthly. Gifts will go to one Hamilton pool, never to a named person.</p>
-            <p class="note">Secure checkout opens once the receiving charity is confirmed. Today you can reserve a founding gift; no payment is taken.</p>
-            <div class="row">
-              <a class="btn btn-go" href="/give" data-track="way_give_reserve">Reserve a gift</a>
-              <a class="btn btn-soft" href="/trust">How funds will work</a>
-            </div>
-          </div>
-        </details>
-        <details class="way rv" data-track="way_inspired">
-          <summary>
-            <span class="av"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg></span>
-            <h3>Get inspired</h3>
-            <span class="one">Why Hamilton, and why now.</span>
-          </summary>
-          <div class="more">
-            <p>The founder's story, how a restoration is meant to work, and the research behind it.</p>
-            <div class="row">
-              <a class="btn btn-go" href="/about" data-track="way_story">Read the story</a>
-              <a class="btn btn-soft" href="/numbers">Check our numbers</a>
-            </div>
-          </div>
-        </details>
-        <details class="way rv" data-track="way_plugged">
-          <summary>
-            <span class="av"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3.5 19c.6-3.7 2.7-5.6 5.5-5.6s4.9 1.9 5.5 5.6M14 15.2c.8-1.4 1.9-2.1 3.2-2.1 2.2 0 3.6 1.8 4.1 4.9"/></svg></span>
-            <h3>Get plugged in</h3>
-            <span class="one">Carry cards. Bring your church or team.</span>
-          </summary>
-          <div class="more">
-            <p>Advocates will be screened and trained before they meet anyone. Congregations, clubs and teams can join together.</p>
-            <div class="row">
-              <a class="btn btn-go" href="#connect" data-interest="Register advocate interest" data-track="way_advocate">Become an advocate</a>
-              <a class="btn btn-soft" href="#connect" data-interest="Join the founding list" data-track="way_list">Join the founding list</a>
-            </div>
-          </div>
-        </details>
-        <details class="way rv" data-track="way_partner">
-          <summary>
-            <span class="av"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M4 20h16M9 20v-5h6v5M8 11h2M14 11h2"/></svg></span>
-            <span class="chip kind">Organizations</span>
-            <h3>Partner</h3>
-            <span class="one">Businesses, charities and agencies.</span>
-          </summary>
-          <div class="more">
-            <p>Accept HOPE at your counter, distribute cards as an agency, or sponsor a restoration cohort.</p>
-            <div class="row">
-              <a class="btn btn-go" href="#connect" data-interest="Explore a partnership" data-track="way_partnership">Start a conversation</a>
-              <a class="btn btn-soft" href="#connect" data-interest="Register vendor interest" data-track="way_vendor">Become a vendor</a>
-            </div>
-          </div>
-        </details>
+        <article class="way rv" id="give">
+          <div class="top"><span class="av"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.3-7-9.4A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.6C19 15.7 12 20 12 20z"/></svg></span></div>
+          <h3>Give</h3>
+          <p class="one">Fund daily essentials and the way out, once or monthly. Reserve a gift today; no payment is taken yet.</p>
+          <div class="acts"><a class="btn btn-go" href="#interestForm" data-interest="Sponsor a Comeback" data-track="way_give">Reserve a gift</a><a class="tlink" href="/trust">How funds will work</a></div>
+        </article>
+        <article class="way rv">
+          <div class="top"><span class="av"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg></span></div>
+          <h3>Get inspired</h3>
+          <p class="one">Why Hamilton, and why now: the story so far and the research behind HOPE.</p>
+          <div class="acts"><a class="btn btn-go" href="/about" data-track="way_story">Read the story</a><a class="tlink" href="/numbers">Check our numbers</a></div>
+        </article>
+        <article class="way rv">
+          <div class="top"><span class="av"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3.5 19c.6-3.7 2.7-5.6 5.5-5.6s4.9 1.9 5.5 5.6M14 15.2c.8-1.4 1.9-2.1 3.2-2.1 2.2 0 3.6 1.8 4.1 4.9"/></svg></span></div>
+          <h3>Get plugged in</h3>
+          <p class="one">Carry cards as a screened, trained advocate, or bring your church, club or team.</p>
+          <div class="acts"><a class="btn btn-go" href="#interestForm" data-interest="Register advocate interest" data-track="way_advocate">Become an advocate</a><a class="tlink" href="#interestForm" data-interest="Join the founding list" data-track="way_list">Join the founding list</a></div>
+        </article>
+        <article class="way rv">
+          <div class="top"><span class="av"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M4 20h16M9 20v-5h6v5M8 11h2M14 11h2"/></svg></span><span class="chip kind">Organizations</span></div>
+          <h3>Partner</h3>
+          <p class="one">Accept HOPE at your counter, distribute cards as an agency, or sponsor a restoration cohort.</p>
+          <div class="acts"><a class="btn btn-go" href="#interestForm" data-interest="Explore a partnership" data-track="way_partner">Start a conversation</a><a class="tlink" href="#interestForm" data-interest="Register vendor interest" data-track="way_vendor">Become a vendor</a></div>
+        </article>
       </div>
     </div>
   </section>
@@ -601,13 +605,13 @@ main{position:relative;padding-inline:max(16px,4.5vw);overflow-x:clip}
       </div>
       <div class="faqs light rv" id="faqs">
         <details open><summary>What is the HOPE Card?</summary><p>A closed-loop program access card, in development. It is not a bank or credit product. The chip and card format make it familiar and visible; the proposed model would open approved essentials at participating vendors and provider-paid Restoration Track steps.</p></details>
-        <details><summary>Can I donate right now?</summary><p>Not through secure checkout yet. The Stripe environment is prepared, but it will activate only when the receiving charity and fund-stewardship pathway are confirmed. Until then, the <a href="/give">giving page</a> records your intended amount so the HOPE team can follow up.</p></details>
-        <details><summary>Will I receive a charitable tax receipt?</summary><p>The receiving-charity pathway is in process. Before any payment, the giving page will name that charity and state whether an official receipt is available. An eligible receipt will come from that receiving charity, not HOPE Tech Inc. <a href="/trust#receipts">Read the full commitment.</a></p></details>
+        <details><summary>Can I donate right now?</summary><p>Not through secure checkout yet. The Stripe environment is prepared, but it will activate only when the receiving charity and fund-stewardship pathway are confirmed. Until then, the <a href="#interestForm" data-interest="Sponsor a Comeback">gift form on this page</a> records your intended amount so the HOPE team can follow up. No payment is taken.</p></details>
+        <details><summary>Will I receive a charitable tax receipt?</summary><p>The receiving-charity pathway is in process. Before any payment, HOPE will name that charity and state whether an official receipt is available. An eligible receipt will come from that receiving charity, not HOPE Tech Inc. <a href="/trust#receipts">Read the full commitment.</a></p></details>
         <details><summary>Are Hamilton organizations already official partners?</summary><p>Community conversations are active, but HOPE will not present a conversation as an endorsement. Organizations will be named only after an agreement is finalized and permission to publish the relationship is clear.</p></details>
         <details><summary>Where will the money go?</summary><p>The proposed model uses one stewarded Hamilton pool for approved daily essentials, pilot infrastructure and verified Restoration Track steps. The final receiving entity, uses, fees and settlement process will be published before live partner-processed giving opens.</p></details>
         <details><summary>How is member privacy protected?</summary><p>Donors should see pooled impact and honest outcomes, never names, daily purchase histories or private case notes. A member controls whether and how their story is shared. The public contact form is separate from future member systems. <a href="/privacy">Read the current privacy notice.</a></p></details>
         <details><summary>When does the Hamilton pilot launch?</summary><p>The first card-supported essentials are targeted for the first half of 2027. That is a target, not a promise: funding, signed partner agreements, safeguarding, vendor readiness and a confirmed receiving charity must all be in place first.</p></details>
-        <details><summary>How can a business or community organization help?</summary><p>Vendors can register interest in approved redemptions, service providers can help shape Restoration Track supports, and community organizations can discuss referrals, advocates, safeguarding and fund stewardship. No conversation is presented as a partnership before terms and permission are confirmed. Choose the relevant pathway in the form below and we will come back with real terms.</p></details>
+        <details><summary>How can a business or community organization help?</summary><p>Vendors can register interest in approved redemptions, service providers can help shape Restoration Track supports, and community organizations can discuss referrals, advocates, safeguarding and fund stewardship. No conversation is presented as a partnership before terms and permission are confirmed. Choose Partner in the form below and we will come back with real terms.</p></details>
         <details><summary>Is this surveillance? Can anyone track a member?</summary><p>The proposed system is designed to prevent donor access to a member's name, vendor, location or purchase history. HOPE will collect only what is necessary to operate support safely. Information may still be disclosed when consent is given, a child-protection duty applies, serious imminent harm must be addressed, or disclosure is legally compelled. Those limits will be explained before participation.</p></details>
         <details><summary>Does someone have to earn help, or perform progress?</summary><p>No. Food, transit, clothing and personal care are unconditional and stay that way whether or not a person engages, makes progress, shares a story or wants a relationship. Larger commitments like rent or tuition are planned with the member and approved by a qualified professional, because those are decisions with consequences, not because someone has to prove they deserve them. A member can take a card and never speak to us again.</p></details>
         <details><summary>HOPE is faith-rooted. Does that change who gets help?</summary><p>No. Anyone can receive and anyone can give. Faith-rooted support is offered only to people who want it and is never attached to essentials, the plan or the Restoration Track. Larger restoration steps would be approved under published program criteria by an appropriately qualified professional, not by a donor or on the basis of faith.</p></details>
@@ -623,33 +627,48 @@ main{position:relative;padding-inline:max(16px,4.5vw);overflow-x:clip}
       <div class="shadowed rv">
         <p class="eyebrow">Say hello</p>
         <h2 class="h2">Put your name beside the comeback.</h2>
-        <p class="lede">Reserve a founding gift, register as an advocate or vendor, offer your expertise, or help build the first Hamilton network. We aim to reply personally within two business days.</p>
+        <p class="lede">Reserve a founding gift, get plugged in, or bring your organization to the table. We aim to reply personally within two business days.</p>
+        <div class="founder">
+          <p class="who">Harrison <span>· Founder</span></p>
+          <p>Rather talk first? Reach out directly.</p>
+          <a href="mailto:harrisonemery10@gmail.com?subject=HOPE%20Hamilton" data-track="founder_email">harrisonemery10@gmail.com</a>
+        </div>
       </div>
       <form class="form light rv" id="interestForm" action="/api/interest" method="post">
         <input type="hidden" name="selectedGift" id="leadGift" value="">
+        <fieldset class="choose">
+          <legend class="flabel">I want to</legend>
+          <div class="tiles" id="tiles">
+            <label class="tile on"><input type="radio" name="interest" value="Sponsor a Comeback" data-default="Sponsor a Comeback" checked><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.3-7-9.4A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.6C19 15.7 12 20 12 20z"/></svg><b>Give</b></label>
+            <label class="tile"><input type="radio" name="interest" value="Get involved" data-default="Get involved"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3.5 19c.6-3.7 2.7-5.6 5.5-5.6s4.9 1.9 5.5 5.6M14 15.2c.8-1.4 1.9-2.1 3.2-2.1 2.2 0 3.6 1.8 4.1 4.9"/></svg><b>Get plugged in</b></label>
+            <label class="tile"><input type="radio" name="interest" value="Explore a partnership" data-default="Explore a partnership"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11"/><path d="M4 20h16M9 20v-5h6v5M8 11h2M14 11h2"/></svg><b>Partner</b></label>
+            <label class="tile" id="tilePrivacy" hidden><input type="radio" name="interest" value="Privacy request" data-default="Privacy request"><b>Privacy request</b></label>
+          </div>
+          <p class="hint" id="tileHint">Reserve a one-time or monthly founding gift. No payment is taken today.</p>
+        </fieldset>
+        <div class="giftbox" id="giftBox">
+          <div class="seg" role="group" aria-label="How often"><button type="button" data-freq="one time" aria-pressed="true">One time</button><button type="button" data-freq="monthly" aria-pressed="false">Monthly</button></div>
+          <div class="amts" role="group" aria-label="Gift amount in Canadian dollars">
+            <button type="button" class="amt" data-amt="10" aria-pressed="false">$10</button>
+            <button type="button" class="amt" data-amt="25" aria-pressed="true">$25</button>
+            <button type="button" class="amt" data-amt="50" aria-pressed="false">$50</button>
+            <button type="button" class="amt" data-amt="100" aria-pressed="false">$100</button>
+            <button type="button" class="amt" data-amt="other" aria-pressed="false">Other</button>
+          </div>
+          <div class="f" id="otherWrap" hidden><label for="giftOther">Other amount <small>CAD</small></label><input id="giftOther" type="number" inputmode="numeric" min="5" max="100000" step="1" placeholder="250"></div>
+          <p class="impact" id="impact"><b>$25</b> helps fund a full day of essentials.<small>Suggested amounts are intentions, not a promise that a gift buys a specific item.</small></p>
+        </div>
         <div class="fields">
-          <div class="f full"><label for="leadInterest">I want to</label>
-            <select id="leadInterest" name="interest">
-              <option value="Sponsor a Comeback">Sponsor a Comeback</option>
-              <option value="Discuss a founding gift">Discuss a founding gift</option>
-              <option value="Join the founding list">Join the founding list</option>
-              <option value="Get involved">Get involved</option>
-              <option value="Register advocate interest">Register advocate interest</option>
-              <option value="Register vendor interest">Register vendor interest</option>
-              <option value="Build with us">Build with us</option>
-              <option value="Explore a partnership">Explore a partnership</option>
-              <option value="Privacy request">Privacy request</option>
-            </select></div>
           <div class="f"><label for="leadName">Name</label><input id="leadName" name="name" autocomplete="name" maxlength="120" required></div>
           <div class="f"><label for="leadEmail">Email</label><input id="leadEmail" name="email" type="email" autocomplete="email" maxlength="200" required></div>
           <div class="f full"><label for="leadPhone">Phone <small>optional</small></label><input id="leadPhone" name="phone" type="tel" autocomplete="tel" maxlength="40"></div>
-          <div class="f full"><label for="leadMessage">Anything we should know? <small>optional</small></label><textarea id="leadMessage" name="message" maxlength="2000" placeholder="Tell us how you want to help."></textarea></div>
+          <div class="f full"><label for="leadMessage">Anything we should know? <small>optional</small></label><textarea id="leadMessage" name="message" maxlength="2000" placeholder="Anything you would like us to know about your gift."></textarea></div>
           <div class="hp" aria-hidden="true"><label for="leadWebsite">Website</label><input id="leadWebsite" name="website" tabindex="-1" autocomplete="off"></div>
         </div>
         <label class="consent"><input type="checkbox" id="leadConsent" name="consent" value="yes" required><span>I understand HOPE Tech Inc. will use these details to respond to me and plan the project, as described in the <a href="/privacy">privacy notice</a>.</span></label>
-        <button class="btn btn-go send" id="interestSubmit" type="submit">Send my interest</button>
-        <p class="fnote">Your details go directly to the HOPE team and are handled as described in the <a href="/privacy">privacy notice</a>.</p>
+        <button class="btn btn-go send" id="interestSubmit" type="submit">Reserve my $25 gift</button>
         <p class="fstatus" id="formStatus" role="status" aria-live="polite"></p>
+        <p class="alt">Making a privacy request? <button type="button" class="linkish" id="privacyLink">Choose privacy request</button></p>
       </form>
     </div>
   </section>
@@ -834,64 +853,81 @@ for(var si=0;si<SCENES;si++){
   var last=runs[runs.length-1];
   if(last&&last.k===k)last.b=si;else runs.push({k:k,a:si,b:si,p:PLATES[k]});
 }
-runs[0].el=plateBox.querySelector('img');
-function loadRest(){runs.forEach(function(r,i){if(i===0||r.el)return;var im=new Image();im.alt='';im.decoding='async';if('fetchPriority' in im)im.fetchPriority='low';im.src=r.p.src;im.style.objectPosition=objPos(r.p);plateBox.appendChild(im);r.el=im});dirty=true;kick()}
+runs[0].el=plateBox.querySelector('img');runs[0].ready=true;
+var ease=function(a,b,x){var t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t)};
+/* write a style only when it changes, so idle frames cost nothing */
+function put(el,prop,val){var key='_'+prop;if(el[key]!==val){el[key]=val;el.style[prop]=val}}
+/* scenes load one at a time, in scroll order, and only join the stack once decoded */
+var loading=false;
+function loadRest(){
+  if(loading)return;loading=true;
+  runs.slice(1).reduce(function(chain,r){return chain.then(function(){return new Promise(function(done){
+    var im=new Image();im.alt='';im.decoding='async';if('fetchPriority' in im)im.fetchPriority='low';
+    var fin=function(){im.style.objectPosition=objPos(r.p);plateBox.appendChild(im);r.el=im;r.ready=true;kick();done()};
+    im.onload=function(){(im.decode?im.decode():Promise.resolve()).then(fin,fin)};
+    im.onerror=function(){done()};
+    im.src=r.p.src;
+  })})},Promise.resolve());
+}
 var tallView=false;
+function vh(){return document.documentElement.clientHeight||innerHeight}
 function objPos(p){return tallView?(p.posTall||p.pos):p.pos}
-function placePlates(){tallView=innerWidth/innerHeight<.9;runs.forEach(function(r){if(r.el)r.el.style.objectPosition=objPos(r.p)});foreImg.style.objectPosition=objPos(runs[0].p)}
+function placePlates(){tallView=innerWidth/vh()<.9;runs.forEach(function(r){if(r.el)r.el.style.objectPosition=objPos(r.p)});foreImg.style.objectPosition=objPos(runs[0].p)}
 function updatePlates(s){
-  var dv=0;
+  /* each scene fades in over a short eased window between sections, so photos never sit half-blended behind text */
+  var ops=runs.map(function(r,idx){return idx===0?1:(r.ready?ease(r.a-.8,r.a-.2,s):0)}),dv=0;
   runs.forEach(function(r,idx){
     if(!r.el)return;
-    var op=idx===0?1:clamp(s-(r.a-1),0,1);
-    var covered=idx<runs.length-1&&s>=runs[idx+1].a&&runs[idx+1].el&&runs[idx+1].el.complete;
-    r.el.style.visibility=covered||op<=0?'hidden':'visible';
-    r.el.style.opacity=op.toFixed(3);
-    var pr=clamp((s-(r.a-.6))/((r.b+.6)-(r.a-.6)),0,1);
-    r.el.style.transform=reduce?'scale(1.04)':'scale('+(1.04+.1*pr).toFixed(4)+') translate3d(0,'+((.5-pr)*2.4).toFixed(3)+'%,0)';
-    if(!covered)dv=dv+((r.p.dim||0)-dv)*op;
+    var op=ops[idx],covered=false;
+    for(var j=idx+1;j<ops.length;j++){if(ops[j]>=1){covered=true;break}}
+    put(r.el,'visibility',covered||op<=0?'hidden':'visible');
+    put(r.el,'opacity',op>=1?'1':op.toFixed(3));
+    if(covered||op<=0)return;
+    var pr=clamp((s-(r.a-.8))/((r.b+.8)-(r.a-.8)),0,1);
+    put(r.el,'transform',reduce?'scale(1.04)':'scale('+(1.04+.1*pr).toFixed(4)+') translate3d(0,'+((.5-pr)*2.4).toFixed(2)+'%,0)');
+    dv=dv+((r.p.dim||0)-dv)*op;
   });
-  var fo=1-clamp(s-runs[0].b,0,1);
-  foreImg.style.opacity=fo.toFixed(3);foreImg.style.visibility=fo<=0?'hidden':'visible';foreImg.style.transform=runs[0].el.style.transform;
-  dimEl.style.opacity=dv.toFixed(3);
+  var fo=1-ease(.08,.55,s);
+  put(foreImg,'opacity',fo.toFixed(3));put(foreImg,'visibility',fo<=0?'hidden':'visible');put(foreImg,'transform',runs[0].el.style.transform);
+  put(dimEl,'opacity',dv.toFixed(3));
 }
 
 /* ---------- scroll to scene mapping; animates only while something is moving ---------- */
 var scenes=[].slice.call(document.querySelectorAll('[data-scene]')),keysY=[];
 function measure(){
-  var max=Math.max(1,document.documentElement.scrollHeight-innerHeight);
-  keysY=scenes.map(function(el){var top=el.getBoundingClientRect().top+scrollY;return Math.min(top+el.offsetHeight/2-innerHeight/2,max)});
+  var H=vh(),max=Math.max(1,document.documentElement.scrollHeight-H);
+  keysY=scenes.map(function(el){var top=el.getBoundingClientRect().top+scrollY;return Math.min(top+el.offsetHeight/2-H/2,max)});
   keysY[0]=0;keysY[keysY.length-1]=max;
   for(var i=1;i<keysY.length-1;i++)keysY[i]=clamp(keysY[i],keysY[i-1]+1,max-(keysY.length-1-i));
-  maxY=max;dirty=true;
+  maxY=max;
 }
 function targetS(){var y=scrollY;for(var i=0;i<keysY.length-1;i++){if(y<keysY[i+1])return i+clamp((y-keysY[i])/(keysY[i+1]-keysY[i]),0,1)}return keysY.length-1}
 var nav=document.getElementById('nav'),prog=document.getElementById('prog'),railLinks=[].slice.call(document.querySelectorAll('#rail a'));
-var sNow=0,dirty=true,raf=0,lastRail=-1,maxY=1;
+var sNow=0,raf=0,lastRail=-1,maxY=1,lastT=0;
 function updateChrome(s){
   nav.classList.toggle('solid',scrollY>40);
-  prog.style.transform='scaleX('+clamp(scrollY/maxY,0,1).toFixed(4)+')';
+  put(prog,'transform','scaleX('+clamp(scrollY/maxY,0,1).toFixed(3)+')');
   var r=s<.5?0:s<1.5?1:s<3.5?2:3;
   if(r!==lastRail){railLinks.forEach(function(a,i){a.classList.toggle('on',i===r);i===r?a.setAttribute('aria-current','location'):a.removeAttribute('aria-current')});lastRail=r}
 }
-function loop(){
+function loop(now){
   raf=0;
-  var t=targetS(),d=t-sNow;
-  sNow=reduce||Math.abs(d)<.0005?t:sNow+d*.085;
-  updatePlates(sNow);updateChrome(sNow);dirty=false;
-  if(Math.abs(t-sNow)>.0005)kick();
+  /* time-based easing: the same feel at 60Hz and 120Hz, with a short tail */
+  var t=targetS(),d=t-sNow,dt=lastT?Math.min(48,now-lastT):16;lastT=now;
+  sNow=reduce||Math.abs(d)<.0006?t:sNow+d*(1-Math.exp(-dt/80));
+  updatePlates(sNow);updateChrome(sNow);
+  if(Math.abs(t-sNow)>.0006)kick();else lastT=0;
 }
 function kick(){if(!raf)raf=requestAnimationFrame(loop)}
 addEventListener('scroll',kick,{passive:true});
-var rt=0;
-function resize(){placePlates();fitMark();measure();kick()}
-addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(resize,120)});
-addEventListener('load',function(){measure();kick();(window.requestIdleCallback||function(f){setTimeout(f,200)})(loadRest)});
+/* phones resize the viewport when the address bar slides; only a real width change re-lays the scene */
+var rt=0,lastW=innerWidth;
+addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){if(Math.abs(innerWidth-lastW)>1){lastW=innerWidth;placePlates();fitMark()}measure();kick()},150)});
+addEventListener('load',function(){measure();kick();setTimeout(loadRest,120)});
 if(document.fonts)document.fonts.ready.then(function(){fitMark();measure();kick()});
-document.querySelectorAll('details').forEach(function(d){d.addEventListener('toggle',function(){measure();kick();if(d.open&&d.dataset.track)track(d.dataset.track+'_open')})});
-/* fall back if load is slow: start fetching the other scenes once someone starts scrolling */
+document.querySelectorAll('details').forEach(function(d){d.addEventListener('toggle',function(){measure();kick()})});
 addEventListener('scroll',function once(){removeEventListener('scroll',once);loadRest()},{passive:true});
-placePlates();fitMark();measure();sNow=targetS();loop();
+placePlates();fitMark();measure();sNow=targetS();loop(performance.now());
 
 /* ---------- reveals ---------- */
 if(!reduce&&'IntersectionObserver' in window){
@@ -905,45 +941,102 @@ if(matchMedia('(max-width:620px)').matches){
   faqs.forEach(function(item){item.addEventListener('toggle',function(){if(item.open)faqs.forEach(function(o){if(o!==item)o.open=false})})});
 }
 
-/* ---------- interest form: posts to /api/interest, which feeds the HOPE sheet ---------- */
+/* ---------- interest form: three choices, gift picked inline, posts to /api/interest (Google Sheet) ---------- */
 (function(){
   var form=document.getElementById('interestForm'),status=document.getElementById('formStatus'),submit=document.getElementById('interestSubmit');
-  var sel=document.getElementById('leadInterest'),msg=document.getElementById('leadMessage'),gift=document.getElementById('leadGift');
-  var valid=function(v){return [].some.call(sel.options,function(o){return o.value===v})};
-  var q=new URLSearchParams(location.search);
-  if(q.get('interest')&&valid(q.get('interest')))sel.value=q.get('interest');
+  var msg=document.getElementById('leadMessage'),gift=document.getElementById('leadGift'),box=document.getElementById('giftBox'),hint=document.getElementById('tileHint');
+  var tiles=document.getElementById('tiles'),privTile=document.getElementById('tilePrivacy');
+  var radios=[].slice.call(form.querySelectorAll('input[name="interest"]'));
+  var amtBtns=[].slice.call(box.querySelectorAll('.amt')),freqBtns=[].slice.call(box.querySelectorAll('[data-freq]'));
+  var otherWrap=document.getElementById('otherWrap'),other=document.getElementById('giftOther'),impact=document.getElementById('impact');
+  /* the three tiles cover every value the sheet accepts; a link can still record the precise one */
+  var GROUP={'Sponsor a Comeback':0,'Discuss a founding gift':0,'Get involved':1,'Join the founding list':1,'Register advocate interest':1,'Build with us':1,'Explore a partnership':2,'Register vendor interest':2,'Privacy request':3};
+  var HINT=['Reserve a one-time or monthly founding gift. No payment is taken today.',
+    'Carry cards as a screened, trained advocate, volunteer, or bring your church, club or team.',
+    'Businesses and vendors, charities, churches and agencies.',
+    'Ask what we hold about you, correct it, or ask us to delete it.'];
+  var PH=['Anything you would like us to know about your gift.',
+    'How would you like to help? Mention your church or team if you are bringing one.',
+    'Your organization and what you have in mind.',
+    'What would you like us to do?'];
+  var USE={10:'a hot meal and a bus ride home',25:'a full day of essentials',50:'transportation, phone access and practical next steps',100:'a milestone on a Personal Vision Plan'};
+  var amt=25,freq='one time';
+  function group(){for(var i=0;i<radios.length;i++){if(radios[i].checked)return GROUP[radios[i].dataset.default]}return 0}
+  function picked(){for(var i=0;i<radios.length;i++){if(radios[i].checked)return radios[i]}return radios[0]}
+  function amount(){if(amt!=='other')return amt;var n=parseInt(other.value,10);return n>0?n:0}
+  function money(n){return '$'+n.toLocaleString('en-CA')}
+  function sync(){
+    var g=group(),n=amount(),monthly=freq==='monthly';
+    radios.forEach(function(r){r.parentNode.classList.toggle('on',r.checked)});
+    tiles.classList.toggle('four',!privTile.hidden);
+    hint.textContent=HINT[g];msg.placeholder=PH[g];box.hidden=g!==0;
+    gift.value=g===0?(n?money(n)+' '+freq:'Other amount, '+freq):'';
+    impact.textContent='';
+    var b=document.createElement('b');b.textContent=n?money(n)+(monthly?' a month':''):'Your gift';
+    var note=document.createElement('small');note.textContent='Suggested amounts are intentions, not a promise that a gift buys a specific item.';
+    impact.append(b,' helps fund '+(USE[n]||'the next right resource at the right time')+'.',note);
+    if(!submit.disabled)submit.textContent=g===0?(n?'Reserve my '+money(n)+(monthly?' monthly':'')+' gift':'Reserve my gift'):g===3?'Send my request':'Send my interest';
+  }
+  function setInterest(v){
+    var g=GROUP[v];if(g===undefined)return;
+    if(g===3)privTile.hidden=false;
+    radios.forEach(function(r){r.value=r.dataset.default});
+    radios[g].value=v;radios[g].checked=true;sync();
+  }
+  function pickAmt(v){amt=v==='other'?'other':+v;amtBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.amt===String(v)))});otherWrap.hidden=amt!=='other';sync()}
+  function pickFreq(v){freq=v;freqBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.freq===v))});sync()}
+  radios.forEach(function(r){r.addEventListener('change',function(){radios.forEach(function(x){if(!x.checked)x.value=x.dataset.default});sync();track('form_choice',{choice:r.dataset.default})})});
+  amtBtns.forEach(function(b){b.addEventListener('click',function(){pickAmt(b.dataset.amt);if(amt==='other')other.focus();track('gift_amount',{amount:b.dataset.amt})})});
+  freqBtns.forEach(function(b){b.addEventListener('click',function(){pickFreq(b.dataset.freq);track('gift_frequency',{frequency:b.dataset.freq})})});
+  other.addEventListener('input',sync);
+  document.getElementById('privacyLink').addEventListener('click',function(){setInterest('Privacy request');document.getElementById('leadName').focus()});
+  document.querySelectorAll('[data-interest]').forEach(function(a){a.addEventListener('click',function(){setInterest(a.getAttribute('data-interest'))})});
+
+  /* links from email, /give and the other pages: ?interest= ?amount= ?gift= ?frequency= ?message= ?form_error= */
+  var q=new URLSearchParams(location.search),qi=q.get('interest'),qa=q.get('amount')||q.get('gift'),qf=(q.get('frequency')||'')+' '+(q.get('gift')||'');
+  if(qi)setInterest(qi);
+  if(qa){var n=parseInt(String(qa).replace(/[^0-9]/g,''),10);if(n>0){if([10,25,50,100].indexOf(n)>=0)pickAmt(n);else{other.value=Math.min(n,100000);pickAmt('other')}}else if(/other/i.test(qa))pickAmt('other');if(!qi)setInterest('Sponsor a Comeback')}
+  if(/month/i.test(qf))pickFreq('monthly');
   if(q.get('message'))msg.value=q.get('message').slice(0,2000);
-  if(q.get('gift'))gift.value=q.get('gift').slice(0,80);
   if(q.get('form_error')){status.className='fstatus err';status.textContent='We could not send your details: '+q.get('form_error').slice(0,160)+'. Please review the form and try again.'}
-  document.querySelectorAll('[data-interest]').forEach(function(a){a.addEventListener('click',function(){var v=a.getAttribute('data-interest');if(valid(v))sel.value=v})});
-  /* arriving from /give or an email link with #connect: land on the form once layout settles */
-  if(location.hash==='#connect'||location.hash==='#faq'){var go=function(){var t=document.querySelector(location.hash);if(t)t.scrollIntoView({block:'start'})};(document.fonts?document.fonts.ready:Promise.resolve()).then(function(){setTimeout(go,60)})}
+  sync();
+  /* land on the form once layout settles when the visitor arrived for it */
+  var target=['#connect','#faq','#interestForm'].indexOf(location.hash)>=0?location.hash:(qi||qa||q.get('form_error')?'#interestForm':'');
+  if(target){(document.fonts?document.fonts.ready:Promise.resolve()).then(function(){setTimeout(function(){var t=document.querySelector(target);if(t)t.scrollIntoView({block:'start'})},60)})}
+
   function say(text,kind){status.className='fstatus'+(kind?' '+kind:'');status.textContent=text}
   form.addEventListener('submit',async function(e){
     e.preventDefault();
     var name=document.getElementById('leadName'),email=document.getElementById('leadEmail'),consent=document.getElementById('leadConsent');
+    var g=group();
+    if(g===0&&amt==='other'&&!amount()){say('Please enter a gift amount, or pick one above.','err');other.focus();return}
     if(!name.value.trim()){say('Please add your name.','err');name.focus();return}
     if(!email.value.trim()||!email.checkValidity()){say('Please add an email address we can reply to.','err');email.focus();return}
     if(!consent.checked){say('Please tick the consent box so we can reply to you.','err');consent.focus();return}
+    sync();
     var entry={
       name:name.value.trim(),email:email.value.trim(),
       phone:document.getElementById('leadPhone').value.trim(),
-      interest:sel.value,message:msg.value.trim(),selectedGift:gift.value,
+      interest:picked().value,message:msg.value.trim(),selectedGift:gift.value,
       website:document.getElementById('leadWebsite').value,consent:'yes'
     };
-    submit.disabled=true;submit.textContent='Sending…';form.setAttribute('aria-busy','true');say('Sending your interest to the HOPE team…');
+    var giftText=g===0?(amount()?money(amount())+(freq==='monthly'?' monthly':''):'')+' gift':'';
+    submit.disabled=true;submit.textContent='Sending…';form.setAttribute('aria-busy','true');say('Sending to the HOPE team…');
     try{
       var res=await fetch('/api/interest',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(entry)});
       var out=await res.json().catch(function(){return {}});
       if(!res.ok||!out.ok)throw new Error(out.error||'Submission failed');
-      say('Thank you, '+entry.name.split(' ')[0]+'. Your note is with the HOPE team and we aim to reply within two business days.','ok');
-      track('interest_form_submitted',{interest:entry.interest});
-      form.reset();gift.value='';
+      var first=entry.name.split(/\s+/)[0];
+      say(g===0?'Thank you, '+first+'. Your '+giftText.trim()+' intention is in. No payment has been taken; we will be in touch within two business days.'
+              :'Thank you, '+first+'. Your note is with the HOPE team and we aim to reply within two business days.','ok');
+      track('interest_form_submitted',{interest:entry.interest,gift:g===0?entry.selectedGift:''});
+      var keep=picked().dataset.default;form.reset();other.value='';amt=25;freq='one time';
+      pickAmt(25);pickFreq('one time');setInterest(keep);
     }catch(err){
       say('We could not send your details just now. Please try again in a moment, or email harrisonemery10@gmail.com.','err');
       track('interest_form_error',{interest:entry.interest});
     }finally{
-      submit.disabled=false;submit.textContent='Send my interest';form.removeAttribute('aria-busy');
+      submit.disabled=false;form.removeAttribute('aria-busy');sync();
     }
   });
 })();
